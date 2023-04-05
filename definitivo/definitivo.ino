@@ -242,16 +242,36 @@ inline void aggira_ostacolo(){
     direzione = 1;
   }
   ruotaAsse(direzione * 90);
-  avanza_superando_ostacolo(direzione);
+  float dist_min = avanza_superando_ostacolo(direzione); //qui
+  bool troie=circum_(dist_min, direzione);
+  /*
   ruotaAsse(direzione * 90 * -1);
   avanza_superando_ostacolo_con_controllo(direzione);
   if (controllo()) {
     ruotaAsse_con_controllo(direzione * 90 * -1);
     if (controllo()) avanza_superando_ostacolo_con_controllo(direzione);
+  }*/
+}
+
+bool circum_(float d_min, int direzione){
+  int echoPort = (direzione == 1) ? echoPort3 : echoPort2 ;
+  int triggerPort = ( echoPort == echoPort2 )? triggerPort2 : triggerPort3 ;
+  while(a==0){
+    while(_getUltrasonicDistance(triggerPort, echoPort)<=d_min){if(controllo()!=0)return; avanza(180);}
+    circum(dist_min, direzione);
   }
 }
 
-inline void avanza_superando_ostacolo( int direzione ) {
+void circum(float d_min, int direzione){
+  int echoPort = (direzione == 1) ? echoPort3 : echoPort2 ;
+  int triggerPort = ( echoPort == echoPort2 )? triggerPort2 : triggerPort3 ;
+  while(_getUltrasonicDistance(triggerPort, echoPort)>d_min-2){
+    ruotaAsse(1*direzione);
+    if(controllo()!=0)break;
+  }
+}
+
+inline float avanza_superando_ostacolo( int direzione ) {
 
   int echoPort = (direzione == 1) ? echoPort3 : echoPort2 ;
   int triggerPort = ( echoPort == echoPort2 )? triggerPort2 : triggerPort3 ;
@@ -264,6 +284,7 @@ inline void avanza_superando_ostacolo( int direzione ) {
     superato = (distanza_min<=10) && distanza_corr > distanza_min + 10;
   } while (!superato);
   stop();
+  return distanza_min;
 }
 
 inline void avanza_superando_ostacolo_con_controllo ( int direzione ) {
