@@ -17,31 +17,31 @@ const float KP = 0.083, KD = 2;  //0.083 2
 
 int16_t lSpeed, rSpeed;
 
-const int STBY=4;
+const int STBY = 4;
 
 
-const int PWMA=3;
-const int AIN1=9;
-const int AIN2=8;
+const int PWMA = 3;
+const int AIN1 = 9;
+const int AIN2 = 8;
 
 
-const int PWMB=5;
-const int BIN1=7;
-const int BIN2=6;
+const int PWMB = 5;
+const int BIN1 = 7;
+const int BIN2 = 6;
 
 
-const int out=28;
-const int s0=29;
-const int s1=30;
-const int s2=31;
-const int s3=32;
+const int out = 28;
+const int s0 = 29;
+const int s1 = 30;
+const int s2 = 31;
+const int s3 = 32;
 
 //Sensor 2 Left
-const int out_2=33; 
-const int s0_2=34;
-const int s1_2=35;
-const int s2_2=36;
-const int s3_2=37;
+const int out_2 = 33;
+const int s0_2 = 34;
+const int s1_2 = 35;
+const int s2_2 = 36;
+const int s3_2 = 37;
 
 
 QTRSensors qtr;
@@ -70,8 +70,9 @@ const int alimUltra3 = 47;
 int _getUltrasonicDistance(int trigger, int echo)
 {
   digitalWrite(trigger, LOW);
+  delay(5);
   digitalWrite(trigger, HIGH);
-  delayMicroseconds(10);
+  delay(10);
   digitalWrite(trigger, LOW);
   double distanza = pulseIn(echo, HIGH) * 0.03432 / 2.0;
   //Serial.println(distanza);
@@ -81,9 +82,11 @@ int _getUltrasonicDistance(int trigger, int echo)
 void setup() {
   Serial.begin(115200);
   qtr.setTypeRC();
-  qtr.setSensorPins((const uint8_t[]){11, 12, 27, 22, 23, 24, 25, 26}, SensorCount);
+  qtr.setSensorPins((const uint8_t[]) {
+    11, 12, 27, 22, 23, 24, 25, 26
+  }, SensorCount);
   qtr.setEmitterPin(2);
-  
+
   for (int i = 0; i < 250; i++)  // make the calibration take about 5 seconds
   {
     qtr.calibrate();
@@ -137,7 +140,7 @@ void setup() {
   pinMode(alimUltra3, OUTPUT);
 
 
-  
+
   digitalWrite(alimUltra1, HIGH);
   digitalWrite(alimUltra2, HIGH);
   digitalWrite(alimUltra3, HIGH);
@@ -148,19 +151,19 @@ void loop() {
 
   uint16_t posizione = qtr.readLineBlack(sensorValues);
 
-  if(posizione>6700){
+  if (posizione > 6700) {
     move(1, speedturn, 0);
     move(2, speedturn, 1);
-    return;    
+    return;
   }
-  if(posizione<300){ 
+  if (posizione < 300) {
     move(1, speedturn, 1);
     move(2, speedturn, 0);
     return;
   }
 
   int16_t errore = posizione - 3500;
-  
+
   PID = (errore * KP) + ((errore - ultimoErrore) * KD);
   ultimoErrore = errore;
 
@@ -180,14 +183,14 @@ void loop() {
     rSpeed = 0;
   }
 
-  if(controllo()){
+  if (controllo()) {
     stop();
     //avanza(180);
     //delay(70);
     //stop();
     delay(2000);
     digitalWrite(s2, LOW);
-    digitalWrite(s3, LOW);  
+    digitalWrite(s3, LOW);
     r = pulseIn(out, LOW);
     //Red 2
     digitalWrite(s2_2, LOW);
@@ -201,32 +204,32 @@ void loop() {
     digitalWrite(s2_2, LOW);
     digitalWrite(s3_2, HIGH);
     b2 = pulseIn(out_2, LOW);
-  
+
     //Green 1
     digitalWrite(s2, HIGH);
     digitalWrite(s3, HIGH);
     g = pulseIn(out, LOW);
-    
+
     //Green 2
     digitalWrite(s2_2, HIGH);
     digitalWrite(s3_2, HIGH);
     g2 = pulseIn(out_2, LOW);
 
-    if(r>=9 && g>=9 && b>=9 && r2>=9 && g2>=9 && b2>=9){
+    if (r >= 9 && g >= 9 && b >= 9 && r2 >= 9 && g2 >= 9 && b2 >= 9) {
       avanza(230);
       delay(200);
       ruotaAsse(180);
-    }else if(r>=9 && g>=9 && b>=9){
+    } else if (r >= 9 && g >= 9 && b >= 9) {
       avanza(230);
       delay(200);
       ruotaAsse(-90);
-    }else if(r2>=9 && g2>=9 && b2>=9){
+    } else if (r2 >= 9 && g2 >= 9 && b2 >= 9) {
       avanza(230);
       delay(200);
       ruotaAsse(90);
     }
   }
-  
+
   move(1, lSpeed, 0);
   move(2, rSpeed, 0);
 
@@ -236,168 +239,191 @@ void loop() {
 
 bool superato;
 
-inline void aggira_ostacolo(){
+inline void aggira_ostacolo() {
   int direzione = -1;
   if ( _getUltrasonicDistance(triggerPort2, echoPort2) > _getUltrasonicDistance(triggerPort3, echoPort3)) {
     direzione = 1;
   }
   ruotaAsse(direzione * 90);
   float dist_min = avanza_superando_ostacolo(direzione); //qui
-  bool troie=circum_(dist_min, direzione);
+  circum_(dist_min, direzione);
   /*
-  ruotaAsse(direzione * 90 * -1);
-  avanza_superando_ostacolo_con_controllo(direzione);
-  if (controllo()) {
+    ruotaAsse(direzione * 90 * -1);
+    avanza_superando_ostacolo_con_controllo(direzione);
+    if (controllo()) {
     ruotaAsse_con_controllo(direzione * 90 * -1);
     if (controllo()) avanza_superando_ostacolo_con_controllo(direzione);
-  }*/
+    }*/
 }
 
-bool circum_(float d_min, int direzione){
+void circum_(float d_min, int direzione) {
   int echoPort = (direzione == 1) ? echoPort3 : echoPort2 ;
-  int triggerPort = ( echoPort == echoPort2 )? triggerPort2 : triggerPort3 ;
-  while(a==0){
-    while(_getUltrasonicDistance(triggerPort, echoPort)<=d_min){if(controllo()!=0)return; avanza(180);}
-    circum(dist_min, direzione);
+  int triggerPort = ( echoPort == echoPort2 ) ? triggerPort2 : triggerPort3 ;
+  while (true) {
+    while (_getUltrasonicDistance(triggerPort, echoPort) <= d_min) {
+      if (controllo() != 0)return;
+      avanza(180);
+    }
+    circum(d_min, direzione);
   }
 }
 
-void circum(float d_min, int direzione){
+void circum(float d_min, int direzione) {
   int echoPort = (direzione == 1) ? echoPort3 : echoPort2 ;
-  int triggerPort = ( echoPort == echoPort2 )? triggerPort2 : triggerPort3 ;
-  while(_getUltrasonicDistance(triggerPort, echoPort)>d_min-2){
-    ruotaAsse(1*direzione);
-    if(controllo()!=0)break;
+  int triggerPort = ( echoPort == echoPort2 ) ? triggerPort2 : triggerPort3 ;
+  while (_getUltrasonicDistance(triggerPort, echoPort) > d_min - 2) {
+    ruotaAsse(1 * direzione);
+    if (controllo() != 0)break;
   }
 }
 
 inline float avanza_superando_ostacolo( int direzione ) {
 
   int echoPort = (direzione == 1) ? echoPort3 : echoPort2 ;
-  int triggerPort = ( echoPort == echoPort2 )? triggerPort2 : triggerPort3 ;
-  
-  int distanza_min = _getUltrasonicDistance(triggerPort, echoPort);
-  do {
-    int distanza_corr = _getUltrasonicDistance(triggerPort, echoPort);
-    distanza_min = min(distanza_min, distanza_corr );
-    avanza(200);
-    superato = (distanza_min<=10) && distanza_corr > distanza_min + 10;
-  } while (!superato);
-  stop();
-  return distanza_min;
-}
+  int triggerPort = ( echoPort == echoPort2 ) ? triggerPort2 : triggerPort3 ;
 
+  int distanza_min = 0;
+
+  do {
+    distanza_min = _getUltrasonicDistance(triggerPort, echoPort);
+  } while (distanza_min < 2);
+
+  avanza(maxspeed * 0.7);
+  bool superato = false;
+  int distanza_corr = 0;
+  do {
+    do {
+      distanza_corr = _getUltrasonicDistance(triggerPort, echoPort);
+    } while (distanza_corr < 2);
+
+    distanza_min = min(distanza_min, distanza_corr );
+    superato = (distanza_min <= 10) && distanza_corr > distanza_min + 10;
+  } while (!superato);
+  motoriFerma();
+}
+/*
 inline void avanza_superando_ostacolo_con_controllo ( int direzione ) {
 
   int echoPort = (direzione == 1) ? echoPort3 : echoPort2 ;
-  int triggerPort = ( echoPort == echoPort2 )? triggerPort2 : triggerPort3 ;
-  
+  int triggerPort = ( echoPort == echoPort2 ) ? triggerPort2 : triggerPort3 ;
+
   int distanza_min = _getUltrasonicDistance(triggerPort, echoPort);
   do {
     if (!controllo()) break;
     int distanza_corr = _getUltrasonicDistance(triggerPort, echoPort);
     distanza_min = min(distanza_min, distanza_corr );
     avanza(200);
-    superato = (distanza_min<=10) && distanza_corr > distanza_min + 10;
+    superato = (distanza_min <= 10) && distanza_corr > distanza_min + 10;
   } while (!superato);
   stop();
 }
-
+*/
 inline void avanza(int v) {
-    move(1, v, 0);
-    move(2, v, 0);
+  move(1, v, 0);
+  move(2, v, 0);
+}
+
+inline void motoriFerma() {
+  move(1, 0, 0);
+  move(2, 0, 0);
 }
 
 inline void giraOrario() {
-   move(1, 230, 1);
-   move(2, 230, 0);
+  move(1, 230, 1);
+  move(2, 230, 0);
 }
 
 inline void giraAntiorario() {
-   move(1, 230, 0);
-   move(2, 230, 1);
+  move(1, 230, 0);
+  move(2, 230, 1);
 }
 
 
-inline float gradi2Eng(float gradiCent){ return gradiCent * 160.0 / 90.0; }
+inline float gradi2Eng(float gradiCent) {
+  return gradiCent * 160.0 / 90.0;
+}
 
-inline float Eng2Gradi(float gradiEng){ return gradiEng * 90.0 / 160.0; }
+inline float Eng2Gradi(float gradiEng) {
+  return gradiEng * 90.0 / 160.0;
+}
 
 
 void ruotaAsse(float gradi) {
 
-  if(gradi == 0) return;
+  if (gradi == 0) return;
   float gradiEn = gradi2Eng(abs(gradi));
   mpu6050.update();
   float valIniziale = mpu6050.getAngleZ();
   do {
-      mpu6050.update();
-      if(gradi > 0){
-        giraOrario();
-      }else{
-        giraAntiorario();
-      }
-      //Serial.println(abs(valIniziale - mpu6050.getAngleZ()));
-      
-    } while (abs(valIniziale - mpu6050.getAngleZ()) < gradiEn);
-  
-        move(1, 0, 0);
-        move(2, 0, 1);
+    mpu6050.update();
+    if (gradi > 0) {
+      giraOrario();
+    } else {
+      giraAntiorario();
+    }
+    //Serial.println(abs(valIniziale - mpu6050.getAngleZ()));
+
+  } while (abs(valIniziale - mpu6050.getAngleZ()) < gradiEn);
+
+  move(1, 0, 0);
+  move(2, 0, 1);
 }
 
 void ruotaAsse_con_controllo(float gradi) {
 
-  if(gradi == 0) { return ; }
+  if (gradi == 0) {
+    return ;
+  }
   float gradiEn = gradi2Eng(abs(gradi));
   mpu6050.update();
   float valIniziale = mpu6050.getAngleZ();
   do {
-      if (!controllo()) break;
-      mpu6050.update();
-      if(gradi > 0){
-        giraOrario();
-      }else{
-        giraAntiorario();
-      }
-      //Serial.println(abs(valIniziale - mpu6050.getAngleZ()));
-      
-    } while (abs(valIniziale - mpu6050.getAngleZ()) < gradiEn);
-  
-        move(1, 0, 0);
-        move(2, 0, 1);
+    if (!controllo()) break;
+    mpu6050.update();
+    if (gradi > 0) {
+      giraOrario();
+    } else {
+      giraAntiorario();
+    }
+    //Serial.println(abs(valIniziale - mpu6050.getAngleZ()));
+
+  } while (abs(valIniziale - mpu6050.getAngleZ()) < gradiEn);
+
+  move(1, 0, 0);
+  move(2, 0, 1);
 }
 
-inline bool controllo(){
-  for(int i=0; i<SensorCount; i++){
-    if(sensorValues[i]<500) return false;
+inline bool controllo() {
+  for (int i = 0; i < SensorCount; i++) {
+    if (sensorValues[i] < 500) return false;
   }
   return true;
 }
 
 void move(int motor, int speed, int direction) {
 
-    digitalWrite(STBY, HIGH);
+  digitalWrite(STBY, HIGH);
 
-    boolean inPin1 = LOW;
-    boolean inPin2 = HIGH;
+  boolean inPin1 = LOW;
+  boolean inPin2 = HIGH;
 
-    if (direction == 1) {
-      inPin1 = HIGH;
-      inPin2 = LOW;
-    }
-
-    if (motor == 1) {
-      digitalWrite(AIN1, inPin1);
-      digitalWrite(AIN2, inPin2);
-      analogWrite(PWMA, speed);
-    } else {
-      digitalWrite(BIN1, inPin1);
-      digitalWrite(BIN2, inPin2);
-      analogWrite(PWMB, speed);
-    }
+  if (direction == 1) {
+    inPin1 = HIGH;
+    inPin2 = LOW;
   }
-  
-void stop(){
 
-  digitalWrite(STBY, LOW); 
+  if (motor == 1) {
+    digitalWrite(AIN1, inPin1);
+    digitalWrite(AIN2, inPin2);
+    analogWrite(PWMA, speed);
+  } else {
+    digitalWrite(BIN1, inPin1);
+    digitalWrite(BIN2, inPin2);
+    analogWrite(PWMB, speed);
+  }
+}
+
+void stop() {
+
+  digitalWrite(STBY, LOW);
 }
