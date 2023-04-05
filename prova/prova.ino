@@ -8,6 +8,10 @@ void loop() {
 
 }
 
+
 void f2(){
   return;  
+}
+void f1(){
+  return;
 }
