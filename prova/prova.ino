@@ -8,7 +8,12 @@ void loop() {
 
 }
 
-
 void f3(){
+  return;
+}
+void f2(){
+  return;  
+}
+void f1(){
   return;
 }
