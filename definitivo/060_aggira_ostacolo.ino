@@ -4,8 +4,16 @@ inline void aggira_ostacolo() {
     direzione = 1;
   }
   ruotaAsse(direzione * 90);
-  float dist_min = avanza_superando_ostacolo(direzione); //qui
-  circum(dist_min, -direzione);
+  if (avanza_superando_ostacolo(direzione)==9000) return; //qui
+  //circum(dist_min, -direzione);
+  avanza(200);
+  delay(40);
+  ruotaAsse(direzione  * -90);
+  if (avanza_superando_ostacolo(direzione)==9000) return;
+  avanza(200);
+  delay(80);
+  ruotaAsse(direzione * -90);
+  if (avanza_superando_ostacolo(direzione)==9000) return;
   /*
     ruotaAsse(direzione * 90 * -1);
     avanza_superando_ostacolo_con_controllo(direzione);
@@ -56,6 +64,7 @@ inline float avanza_superando_ostacolo( int direzione ) {
   int distanza_corr = 0;
   do {
     do {
+      if (controllo()!=0)return 9000;
       distanza_corr = _getUltrasonicDistance(triggerPort, echoPort);
     } while (distanza_corr < 2);
 
@@ -80,6 +89,6 @@ inline void avanza_superando_ostacolo_con_controllo ( int direzione ) {
     superato = (distanza_min <= 10) && distanza_corr > distanza_min + 10;
   } while (!superato);
   stop();
-}
-*/
+}*/
+
 

@@ -11,18 +11,32 @@ const int potenzaGiraOrario = 230;
 
 inline void giraOrario(bool su_asse=true) {
   int potenzaM2 = potenzaGiraOrario;
-  int potenzaM1 = su_asse? potenzaM2 : 0;
+  int potenzaM1 = su_asse? potenzaM2 : 150;
 
-  move(1, potenzaM1, 1);
-  move(2, potenzaM2, 0);
+  if(not(su_asse)){
+    move(1, potenzaM1, 1);
+    move(2, potenzaM2, 0);
+  }else{
+    move(1, potenzaM2, 1);
+    move(2, potenzaM2, 0);
+
+  }
+
 }
 
 inline void giraAntiorario(bool su_asse=true) {
   int potenzaM1 = potenzaGiraOrario;
-  int potenzaM2 = su_asse? potenzaM1 : 0;
+  int potenzaM2 = su_asse? potenzaM1 : 150;
 
-  move(1, potenzaM1, 0);
-  move(2, potenzaM2, 1);  
+  if(not(su_asse)){
+    move(1, potenzaM1, 0);
+    move(2, potenzaM2, 1);
+  }else{
+    move(1, potenzaM1, 0);
+    move(2, potenzaM1, 1);
+
+  }
+
 }
 
 

@@ -1,11 +1,11 @@
 #pragma once
 
-const uint8_t maxspeed = 240;
-const uint8_t speed_circum = maxspeed * 0.7;
+const uint8_t maxspeed = 255;
+const uint8_t speed_circum = maxspeed * 0.9;
 const uint8_t speedturn    = maxspeed * 1.0;
 
 //PID
-const float KP = 0.083, KD = 2;  //0.083 2
+const float KP = 0.09, KD = 2.2;  //0.083 2
 
 const int STBY = 4;
 

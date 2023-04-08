@@ -44,6 +44,37 @@ inline bool controllo() {
   return true;
 }
 
+void calibra(){
+
+  mpu6050.update();
+  float valIniziale = mpu6050.getAngleZ();
+  
+  bool sinistra = false;
+  bool destra = true;
+  int gradi = gradi2Eng(40);
+
+  for(int i = 0; i < 7; i+=0){
+
+      mpu6050.update();
+
+      if(abs(valIniziale - mpu6050.getAngleZ()) > gradi){
+        valIniziale = mpu6050.getAngleZ();
+        sinistra = !sinistra;
+        destra = !destra;
+        gradi = gradi2Eng(80);
+        i++;
+      }
+
+      if(i == 6) gradi = gradi2Eng(40);
+
+      move(1, 240, sinistra);
+      move(2, 240, destra);
+
+      qtr.calibrate();
+      delay(20);
+  }
+  
+}
 
 long long int t_start;
 
@@ -55,11 +86,13 @@ void setup() {
   }, SensorCount);
   qtr.setEmitterPin(2);
 
+
   for (int i = 0; i < 250; i++)  // make the calibration take about 5 seconds
   {
     qtr.calibrate();
     delay(20);
   }
+
 
   qtr.setTimeout(2000);
 
@@ -107,6 +140,7 @@ void setup() {
   pinMode(echoPort3, INPUT);
   pinMode(alimUltra3, OUTPUT);
 
+  //calibra();
 
   t_start=millis();
   digitalWrite(alimUltra1, HIGH);
@@ -116,17 +150,15 @@ void setup() {
 
 void loop() {
   t1 = millis();
-
-  //if(millis()-t_start<100)avanza(maxspeed*0.8);
   
   uint16_t posizione = qtr.readLineBlack(sensorValues);
 
-  if (posizione > 6700) {
+  if (posizione > 6200) {
     move(1, speedturn, 0);
     move(2, speedturn, 1);
     return;
   }
-  if (posizione < 300) {
+  if (posizione < 800) {
     move(1, speedturn, 1);
     move(2, speedturn, 0);
     return;
