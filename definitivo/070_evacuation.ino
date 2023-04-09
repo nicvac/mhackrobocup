@@ -18,7 +18,7 @@ const double distFinaleCm = 2;
 
 
 //Ruota su se stesso fino a individuare uno spike nelle distanze
-void evacScansionaOggetto() {
+void trovaERaggiungiPalla() {
 
   //Radar, ruota fino a individuare un oggetto da raggiungere
   double oggDistCm(0); //la distanza dall'oggetto che mi ha determinato lo spike (che ho agganciato)
