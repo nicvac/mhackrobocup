@@ -1,16 +1,35 @@
-//Giroscopio Engineering - gradi
+#include "definizioni.h"
+
+//Giroscopio Da Engineering a gradi
 inline float gradi2Eng(float gradiCent) {
   return gradiCent * 160.0 / 90.0;
 }
 
+//Giroscopio Da gradi a engineering
 inline float Eng2Gradi(float gradiEng) {
   return gradiEng * 90.0 / 160.0;
 }
 
-const int potenzaGiraOrario = 230;
+//Potenza di default, usata in giraOrario e Antiorario
+const int sgPotenzaGiro = 230;
 
-inline void giraOrario(bool su_asse=true) {
-  int potenzaM2 = potenzaGiraOrario;
+//Prototipi
+void gira( SGVERSO verso, int potenzaMot = sgPotenzaGiro, bool suAsse = true);
+void giraOrario(bool su_asse=true, int potenzaM = sgPotenzaGiro );
+void giraAntiorario(bool su_asse=true, int potenzaM = sgPotenzaGiro );
+
+//Funzione SEMPLICE
+inline void gira( SGVERSO verso, int potenzaMot = sgPotenzaGiro, bool suAsse = true) {
+  if ( verso == SGORARIO ) {
+    giraOrario(suAsse, potenzaMot );
+  } else {
+    giraAntiorario(suAsse, potenzaMot );
+  }
+}
+
+
+inline void giraOrario(bool su_asse=true, int potenzaM = sgPotenzaGiro ) {
+  int potenzaM2 = potenzaM;
   int potenzaM1 = su_asse? potenzaM2 : 150;
 
   if(not(su_asse)){
@@ -24,8 +43,8 @@ inline void giraOrario(bool su_asse=true) {
 
 }
 
-inline void giraAntiorario(bool su_asse=true) {
-  int potenzaM1 = potenzaGiraOrario;
+inline void giraAntiorario(bool su_asse=true, int potenzaM = sgPotenzaGiro ) {
+  int potenzaM1 = potenzaM;
   int potenzaM2 = su_asse? potenzaM1 : 150;
 
   if(not(su_asse)){

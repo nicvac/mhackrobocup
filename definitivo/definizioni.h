@@ -4,7 +4,7 @@ const uint8_t maxspeed = 255;
 const uint8_t speed_circum = maxspeed * 0.9;
 const uint8_t speedturn    = maxspeed * 1.0;
 
-//PID
+//### PID
 const float KP = 0.09, KD = 2.2;  //0.083 2
 
 const int STBY = 4;
@@ -30,11 +30,10 @@ const int s1_2 = 35;
 const int s2_2 = 36;
 const int s3_2 = 37;
 
+//### ULTRASONIC DISTANCE
 const int triggerPort1 = 38;
 const int echoPort1 = 39;
 const int alimUltra1 = 40;
-
-const int alimGiroscopio = 41;
 
 const int triggerPort2 = 42;
 const int echoPort2 = 43;
@@ -43,3 +42,13 @@ const int alimUltra2 = 44;
 const int triggerPort3 = 45;
 const int echoPort3 = 46;
 const int alimUltra3 = 47;
+
+// Opzioni: sesore frontale, sinistro, destro
+enum SDTYPE { SDFRONT=0, SDLEFT, SDRIGHT };
+
+//### GIROSCOPIO
+const int alimGiroscopio = 41;
+
+//Opzioni: Senso orario o antioriario
+enum SGVERSO { SGORARIO=0, SGANTIOR };
+

@@ -25,17 +25,6 @@ float x, y, z;
 
 unsigned long cont_dist_stabile = 0;
 
-int _getUltrasonicDistance(int trigger, int echo)
-{
-  digitalWrite(trigger, LOW);
-  delay(5);
-  digitalWrite(trigger, HIGH);
-  delay(10);
-  digitalWrite(trigger, LOW);
-  double distanza = pulseIn(echo, HIGH) * 0.03432 / 2.0;
-  //Serial.println(distanza);
-  return distanza;
-}
 
 inline bool controllo() {
   for (int i = 0; i < SensorCount; i++) {
