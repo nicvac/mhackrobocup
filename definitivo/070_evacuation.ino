@@ -16,6 +16,10 @@ const double sizePallinaCm = 4.5;
 //La distanza finale fra robot e oggetto da raggiungere 
 const double distFinaleCm = 2;
 
+//Dimensioni della stanza
+const double dim1 = 90;
+const double dim2 = 120;
+const double dimDiag = sqrt( dim1*dim1 + dim2*dim2);
 
 //Trova una palla nella stanza e la raggiunge
 void trovaERaggiungiPalla() {
@@ -32,7 +36,7 @@ void trovaERaggiungiPalla() {
   //Raggiunto l'oggetto ad una distanza di distFinaleCm
   //Ruoto il robot per centrare meglio l'oggetto
   if ( dirScanDetected ) {
-    centratiRispettoAlloggetto( dirScan );
+    evacCentratiRispettoAlloggetto( dirScan );
   }
 
   //@@@ QUI BISOGNA LEGGERE IL COLORE DELLA PALLINA USANDO IL SENSORE DI COLORE FRONTALE
@@ -46,7 +50,7 @@ void trovaERaggiungiPalla() {
 }
 
 //Raggiunto l'oggetto, ruoto il robot per centrare al meglio l'oggetto
-void centratiRispettoAlloggetto(SGVERSO dirScan ) {
+void evacCentratiRispettoAlloggetto(SGVERSO dirScan ) {
     
     gira(dirScan, scanVel, ruotaSuAsse);
 
@@ -86,7 +90,8 @@ void evacIndividuaSpike( double & distCm ) {
 
     bool daLontanoAVicino = prevCm > currCm;
     bool isSpike = (diffCm >= sizePallinaCm);
-    isScanInteresting = (isSpike and daLontanoAVicino); 
+    bool nellaStanza = (currCm < dimDiag);
+    isScanInteresting = (isSpike and daLontanoAVicino and nellaStanza); 
   }
 
   motoriFerma();
@@ -134,7 +139,7 @@ void evacRaggiungiOggetto( double oggDistCm, SGVERSO & dirScan, bool & dirScanDe
     //Devo determinare il verso di rotazione da usare per riagganciare l'oggetto.
     //Il verso di rotazione va determinato solo una volta e si userà sempre lo stesso per riagganciare l'oggetto
     if (not(dirScanDetected)) {
-      dirScan = detectScanDirection(scanMinCm);
+      dirScan = evacDetectScanDirection(scanMinCm);
       dirScanDetected = true;
     }
 
@@ -156,7 +161,7 @@ void evacRaggiungiOggetto( double oggDistCm, SGVERSO & dirScan, bool & dirScanDe
 
 //Determina il verso di rotazione da usare per riagganciare l'oggetto.
 //Il verso di rotazione va determinato solo una volta e si userà sempre lo stesso per riagganciare l'oggetto
-SGVERSO detectScanDirection( double scanMinCm ) {
+SGVERSO evacDetectScanDirection( double scanMinCm ) {
 
   SGVERSO dirScan;
 
