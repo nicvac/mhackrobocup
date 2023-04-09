@@ -49,21 +49,19 @@ void evacTrovaERaggiungiPalla() {
 
 }
 
-//Raggiunto l'oggetto, ruoto il robot per centrare al meglio l'oggetto
+//Raggiunto l'oggetto, ruoto il robot per centrare al meglio l'oggetto.
+// Ruoto finchè non raggiungo la distanza minima.
 void evacCentratiRispettoAlloggetto(SGVERSO dirScan ) {
-    
-    gira(dirScan, scanVel, ruotaSuAsse);
 
     double currCm = getDistanceCm(SDFRONT, distStableCount);
     double scanMinCm = currCm;
-    bool isAgganciato = false;
-    while ( not isAgganciato ) {
+
+    gira(dirScan, scanVel, ruotaSuAsse);
+
+    bool minimoMigliorato = true;
+    while ( minimoMigliorato ) {
       currCm = getDistanceCm(SDFRONT, distStableCount);
-      if ( scanMinCm > scanMinCm ) {
-        isAgganciato = true;
-      } else {
-        scanMinCm = currCm;        
-      }
+      minimoMigliorato = ( currCm <= scanMinCm );
     }
     motoriFerma();
 
@@ -88,7 +86,7 @@ void evacIndividuaSpike( double & distCm ) {
     currCm = getDistanceCm(SDFRONT, distStableCount);
     double diffCm = abs(prevCm - currCm);
 
-    bool daLontanoAVicino = prevCm > currCm;
+    bool daLontanoAVicino = prevCm > currCm + 1.0;
     bool isSpike = (diffCm >= sizePallinaCm);
     bool nellaStanza = (currCm < dimDiag);
     isScanInteresting = (isSpike and daLontanoAVicino and nellaStanza); 
@@ -117,7 +115,7 @@ void evacRaggiungiOggetto( double oggDistCm, SGVERSO & dirScan, bool & dirScanDe
 
     //Avanza finchè la distanza si riduce
     avanza(evacMoveVel);
-    while ( isAgganciato and (scanDistCurrCm >= distFinaleCm) ) {
+    while ( isAgganciato and (scanDistCurrCm > distFinaleCm) ) {
       scanDistCurrCm = getDistanceCm(SDFRONT, distStableCount);
 
       if ( scanDistCurrCm <= scanMinCm + 0.5 ) {
@@ -130,14 +128,14 @@ void evacRaggiungiOggetto( double oggDistCm, SGVERSO & dirScan, bool & dirScanDe
 
     //Qui sono sganciato oppure ho raggiunto l'oggetto
     //Se ho rggiunto l'oggetto esco dal ciclo principale
-    if ( scanDistCurrCm >= distFinaleCm ) {
+    if ( scanDistCurrCm <= distFinaleCm ) {
       break;
     }
 
     //Qui sono sganciato dall'oggetto. Lo riaggancio, scansionando un'area di pochi gradi a destra e a sinistra.
     
     //Devo determinare il verso di rotazione da usare per riagganciare l'oggetto.
-    //Il verso di rotazione va determinato solo una volta e si userà sempre lo stesso per riagganciare l'oggetto
+    //Il verso di rotazione va determinato solo una volta e si userà sempre lo stesso per riagganciare l'oggetto corrente
     if (not(dirScanDetected)) {
       dirScan = evacDetectScanDirection(scanMinCm);
       dirScanDetected = true;
@@ -149,12 +147,11 @@ void evacRaggiungiOggetto( double oggDistCm, SGVERSO & dirScan, bool & dirScanDe
       scanDistCurrCm = getDistanceCm(SDFRONT, distStableCount);
       isAgganciato = (scanDistCurrCm <= scanMinCm + 0.5 );
     }
+    motoriFerma();
 
     //Una volta riagganciato, giro di ulteriori 5 gradi per centrare meglio l'oggetto
     double angolo = ( dirScan == SGANTIOR ) ? -5 : 5;
     ruotaAsse( angolo, true );
-
-    motoriFerma();
 
   }
 }
@@ -167,11 +164,12 @@ SGVERSO evacDetectScanDirection( double scanMinCm ) {
 
   mpu6050.update();
 
-  //Ruota come un radar, in senso antiorario
+  //Ruota come un radar, in senso antiorario per 10 gradi
+  const double angleLimit = 10.0;
   gira(SGANTIOR, scanVel, ruotaSuAsse);
   double cTurnAngle = mpu6050.getAngleZ();
   bool trovato = false;
-  while ( not(trovato) and abs( cTurnAngle ) <= 10 ) {
+  while ( not(trovato) and abs( cTurnAngle ) <= angleLimit ) {
     cTurnAngle = mpu6050.getAngleZ();
     double tempDist = getDistanceCm(SDFRONT, distStableCount);
     if ( tempDist <= scanMinCm + 0.5 ) {
