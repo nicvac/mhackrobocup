@@ -17,7 +17,7 @@ const double sizePallinaCm = 4.5;
 const double distFinaleCm = 2;
 
 
-//Ruota su se stesso fino a individuare uno spike nelle distanze
+//Trova una palla nella stanza e la raggiunge
 void trovaERaggiungiPalla() {
 
   //Radar, ruota fino a individuare un oggetto da raggiungere
