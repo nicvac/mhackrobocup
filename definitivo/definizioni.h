@@ -52,3 +52,6 @@ const int alimGiroscopio = 41;
 //Opzioni: Senso orario o antioriario
 enum SGVERSO { SGORARIO=0, SGANTIOR };
 
+//### EVACUATION ZONE
+//Tipo di Evacuation zone
+enum EV_TYPE { EV_VERDE=0, EV_ROSSA };

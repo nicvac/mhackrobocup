@@ -21,8 +21,31 @@ const double dim1 = 90;
 const double dim2 = 120;
 const double dimDiag = sqrt( dim1*dim1 + dim2*dim2);
 
+//Raggiunge l'angolo verde
+void evacRaggiungiAngoloVerde() {
+  //@@@ DA SCRIVERE
+}
+
+//Raggiunge l'angolo rosso
+void evacRaggiungiAngoloRosso() {
+  //@@@ DA SCRIVERE
+}
+
+//L'oggetto raggiunto è una pallina
+//Restituisce vero se abbiamo raggiunto una pallina
+//Restituisce evacuationType: il colore della evacuation zone in cui portare la pallina
+bool evacIsPallina( EV_TYPE & evacuationType ) {
+  //@@@ DA SCRIVERE
+}
+
+//Cattura la pallina
+void evacCatturaPallina() {
+  //@@@ DA SCRIVERE
+}
+
 //Trova una palla nella stanza e la raggiunge
-void evacTrovaERaggiungiPalla() {
+//Restituisce evacuationType: il colore della evacuation zone in cui portare la pallina
+void evacTrovaERaggiungiPalla( EV_TYPE & evacuationType ) {
 
   //Radar, ruota fino a individuare un oggetto da raggiungere
   double oggDistCm(0); //la distanza dall'oggetto che mi ha determinato lo spike (che ho agganciato)
@@ -39,13 +62,16 @@ void evacTrovaERaggiungiPalla() {
     evacCentratiRispettoAlloggetto( dirScan );
   }
 
-  //@@@ QUI BISOGNA LEGGERE IL COLORE DELLA PALLINA USANDO IL SENSORE DI COLORE FRONTALE
-  bool isPallina = true;
+  //Controlliamo se l'oggetto raggiunto è una pallina
+  bool isPallina = evacIsPallina( evacuationType );
 
   //Ruoto su me stesso in modo da posizionare la gabbia per catturare la pallina
   if (isPallina) {
     ruotaAsse( 180, true );
   }
+
+  //Cattura pallina
+  evacCatturaPallina();
 
 }
 
