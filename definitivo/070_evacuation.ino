@@ -22,7 +22,7 @@ const double dim2 = 120;
 const double dimDiag = sqrt( dim1*dim1 + dim2*dim2);
 
 //Trova una palla nella stanza e la raggiunge
-void trovaERaggiungiPalla() {
+void evacTrovaERaggiungiPalla() {
 
   //Radar, ruota fino a individuare un oggetto da raggiungere
   double oggDistCm(0); //la distanza dall'oggetto che mi ha determinato lo spike (che ho agganciato)
