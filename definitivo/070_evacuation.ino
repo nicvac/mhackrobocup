@@ -17,11 +17,153 @@ const double sizePallinaCm = 4.5;
 const double distFinaleCm = 2;
 
 //Dimensioni della stanza
-const double dim1 = 90;
-const double dim2 = 120;
-const double dimDiag = sqrt( dim1*dim1 + dim2*dim2);
+const double dimRoom1 = 90;
+const double dimRoom2 = 120;
+const double dimDiag = sqrt( dimRoom1*dimRoom1 + dimRoom2*dimRoom2);
 
-//Raggiunge l'angolo verde
+//Dimensione robot
+const double dimRobLarg = 15;
+const double dimRobAltz = 20;
+
+//Confronto a meno di un errore
+inline bool simile( const double & a, const double & b, const double errore = 0.5 ) {
+  return ( abs(a - b) <= errore );
+}
+
+//Ritorna la dimensione calcolata dai due sensori laterali.
+inline double evacGetRoomSize() {
+  double currLCm = getDistanceCm(SDLEFT, distStableCount);
+  double currRCm = getDistanceCm(SDRIGHT, distStableCount);
+  double totCm = currLCm + currRCm + dimRobLarg;
+  return totCm;
+}
+
+//Avanza di cm (sfrutta il sensore di distanza)
+inline void avanzaCm( double cm ) {
+  double distStartCm = getDistanceCm(SDFRONT, distStableCount);
+  double currDistCm = distStartCm;
+  avanza(evacMoveVel);
+  while (  distStartCm - currDistCm <= cm ) {
+    currDistCm = getDistanceCm(SDFRONT, distStableCount);
+  }
+  motoriFerma();
+}
+
+
+//Posizionati perpendicolarmente alla stanza.
+//In questa posizione i sensori laterali misurano una delle due dimensioni della stanza.
+//Dopo questa funzione il robot non punta verso le uscite, nè lateralmente, nè frontalmente.
+void evacPosizionatiVerticalmente() {
+  //Misuro la dimensione della stanza accross track
+  double currRoomSizeAccrossCm = evacGetRoomSize();
+
+  //Faccio un giro di più di 360 gradi finchè non sono perpendicolare alla stanza
+  bool sonoInPosizione=false;
+  while ( not(sonoInPosizione) ) {
+
+    bool done = false;
+    double angle = 0;
+    while ( (abs( angle ) <= 370) and (not( simile( currRoomSizeAccrossCm, dimRoom1) or simile( currRoomSizeAccrossCm, dimRoom2) ) ) ) {
+      if ( not(done) ) {
+        mpu6050.update();
+        gira(SGANTIOR, scanVel, ruotaSuAsse);
+        done = true;
+      }
+      angle = mpu6050.getAngleZ();
+
+      currRoomSizeAccrossCm = evacGetRoomSize();
+    }
+    motoriFerma();
+
+    //Ho trovato una delle dimensioni accross track?
+    bool sonoPerpendicolareLateralmente = simile( currRoomSizeAccrossCm, dimRoom1) or simile( currRoomSizeAccrossCm, dimRoom2);
+    bool sonoPerpendicolareFrontalmente = false;
+    if ( sonoPerpendicolareLateralmente ) {
+      //Misuro la dimensione della stanza along track
+      ruotaAsse(  90, true );
+      double currRoomSizeAlongCm = evacGetRoomSize();
+      ruotaAsse( -90, true );
+      
+      double dimExpectedAlongCm = simile( currRoomSizeAccrossCm, dimRoom1) ? dimRoom2 : dimRoom1;
+      sonoPerpendicolareFrontalmente = simile( currRoomSizeAlongCm, dimExpectedAlongCm);
+
+    }
+    
+    sonoInPosizione = sonoPerpendicolareLateralmente and sonoPerpendicolareFrontalmente;
+    if ( sonoInPosizione ) break;
+
+    //Non ho trovato la posizione ottimale.
+    //Mi sposto di 10 centimetri lungo la direzione con più spazio e ripeto la ricerca.
+    double distFront = getDistanceCm(SDFRONT, distStableCount);
+    double distLeft  = getDistanceCm(SDLEFT , distStableCount);
+    double distRight = getDistanceCm(SDRIGHT, distStableCount);
+    double distCm=0;
+    if ( distFront >= distLeft and distFront >= distRight ) {
+      //avanza frontalmente
+      distCm = distFront;
+    } else if ( distLeft >= distFront and distLeft >= distRight ) {
+      //girati a destra e avanza
+      ruotaAsse( 90, true );
+      distCm = distLeft;
+    } else {
+      //girati a sinistra a avanza
+      ruotaAsse( -90, true );
+      distCm = distRight;
+    }
+    //Limito la distanza nel caso sia stato puntato un oggetto fuori dalla stanza
+    distCm = min(distCm, dimRoom1);
+    //Sono nella direzione di avanzamento. Avanzo di qualche cm nella direzione con più spazio.
+    avanzaCm( distCm / 3.0 );
+
+  }
+
+}
+
+//Raggiunge un angolo
+void evacRaggiungiAngolo() {
+
+  //Posizionati verticalmente nella stanza
+  //Qui non punto alle uscite, nè lateralmente, nè frontalmente.
+  evacPosizionatiVerticalmente();
+
+  //Calcola le distanze dalla posizione ottimale
+  double distLeft  = getDistanceCm(SDLEFT , distStableCount);
+  double distRight = getDistanceCm(SDRIGHT, distStableCount);
+  ruotaAsse( 90, true );
+  double distNordA  = getDistanceCm(SDLEFT , distStableCount);
+  double distSudA  = getDistanceCm(SDRIGHT, distStableCount);
+  ruotaAsse( -90, true );
+
+  //Mi avvicino al muro
+  double ang90 = (distLeft < distRight ) ? -90 : 90;
+  bool orario = ang90 > 0;
+  ruotaAsse( ang90, true );
+
+  double distFront = getDistanceCm(SDFRONT, distStableCount);
+  bool done = false;
+  while (distFront <= 3) {
+    if ( not(done) ) {
+      avanza(evacMoveVel);
+      done = true;
+    } 
+    distFront = getDistanceCm(SDFRONT, distStableCount);
+  }
+  motoriFerma();
+  //Qui sono a meno di 3 cm da un muro, frontalmente
+
+  //Ricalcolo le distanze laterali
+  double distNordB = getDistanceCm( orario? SDLEFT : SDRIGHT, distStableCount);
+  double distSudB  = getDistanceCm( orario? SDRIGHT: SDLEFT , distStableCount);
+
+  //@@@ CONTINUA DA QUI
+  if ( simile(distNordA, distNordB, 15) ) {
+
+  }
+
+
+}
+
+//Raggiunge l'angolo rosso
 void evacRaggiungiAngoloVerde() {
   //@@@ DA SCRIVERE
 }
@@ -31,10 +173,13 @@ void evacRaggiungiAngoloRosso() {
   //@@@ DA SCRIVERE
 }
 
+
 //L'oggetto raggiunto è una pallina
 //Restituisce vero se abbiamo raggiunto una pallina
 //Restituisce evacuationType: il colore della evacuation zone in cui portare la pallina
 bool evacIsPallina( EV_TYPE & evacuationType ) {
+  //@@@ Restituire false se qualche sensore dell'infrarosso vede l'entrata o l'uscita dell'evacuation zone, questo nel caso
+  //@@@ la spike detection trova un angolo dell'entrata o uscita.
   //@@@ DA SCRIVERE
 }
 
@@ -48,35 +193,36 @@ void evacCatturaPallina() {
 bool dirScanDetected = false;
 void evacTrovaERaggiungiPalla( EV_TYPE & evacuationType ) {
 
-  //Radar, ruota fino a individuare un oggetto da raggiungere
-  Serial.print("evacIndividuaSpike begin");
-  double oggDistCm(0); //la distanza dall'oggetto che mi ha determinato lo spike (che ho agganciato)
-  evacIndividuaSpike(oggDistCm); 
-  Serial.println(String("evacIndividuaSpike end. oggDistCm: ") + oggDistCm);
+  bool isPallina = false;
+  while ( not(isPallina) ) {
+    //Radar, ruota fino a individuare un oggetto da raggiungere
+    Serial.print("evacIndividuaSpike begin");
+    double oggDistCm(0); //la distanza dall'oggetto che mi ha determinato lo spike (che ho agganciato)
+    evacIndividuaSpike(oggDistCm); 
+    Serial.println(String("evacIndividuaSpike end. oggDistCm: ") + oggDistCm);
 
+    //Tieni agganciato l'oggetto ed avvicinati
+    Serial.print("evacRaggiungiOggetto begin");
+    dirScanDetected = false;
+    SGVERSO dirScan;
+    evacRaggiungiOggetto(oggDistCm, dirScan, dirScanDetected);
+    Serial.println(String("evacRaggiungiOggetto end. oggDistCm: ")+ oggDistCm + "; dirScan: "+ dirScan + "; dirScanDetected: "+ dirScanDetected); 
 
-  //Tieni agganciato l'oggetto ed avvicinati
-  Serial.print("evacRaggiungiOggetto begin");
-  dirScanDetected = false;
-  SGVERSO dirScan;
-  evacRaggiungiOggetto(oggDistCm, dirScan, dirScanDetected);
-  Serial.println(String("evacRaggiungiOggetto end. oggDistCm: ")+ oggDistCm + "; dirScan: "+ dirScan + "; dirScanDetected: "+ dirScanDetected); 
+    //Raggiunto l'oggetto ad una distanza di distFinaleCm
+    //Ruoto il robot per centrare meglio l'oggetto
+    if ( dirScanDetected ) {
+      Serial.println(String("")+"evacCentratiRispettoAlloggetto begin. dirScan: "+dirScan); 
+      evacCentratiRispettoAlloggetto( dirScan );
+      Serial.println(String("evacCentratiRispettoAlloggetto end.")); 
+    }
 
-  //Raggiunto l'oggetto ad una distanza di distFinaleCm
-  //Ruoto il robot per centrare meglio l'oggetto
-  if ( dirScanDetected ) {
-    Serial.println(String("")+"evacCentratiRispettoAlloggetto begin. dirScan: "+dirScan); 
-    evacCentratiRispettoAlloggetto( dirScan );
-    Serial.println(String("evacCentratiRispettoAlloggetto end.")); 
+    //Controlliamo se l'oggetto raggiunto è una pallina
+    isPallina = evacIsPallina( evacuationType );
+
   }
-
-  //Controlliamo se l'oggetto raggiunto è una pallina
-  bool isPallina = evacIsPallina( evacuationType );
 
   //Ruoto su me stesso in modo da posizionare la gabbia per catturare la pallina
-  if (isPallina) {
-    ruotaAsse( 180, true );
-  }
+  ruotaAsse( 180, true );
 
   //Cattura pallina
   evacCatturaPallina();
