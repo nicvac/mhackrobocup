@@ -45,21 +45,29 @@ void evacCatturaPallina() {
 
 //Trova una palla nella stanza e la raggiunge
 //Restituisce evacuationType: il colore della evacuation zone in cui portare la pallina
+bool dirScanDetected = false;
 void evacTrovaERaggiungiPalla( EV_TYPE & evacuationType ) {
 
   //Radar, ruota fino a individuare un oggetto da raggiungere
+  Serial.print("evacIndividuaSpike begin");
   double oggDistCm(0); //la distanza dall'oggetto che mi ha determinato lo spike (che ho agganciato)
-  evacIndividuaSpike(oggDistCm);
+  evacIndividuaSpike(oggDistCm); 
+  Serial.println(String("evacIndividuaSpike end. oggDistCm: ") + oggDistCm);
+
 
   //Tieni agganciato l'oggetto ed avvicinati
-  bool dirScanDetected = false;
+  Serial.print("evacRaggiungiOggetto begin");
+  dirScanDetected = false;
   SGVERSO dirScan;
   evacRaggiungiOggetto(oggDistCm, dirScan, dirScanDetected);
+  Serial.println(String("evacRaggiungiOggetto end. oggDistCm: ")+ oggDistCm + "; dirScan: "+ dirScan + "; dirScanDetected: "+ dirScanDetected); 
 
   //Raggiunto l'oggetto ad una distanza di distFinaleCm
   //Ruoto il robot per centrare meglio l'oggetto
   if ( dirScanDetected ) {
+    Serial.println(String("")+"evacCentratiRispettoAlloggetto begin. dirScan: "+dirScan); 
     evacCentratiRispettoAlloggetto( dirScan );
+    Serial.println(String("evacCentratiRispettoAlloggetto end.")); 
   }
 
   //Controlliamo se l'oggetto raggiunto è una pallina
