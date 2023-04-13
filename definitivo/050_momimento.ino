@@ -14,9 +14,9 @@ inline float Eng2Gradi(float gradiEng) {
 const int sgPotenzaGiro = 230;
 
 //Prototipi
-void gira( SGVERSO verso, int potenzaMot = sgPotenzaGiro, bool suAsse = true);
-void giraOrario(bool su_asse=true, int potenzaM = sgPotenzaGiro );
-void giraAntiorario(bool su_asse=true, int potenzaM = sgPotenzaGiro );
+void gira( SGVERSO verso, int potenzaMot, bool suAsse);
+void giraOrario(bool su_asse, int potenzaM);
+void giraAntiorario(bool su_asse, int potenzaM );
 
 //Funzione SEMPLICE
 inline void gira( SGVERSO verso, int potenzaMot = sgPotenzaGiro, bool suAsse = true) {
