@@ -232,6 +232,7 @@ void loop() {
   move(2, rSpeed, 0);
 
   //Controllo della distanza su valori stabili. Ci sono degli spike che in questo modo ignoriamo
+  /*
   int distanza = _getUltrasonicDistance(triggerPort1, echoPort1);
 
   if (  3 <= distanza && distanza <= 7  ) {
@@ -243,5 +244,5 @@ void loop() {
   if (cont_dist_stabile >= 3 ) {
     aggira_ostacolo(); //prima lettura 0 (percui maggioe 3)
   }
+  */
 }
-
