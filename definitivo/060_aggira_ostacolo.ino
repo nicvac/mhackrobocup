@@ -7,17 +7,12 @@ inline void aggira_ostacolo() {
   //if (avanza_superando_ostacolo(direzione)==9000) return; //qui
   avanza_superando_ostacolo(direzione);
   //circum(dist_min, -direzione);
-  //avanza(200);
-  //delay(40);
-  avanza(speed_circum);
-  delay(40*2);
-
+  avanza(200);
+  delay(40);
   ruotaAsse(direzione  * -90);
   if (avanza_superando_ostacolo(direzione)==9000) return;
-  //avanza(200);
-  //delay(80);
-  avanza(speed_circum);
-  delay(80*2);
+  avanza(200);
+  delay(80);
   ruotaAsse(direzione * -90);
   if (avanza_superando_ostacolo(direzione)==9000) return;
   /*
