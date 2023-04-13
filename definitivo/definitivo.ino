@@ -26,11 +26,12 @@ float x, y, z;
 unsigned long cont_dist_stabile = 0;
 
 
-inline bool controllo() {
+inline int controllo() {
+  int c=0;
   for (int i = 0; i < SensorCount; i++) {
-    if (sensorValues[i] < 500) return false;
+    if (sensorValues[i] > 700) c++;
   }
-  return true;
+  return c;
 }
 
 void calibra(){
@@ -174,7 +175,7 @@ void loop() {
     rSpeed = 0;
   }
 /*
-  if (controllo()) {
+  if (controllo()>4) {
     stop();
     //avanza(180);
     //delay(70);
@@ -224,15 +225,15 @@ void loop() {
   //Il PID ha bisogno di tempo per stabilizzarsi.
   //Ignora il risultato del PID per i primi X ms.
   if(millis()-t_start<100) {
-    lSpeed=maxspeed;
-    rSpeed=maxspeed;
+    lSpeed=maxspeed * 0.5;
+    rSpeed=maxspeed * 0.5;
   }
 
   move(1, lSpeed, 0);
   move(2, rSpeed, 0);
 
   //Controllo della distanza su valori stabili. Ci sono degli spike che in questo modo ignoriamo
-  /*
+  
   int distanza = _getUltrasonicDistance(triggerPort1, echoPort1);
 
   if (  3 <= distanza && distanza <= 7  ) {
@@ -244,5 +245,5 @@ void loop() {
   if (cont_dist_stabile >= 3 ) {
     aggira_ostacolo(); //prima lettura 0 (percui maggioe 3)
   }
-  */
+  
 }
