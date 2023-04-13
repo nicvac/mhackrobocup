@@ -19,11 +19,17 @@ const double distFinaleCm = 2;
 //Dimensioni della stanza
 const double dimRoom1 = 90;
 const double dimRoom2 = 120;
-const double dimDiag = sqrt( dimRoom1*dimRoom1 + dimRoom2*dimRoom2);
+const double dimRoomDiag = sqrt( dimRoom1*dimRoom1 + dimRoom2*dimRoom2);
+
+
+//Dimensioni Evacuation points
+const double dimEvacPoint = 30;
+const double dimEvacPointAltezza = sqrt( dimEvacPoint*dimEvacPoint + dimEvacPoint*dimEvacPoint) / 2.0;
 
 //Dimensione robot
-const double dimRobLarg = 15;
-const double dimRobAltz = 20;
+const double dimRobDistLat = 7; //Distanza dal centro al sensore laterale
+const double dimRobDistFront = 10; //Distanza dal centro al sensore frontale
+const double dimRobDistDelta = dimRobDistFront - dimRobDistLat; //Delta da aggiungere alla distanza laterale per ottenere la frontale, dopo la rotazione
 
 //Confronto a meno di un errore
 inline bool simile( const double & a, const double & b, const double errore = 0.5 ) {
@@ -34,12 +40,17 @@ inline bool simile( const double & a, const double & b, const double errore = 0.
 inline double evacGetRoomSize() {
   double currLCm = getDistanceCm(SDLEFT, distStableCount);
   double currRCm = getDistanceCm(SDRIGHT, distStableCount);
-  double totCm = currLCm + currRCm + dimRobLarg;
+  double totCm = currLCm + currRCm + dimRobDistLat*2;
   return totCm;
 }
 
 //Avanza di cm (sfrutta il sensore di distanza)
+//Avanzo procedendo in senso di marcia, per sfruttare in avvicinamento il sensore frontale
+//Attenzione! Se cm > distanza con l'oggetto più vicino ==> usa avanzaRetroCm
 inline void avanzaCm( double cm ) {
+  Serial.println(String("") + __func__ );
+  Serial.println(String("") + "cm: " + cm );
+
   double distStartCm = getDistanceCm(SDFRONT, distStableCount);
   double currDistCm = distStartCm;
   avanza(evacMoveVel);
@@ -47,19 +58,68 @@ inline void avanzaCm( double cm ) {
     currDistCm = getDistanceCm(SDFRONT, distStableCount);
   }
   motoriFerma();
+
+  Serial.println(String("") + __func__ + " END ");
 }
 
+//Avanza in retromarcia di cm (sfrutta il sensore di distanza)
+//Avanzo procedendo in retromarcia, per sfruttare in allontanamento il sensore frontale
+//Mi serve quando cm > distanza con l'oggetto più vicino
+inline void avanzaRetroCm(double cm ) {
+  Serial.println(String("") + __func__ );
+  Serial.println(String("") + "cm: " + cm );
+
+  ruotaAsse(180, true);
+  double distStartCm = getDistanceCm(SDFRONT, distStableCount);
+  double currDistCm = distStartCm;
+  avanza(-evacMoveVel);
+  while ( currDistCm - distStartCm <= cm ) {
+    currDistCm = getDistanceCm(SDFRONT, distStableCount);
+  }
+  motoriFerma();
+  ruotaAsse(-180, true);
+
+  Serial.println(String("") + __func__ + " END ");
+}
+
+
+//FUNZIONE PRINCIPALE
+void evacuation() {
+
+  Serial.println(String("") + __func__ );
+
+  //Sono appena entrato nella stanza
+  //Solo per la prima volta, Avanza nella stanza, eventualmente spingendo le palline
+  avanzaRetroCm(dimRoom1 / 2.0);
+
+  //Raggiungo il centro della stanza
+  evacRaggiungiCentroStanza();
+
+  //Dal centro stanza raggiungi la pallina.
+  EV_TYPE evacuationType;
+  evacTrovaERaggiungiPalla(evacuationType);
+
+  Serial.println(String("") + __func__ + " END ");
+
+}
 
 //Posizionati perpendicolarmente alla stanza.
 //In questa posizione i sensori laterali misurano una delle due dimensioni della stanza.
 //Dopo questa funzione il robot non punta verso le uscite, nè lateralmente, nè frontalmente.
 void evacPosizionatiVerticalmente() {
+
+  Serial.println(__func__);
+
   //Misuro la dimensione della stanza accross track
   double currRoomSizeAccrossCm = evacGetRoomSize();
+
+  Serial.println(String("")+"currRoomSizeAccrossCm: "+currRoomSizeAccrossCm);
 
   //Faccio un giro di più di 360 gradi finchè non sono perpendicolare alla stanza
   bool sonoInPosizione=false;
   while ( not(sonoInPosizione) ) {
+  
+    Serial.println(String("")+"Faccio un giro di più di 360 gradi finchè non sono perpendicolare alla stanza");
 
     bool done = false;
     double angle = 0;
@@ -86,14 +146,17 @@ void evacPosizionatiVerticalmente() {
       
       double dimExpectedAlongCm = simile( currRoomSizeAccrossCm, dimRoom1) ? dimRoom2 : dimRoom1;
       sonoPerpendicolareFrontalmente = simile( currRoomSizeAlongCm, dimExpectedAlongCm);
-
     }
-    
+
     sonoInPosizione = sonoPerpendicolareLateralmente and sonoPerpendicolareFrontalmente;
+    Serial.println(String("")+"sonoPerpendicolareLateralmente: " + sonoPerpendicolareLateralmente);
+    Serial.println(String("")+"sonoPerpendicolareFrontalmente: " + sonoPerpendicolareFrontalmente);
+    Serial.println(String("")+"sonoInPosizione: " + sonoInPosizione);
     if ( sonoInPosizione ) break;
 
     //Non ho trovato la posizione ottimale.
     //Mi sposto di 10 centimetri lungo la direzione con più spazio e ripeto la ricerca.
+    Serial.println(String("")+"Non ho trovato la posizione ottimale. Mi sposto di 10 centimetri lungo la direzione con più spazio e ripeto la ricerca.");
     double distFront = getDistanceCm(SDFRONT, distStableCount);
     double distLeft  = getDistanceCm(SDLEFT , distStableCount);
     double distRight = getDistanceCm(SDRIGHT, distStableCount);
@@ -117,60 +180,103 @@ void evacPosizionatiVerticalmente() {
 
   }
 
+  Serial.println(String("") + "Sono perpendicolare alla stanza");
+  Serial.println(String("") + __func__ + " END ");
+
 }
 
-//Raggiunge un angolo
-void evacRaggiungiAngolo() {
+//Raggiunge il centro della stanza
+// L'asse Nord-Sud sarà allineato con la dimensione corta.
+// L'asse Laterale sarà allineato con la dimensione lunga.
+void evacRaggiungiCentroStanza() {
+
+  Serial.println(String("") + __func__ );
 
   //Posizionati verticalmente nella stanza
-  //Qui non punto alle uscite, nè lateralmente, nè frontalmente.
+  //Qui sono allineato sugli assi rispetto alla stanza E non punto alle uscite, nè lateralmente, nè frontalmente.
   evacPosizionatiVerticalmente();
 
-  //Calcola le distanze dalla posizione ottimale
-  double distLeft  = getDistanceCm(SDLEFT , distStableCount);
-  double distRight = getDistanceCm(SDRIGHT, distStableCount);
+  double err=2.0;
+
+  //Mi posiziono in modo da avere l'asse nord-sud allineato al lato più corto
+  double roomSizeAccrossCm = evacGetRoomSize();
+  if ( simile(roomSizeAccrossCm, dimRoom1, err) ) {
+    ruotaAsse( 90, true );  
+  }
+
+  Serial.println(String("") + "L'asse nord-sud è allineato al lato più corto");
+
+  //Calcola le distanze dal centro del robot ai muri
+  double distLeftCm  = getDistanceCm(SDLEFT , distStableCount) + dimRobDistLat;
+  double distRightCm = getDistanceCm(SDRIGHT, distStableCount) + dimRobDistLat;
   ruotaAsse( 90, true );
-  double distNordA  = getDistanceCm(SDLEFT , distStableCount);
-  double distSudA  = getDistanceCm(SDRIGHT, distStableCount);
+  double distNordCm = getDistanceCm(SDLEFT , distStableCount) + dimRobDistDelta;
+  double distSudCm  = getDistanceCm(SDRIGHT, distStableCount) + dimRobDistDelta;
   ruotaAsse( -90, true );
 
-  //Mi avvicino al muro
-  double ang90 = (distLeft < distRight ) ? -90 : 90;
-  bool orario = ang90 > 0;
-  ruotaAsse( ang90, true );
+  Serial.println(String("") + "Compenso le distanze per raggiungere il centro");
+  Serial.println(String("") + "distLeftCm: " + distLeftCm);
+  Serial.println(String("") + "distRightCm: " + distRightCm);
+  Serial.println(String("") + "distNordCm: " + distNordCm);
+  Serial.println(String("") + "distSudCm: " + distSudCm);
 
-  double distFront = getDistanceCm(SDFRONT, distStableCount);
-  bool done = false;
-  while (distFront <= 3) {
-    if ( not(done) ) {
-      avanza(evacMoveVel);
-      done = true;
-    } 
-    distFront = getDistanceCm(SDFRONT, distStableCount);
+  //Mi accentro lateralmente. Left-Right è allineato con la dimensione della stanza più lunga
+  Serial.println(String("") + "Mi accentro lateralmente. Left-Right è allineato con la dimensione della stanza più lunga");
+  if ( not(simile(distLeftCm, distRightCm, err)) ) {
+    //Calcolo la distanza dal centro
+    if ( distLeftCm > distRightCm ) {
+      //Devo andare verso sinistra
+      double gapCm = distLeftCm - (dimRoom2 / 2.0);
+      ruotaAsse( -90, true ); 
+      //Avanzo procedendo in retromarcia, per sfruttare in allontanamento il sensore frontale
+      //Eventualmente, spingi pure le palline
+      avanzaRetroCm(gapCm);
+      //Mi riposiziono per riallineare left-right con la dimensione lunga
+      ruotaAsse(  90, true );
+    } else {
+      //Devo andare verso destra
+      double gapCm = distRightCm - (dimRoom2 / 2.0);
+      ruotaAsse(  90, true ); 
+      avanzaRetroCm(gapCm);
+      ruotaAsse( -90, true );
+    }
+  }
+
+  //Mi accentro frontalmente. Nord-Sud è allineato con la dimensione della stanza più corta
+  Serial.println(String("") + "Mi accentro frontalmente. Nord-Sud è allineato con la dimensione della stanza più corta");
+  if ( not(simile(distNordCm, distSudCm, err)) ) {
+    //Calcolo la distanza dal centro
+    if ( distNordCm > distSudCm ) {
+      //Devo andare verso nord
+      double gapCm = distNordCm - (dimRoom2 / 2.0);
+      avanzaRetroCm(gapCm); 
+    } else {
+      //Devo andare verso sud
+      double gapCm = distSudCm - (dimRoom2 / 2.0);
+      ruotaAsse(  180, true ); 
+      avanzaRetroCm(gapCm);
+      ruotaAsse( -180, true );
+    }
   }
   motoriFerma();
-  //Qui sono a meno di 3 cm da un muro, frontalmente
 
-  //Ricalcolo le distanze laterali
-  double distNordB = getDistanceCm( orario? SDLEFT : SDRIGHT, distStableCount);
-  double distSudB  = getDistanceCm( orario? SDRIGHT: SDLEFT , distStableCount);
-
-  //@@@ CONTINUA DA QUI
-  if ( simile(distNordA, distNordB, 15) ) {
-
-  }
-
+  Serial.println(String("") + "Sono al centro della stanza. Nord-sud allineato su dim corta. Asse laterale allineato su dim lunga.");
+  Serial.println(String("") + __func__ + " END ");
 
 }
 
 //Raggiunge l'angolo rosso
 void evacRaggiungiAngoloVerde() {
+  Serial.println(String("") + __func__ );
   //@@@ DA SCRIVERE
+  Serial.println(String("") + __func__ + " END ");
 }
 
 //Raggiunge l'angolo rosso
 void evacRaggiungiAngoloRosso() {
+  Serial.println(String("") + __func__ );
   //@@@ DA SCRIVERE
+  Serial.println(String("") + __func__ + " END ");
 }
 
 
@@ -178,20 +284,27 @@ void evacRaggiungiAngoloRosso() {
 //Restituisce vero se abbiamo raggiunto una pallina
 //Restituisce evacuationType: il colore della evacuation zone in cui portare la pallina
 bool evacIsPallina( EV_TYPE & evacuationType ) {
-  //@@@ Restituire false se qualche sensore dell'infrarosso vede l'entrata o l'uscita dell'evacuation zone, questo nel caso
-  //@@@ la spike detection trova un angolo dell'entrata o uscita.
+  Serial.println(String("") + __func__ );
   //@@@ DA SCRIVERE
+  //RESTITUISCI FALSE SE LEGGI UNA LINEA DI ENTRATA O USCITA
+  Serial.println(String("") + __func__ + " END ");
+  return true;
 }
 
 //Cattura la pallina
 void evacCatturaPallina() {
+  Serial.println(String("") + __func__ );
   //@@@ DA SCRIVERE
+  Serial.println(String("") + __func__ + " END ");
 }
 
+//Questa funzione va chiamata dal centro stanza!
 //Trova una palla nella stanza e la raggiunge
 //Restituisce evacuationType: il colore della evacuation zone in cui portare la pallina
 bool dirScanDetected = false;
 void evacTrovaERaggiungiPalla( EV_TYPE & evacuationType ) {
+
+  Serial.println(String("") + __func__ );
 
   bool isPallina = false;
   while ( not(isPallina) ) {
@@ -227,11 +340,15 @@ void evacTrovaERaggiungiPalla( EV_TYPE & evacuationType ) {
   //Cattura pallina
   evacCatturaPallina();
 
+  Serial.println(String("") + __func__ + " END ");
+
 }
 
 //Raggiunto l'oggetto, ruoto il robot per centrare al meglio l'oggetto.
 // Ruoto finchè non raggiungo la distanza minima.
 void evacCentratiRispettoAlloggetto(SGVERSO dirScan ) {
+
+  Serial.println(String("") + __func__ );
 
     double currCm = getDistanceCm(SDFRONT, distStableCount);
     double scanMinCm = currCm;
@@ -245,6 +362,8 @@ void evacCentratiRispettoAlloggetto(SGVERSO dirScan ) {
     }
     motoriFerma();
 
+  Serial.println(String("") + __func__ + " END ");
+
 }
 
 //Gira in senso antioratio, come un radar, per individuare uno spike nella distanza
@@ -252,9 +371,12 @@ void evacCentratiRispettoAlloggetto(SGVERSO dirScan ) {
 //Fermati quando hai individuato uno spike: potenzialmente un oggetto da prendere.
 //Note:
 // - se si parte osservando già l'oggetto, la scansione prenderà il prossimo oggetto o lo stesso dopo una rotazione di 360 gradi.
-// - a volte aggancia gli spigoli delle entrate. Pazienza... si arriverà allo spigolo e si controllerà che non è una pallina (con il sensore di colore frontale).
+// - LA SCANSIONE DEVE ESSERE FATTA PARTENDO DAL CENTRO STANZA, PER TROVARE SOLO PALLINE E NON GLI SPIGOLI DELLE ENTRATE / USCITE!
+// - SE ENTRATA E USCITA NON SONO NEGLI ANGOLI, POTREBBE PRENDERE COME SPIKE L'ANGOLO DEL MURO DI UNA ENTRATA O UNA USCITA
 void evacIndividuaSpike( double & distCm ) {
   
+  Serial.println(String("") + __func__ );
+
   //Ruota come un radar, in senso antiorario
   gira(SGANTIOR, scanVel, ruotaSuAsse);
 
@@ -268,7 +390,7 @@ void evacIndividuaSpike( double & distCm ) {
 
     bool daLontanoAVicino = prevCm > currCm + 1.0;
     bool isSpike = (diffCm >= sizePallinaCm);
-    bool nellaStanza = (currCm < dimDiag);
+    bool nellaStanza = (currCm < (dimRoomDiag/2.0 - dimEvacPointAltezza) );
     isScanInteresting = (isSpike and daLontanoAVicino and nellaStanza); 
   }
 
@@ -277,11 +399,14 @@ void evacIndividuaSpike( double & distCm ) {
   //Ritorna l'ultima distanza
   distCm = currCm;
 
+  Serial.println(String("") + __func__ + " END ");
 }
 
 //Sto puntando l'oggetto. Lo raggiungo.
 void evacRaggiungiOggetto( double oggDistCm, SGVERSO & dirScan, bool & dirScanDetected ) {
   
+  Serial.println(String("") + __func__ );
+
   //Il verso di rotazione deve essere determinato solo una volta in questa funzione.
   dirScanDetected = false;
   dirScan = SGANTIOR;
@@ -334,11 +459,15 @@ void evacRaggiungiOggetto( double oggDistCm, SGVERSO & dirScan, bool & dirScanDe
     ruotaAsse( angolo, true );
 
   }
+
+  Serial.println(String("") + __func__ + " END ");
 }
 
 //Determina il verso di rotazione da usare per riagganciare l'oggetto.
 //Il verso di rotazione va determinato solo una volta e si userà sempre lo stesso per riagganciare l'oggetto
 SGVERSO evacDetectScanDirection( double scanMinCm ) {
+
+  Serial.println(String("") + __func__ );
 
   SGVERSO dirScan;
 
@@ -364,6 +493,8 @@ SGVERSO evacDetectScanDirection( double scanMinCm ) {
   ruotaAsse( abs(cTurnAngle), true );
 
   dirScan = trovato ? SGANTIOR : SGORARIO ;
+
+  Serial.println(String("") + __func__ + " END ");
 
   return dirScan;
 
