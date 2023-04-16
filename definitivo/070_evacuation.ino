@@ -108,12 +108,36 @@ void evacuation() {
   //Solo per la prima volta, Avanza nella stanza, eventualmente spingendo le palline
   avanzaAutoCm(dimRoom1 / 2.0);
 
-  //Raggiungo il centro della stanza
+  bool ciSonoPalline = true;
+  while ( ciSonoPalline ) {
+    //Raggiungo il centro della stanza
+    evacRaggiungiCentroStanza();
+
+    //Dal centro stanza raggiungi la pallina.
+    EV_TYPE evacuationType;
+    evacTrovaERaggiungiPalla(evacuationType);
+
+    if ( evacuationType != EV_USCITA ) {
+      evacCatturaPallina();
+      //Dal centro della stanza ruoto, fino a puntare gli angoli (la cui distanza è nota dal centro stanza)
+      if ( evacuationType == EV_ROSSA ) {
+        evacRaggiungiAngoloRosso();
+      } else {
+        evacRaggiungiAngoloVerde();
+      }
+      //Rilascio la pallina dopo aver raggiunto l'angolo
+      evacRilasciaPallina();
+
+    }
+
+    ciSonoPalline = (evacuationType != EV_USCITA);
+  }
+
+  //Raggiungo di nuovo il centro della stanza
   evacRaggiungiCentroStanza();
 
-  //Dal centro stanza raggiungi la pallina.
-  EV_TYPE evacuationType;
-  evacTrovaERaggiungiPalla(evacuationType);
+  //Raggiungi l'uscita
+  evacRaggiungiUscita();
 
   Serial.println(String("") + __func__ + " END ");
 
@@ -280,9 +304,27 @@ void evacRaggiungiCentroStanza() {
 
 }
 
-//Raggiunge l'angolo rosso
+//Dal centro della stanza raggiungi l'uscita.
+//Qui dovrei avere tutte le palline delle evacuation zone
+void evacRaggiungiUscita() {
+  Serial.println(String("") + __func__ );
+  //@@@ DA SCRIVERE
+  Serial.println(String("") + __func__ + " END ");
+}
+
+//Dal centro della stanza ruoto, fino a puntare un angolo (la cui distanza è nota dal centro stanza)
+//e lo raggiungo
+void evacRaggiungiAngolo() {
+  Serial.println(String("") + __func__ );
+  //@@@ DA SCRIVERE
+  Serial.println(String("") + __func__ + " END ");
+}
+
+//Raggiunge l'angolo verde
 void evacRaggiungiAngoloVerde() {
   Serial.println(String("") + __func__ );
+
+  evacRaggiungiAngolo();
   //@@@ DA SCRIVERE
   Serial.println(String("") + __func__ + " END ");
 }
@@ -290,6 +332,8 @@ void evacRaggiungiAngoloVerde() {
 //Raggiunge l'angolo rosso
 void evacRaggiungiAngoloRosso() {
   Serial.println(String("") + __func__ );
+
+  evacRaggiungiAngolo();
   //@@@ DA SCRIVERE
   Serial.println(String("") + __func__ + " END ");
 }
@@ -313,9 +357,16 @@ void evacCatturaPallina() {
   Serial.println(String("") + __func__ + " END ");
 }
 
+//Rilascia la pallina
+void evacRilasciaPallina() {
+  Serial.println(String("") + __func__ );
+  //@@@ DA SCRIVERE
+  Serial.println(String("") + __func__ + " END ");
+}
+
 //Questa funzione va chiamata dal centro stanza!
 //Trova una palla nella stanza e la raggiunge
-//Restituisce evacuationType: il colore della evacuation zone in cui portare la pallina
+//Restituisce evacuationType: il colore della evacuation zone in cui portare la pallina oppure uscita (non ci sono palline)
 bool dirScanDetected = false;
 void evacTrovaERaggiungiPalla( EV_TYPE & evacuationType ) {
 
@@ -326,8 +377,14 @@ void evacTrovaERaggiungiPalla( EV_TYPE & evacuationType ) {
     //Radar, ruota fino a individuare un oggetto da raggiungere
     Serial.print("evacIndividuaSpike begin");
     double oggDistCm(0); //la distanza dall'oggetto che mi ha determinato lo spike (che ho agganciato)
-    evacIndividuaSpike(oggDistCm); 
-    Serial.println(String("evacIndividuaSpike end. oggDistCm: ") + oggDistCm);
+    bool trovato = evacIndividuaSpike(oggDistCm);
+
+    Serial.println(String("evacIndividuaSpike end. oggDistCm: ") + oggDistCm + "; trovato: "+trovato);
+
+    if ( not(trovato) ) {
+      evacuationType = EV_USCITA;
+      return;
+    }
 
     //Tieni agganciato l'oggetto ed avvicinati
     Serial.print("evacRaggiungiOggetto begin");
@@ -388,20 +445,25 @@ void evacCentratiRispettoAlloggetto(SGVERSO dirScan ) {
 // - se si parte osservando già l'oggetto, la scansione prenderà il prossimo oggetto o lo stesso dopo una rotazione di 360 gradi.
 // - LA SCANSIONE DEVE ESSERE FATTA PARTENDO DAL CENTRO STANZA, PER TROVARE SOLO PALLINE E NON GLI SPIGOLI DELLE ENTRATE / USCITE!
 // - SE ENTRATA E USCITA NON SONO NEGLI ANGOLI, POTREBBE PRENDERE COME SPIKE L'ANGOLO DEL MURO DI UNA ENTRATA O UNA USCITA
-void evacIndividuaSpike( double & distCm ) {
+bool evacIndividuaSpike( double & distCm ) {
   
   Serial.println(String("") + __func__ );
 
   //Ruota come un radar, in senso antiorario
   gira(SGANTIOR, scanVel, ruotaSuAsse);
 
-  //Individua lo spike
+  //Individua lo spike. Fa due giri su se stesso. Se non trova nulla restituisce false.
+  mpu6050.update();
+  double cTurnAngle = 0.0;
+
   bool isScanInteresting = false;
   double currCm(0);
-  while ( not(isScanInteresting) ) {
+  while ( not(isScanInteresting) and abs( cTurnAngle ) <= 360.0*2 ) {
     double prevCm = currCm;
     currCm = getDistanceCm(SDFRONT, distStableCount);
     double diffCm = abs(prevCm - currCm);
+
+    cTurnAngle = mpu6050.getAngleZ();
 
     bool daLontanoAVicino = prevCm > currCm + 1.0;
     bool isSpike = (diffCm >= sizePallinaCm);
@@ -415,6 +477,8 @@ void evacIndividuaSpike( double & distCm ) {
   distCm = currCm;
 
   Serial.println(String("") + __func__ + " END ");
+
+  return isScanInteresting;
 }
 
 //Sto puntando l'oggetto. Lo raggiungo.
