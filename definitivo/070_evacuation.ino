@@ -44,10 +44,26 @@ inline double evacGetRoomSize() {
   return totCm;
 }
 
+
+//Scegli automaticamente se posso usare avanzaFronteCm oppure devo ricorrere a avanzaRetroCm
+inline void avanzaAutoCm(double cm) {
+  Serial.println(String("") + __func__ );
+  Serial.println(String("") + "cm: " + cm );
+
+  double currCm = getDistanceCm(SDFRONT, distStableCount);
+  if ( cm <= currCm ) {
+    avanzaFronteCm(cm);
+  } else {
+    avanzaRetromCm(cm);
+  }
+
+  Serial.println(String("") + __func__ + " END ");
+}
+
 //Avanza di cm (sfrutta il sensore di distanza)
-//Avanzo procedendo in senso di marcia, per sfruttare in avvicinamento il sensore frontale
-//Attenzione! Se cm > distanza con l'oggetto più vicino ==> usa avanzaRetroCm
-inline void avanzaCm( double cm ) {
+//Avanzo procedendo frontalmente, per sfruttare in avvicinamento il sensore frontale
+//Attenzione! Se cm > distanza dall'oggetto più vicino al frontale ==> usa avanzaRetroCm
+inline void avanzaFronteCm( double cm ) {
   Serial.println(String("") + __func__ );
   Serial.println(String("") + "cm: " + cm );
 
@@ -64,8 +80,8 @@ inline void avanzaCm( double cm ) {
 
 //Avanza in retromarcia di cm (sfrutta il sensore di distanza)
 //Avanzo procedendo in retromarcia, per sfruttare in allontanamento il sensore frontale
-//Mi serve quando cm > distanza con l'oggetto più vicino
-inline void avanzaRetroCm(double cm ) {
+//Mi serve quando cm > distanza dall'oggetto più vicino al frontale.
+inline void avanzaRetromCm(double cm ) {
   Serial.println(String("") + __func__ );
   Serial.println(String("") + "cm: " + cm );
 
@@ -90,7 +106,7 @@ void evacuation() {
 
   //Sono appena entrato nella stanza
   //Solo per la prima volta, Avanza nella stanza, eventualmente spingendo le palline
-  avanzaRetroCm(dimRoom1 / 2.0);
+  avanzaAutoCm(dimRoom1 / 2.0);
 
   //Raggiungo il centro della stanza
   evacRaggiungiCentroStanza();
@@ -176,7 +192,7 @@ void evacPosizionatiVerticalmente() {
     //Limito la distanza nel caso sia stato puntato un oggetto fuori dalla stanza
     distCm = min(distCm, dimRoom1);
     //Sono nella direzione di avanzamento. Avanzo di qualche cm nella direzione con più spazio.
-    avanzaCm( distCm / 3.0 );
+    avanzaAutoCm( distCm / 3.0 );
 
   }
 
@@ -228,16 +244,15 @@ void evacRaggiungiCentroStanza() {
       //Devo andare verso sinistra
       double gapCm = distLeftCm - (dimRoom2 / 2.0);
       ruotaAsse( -90, true ); 
-      //Avanzo procedendo in retromarcia, per sfruttare in allontanamento il sensore frontale
-      //Eventualmente, spingi pure le palline
-      avanzaRetroCm(gapCm);
-      //Mi riposiziono per riallineare left-right con la dimensione lunga
+      //Avanza, spingi pure le palline
+      avanzaAutoCm(gapCm);
+      //Mi riposiziono per riallineare left-right con la dimensione più lunga
       ruotaAsse(  90, true );
     } else {
       //Devo andare verso destra
       double gapCm = distRightCm - (dimRoom2 / 2.0);
       ruotaAsse(  90, true ); 
-      avanzaRetroCm(gapCm);
+      avanzaAutoCm(gapCm);
       ruotaAsse( -90, true );
     }
   }
@@ -249,12 +264,12 @@ void evacRaggiungiCentroStanza() {
     if ( distNordCm > distSudCm ) {
       //Devo andare verso nord
       double gapCm = distNordCm - (dimRoom2 / 2.0);
-      avanzaRetroCm(gapCm); 
+      avanzaAutoCm(gapCm); 
     } else {
       //Devo andare verso sud
       double gapCm = distSudCm - (dimRoom2 / 2.0);
       ruotaAsse(  180, true ); 
-      avanzaRetroCm(gapCm);
+      avanzaAutoCm(gapCm);
       ruotaAsse( -180, true );
     }
   }
