@@ -7,7 +7,6 @@ const uint8_t speedturn    = maxspeed * 1.0;
 //### PID
 const float KP = 0.083, KD = 2;  //0.083 2
 
-//Motori
 const int STBY = 4;
 
 const int PWMA = 3;
@@ -18,7 +17,6 @@ const int PWMB = 5;
 const int BIN1 = 7;
 const int BIN2 = 6;
 
-//Sensor 1 Right
 const int out = 28;
 const int s0 = 29;
 const int s1 = 30;
@@ -32,22 +30,11 @@ const int s1_2 = 35;
 const int s2_2 = 36;
 const int s3_2 = 37;
 
-<<<<<<< Updated upstream
 //### ULTRASONIC DISTANCE
-=======
-//Alimentazione giroscopio
-const int alimGiroscopio = 41;
-
-//Sensore ultrasuoni frontale
->>>>>>> Stashed changes
 const int triggerPort1 = 38;
 const int echoPort1 = 39;
 const int alimUltra1 = 40;
 
-<<<<<<< Updated upstream
-=======
-//Sensori ultrasuoni laterali
->>>>>>> Stashed changes
 const int triggerPort2 = 42;
 const int echoPort2 = 43;
 const int alimUltra2 = 44;

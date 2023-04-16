@@ -25,11 +25,12 @@ float x, y, z;
 
 unsigned long cont_dist_stabile = 0;
 
+float terraX;
 
 inline int controllo() {
   int c=0;
   for (int i = 0; i < SensorCount; i++) {
-    if (sensorValues[i] > 700) c++;
+    if (sensorValues[i] > 600) c++;
   }
   return c;
 }
@@ -136,6 +137,8 @@ void setup() {
   digitalWrite(alimUltra1, HIGH);
   digitalWrite(alimUltra2, HIGH);
   digitalWrite(alimUltra3, HIGH);
+  mpu6050.update();
+  terraX=mpu6050.getAngleX();
 }
 
 void loop() {
@@ -143,12 +146,13 @@ void loop() {
   
   uint16_t posizione = qtr.readLineBlack(sensorValues);
 
-  if (posizione > 6200) {
+  if (posizione > 4500) {
     move(1, speedturn, 0);
     move(2, speedturn, 1);
     return;
-  }
-  if (posizione < 800) {
+  }                                          //VALORI FUNZIONANTI INIZIALI 6200 - 800  VALORI MIGLIORATI 4500-2500
+  
+  if (posizione < 2500) {
     move(1, speedturn, 1);
     move(2, speedturn, 0);
     return;
@@ -221,17 +225,18 @@ void loop() {
       ruotaAsse(90);
     }
   }*/
-
   //Il PID ha bisogno di tempo per stabilizzarsi.
   //Ignora il risultato del PID per i primi X ms.
   if(millis()-t_start<100) {
     lSpeed=maxspeed * 0.5;
     rSpeed=maxspeed * 0.5;
   }
-
-  move(1, lSpeed, 0);
-  move(2, rSpeed, 0);
-
+  mpu6050.update();
+  if (abs(mpu6050.getAngleX()-terraX)>=/*gradi2Eng(10)*/8)avanza(255);
+  else {
+    move(1, lSpeed, 0);
+    move(2, rSpeed, 0);
+  }
   //Controllo della distanza su valori stabili. Ci sono degli spike che in questo modo ignoriamo
   
   int distanza = _getUltrasonicDistance(triggerPort1, echoPort1);
