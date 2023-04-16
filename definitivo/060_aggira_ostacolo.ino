@@ -75,6 +75,7 @@ inline float avanza_superando_ostacolo( int direzione ) {
   motoriFerma();
   return distanza_min;
 }
+
 /*
 inline void avanza_superando_ostacolo_con_controllo ( int direzione ) {
 
