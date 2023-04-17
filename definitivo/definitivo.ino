@@ -9,7 +9,7 @@ unsigned long r2, g2, b2;
 unsigned long int t1, t2 = 0;
 unsigned long int inv1, inv2 = 0;
 int16_t ultimoErrore = 0;
-
+uint16_t posizione = 3500;
 float PID;
 
 int16_t lSpeed, rSpeed;
@@ -28,11 +28,15 @@ unsigned long cont_dist_stabile = 0;
 float terraX;
 
 inline int controllo() {
+  
   int c=0;
+  posizione = qtr.readLineBlack(sensorValues);
   for (int i = 0; i < SensorCount; i++) {
     if (sensorValues[i] > 600) c++;
   }
   return c;
+  
+//return qtr.readLineBlack(sensorValues);
 }
 
 void calibra(){
@@ -144,7 +148,7 @@ void setup() {
 void loop() {
   t1 = millis();
   
-  uint16_t posizione = qtr.readLineBlack(sensorValues);
+  posizione = qtr.readLineBlack(sensorValues);
 
   if (posizione > 4500) {
     move(1, speedturn, 0);
