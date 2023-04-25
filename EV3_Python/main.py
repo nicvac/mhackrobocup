@@ -109,20 +109,20 @@ def rescue_kit():
     # Muovi per 2.9 rotazioni a velocità -30 30
     # Muovi per 3 secondi a velocità -40 -40
     # Muovi per 135 gradi alla velocità 75%
-    # Attendi 0.5 secondi
+    wait(500)
     # Muovi per -135 gradi alla velocità 75%
-    # Attendi 0.5 secondi
+    wait(500)
     # Muovi per 135 gradi alla velocità 75%
-    # Attendi 0.5 secondi
+    wait(500)
     # Muovi per -135 gradi alla velocità 75%
-    # Attendi 0.5 secondi
+    wait(500)
     # Muovi per 135 gradi alla velocità 75%
-    # Attendi 0.5 secondi
+    wait(500)
     # Muovi per -135 gradi alla velocità 75%
-    # Attendi 0.5 secondi
+    wait(500)
 
 
-def uscita_rescue_kit():
+#def uscita_rescue_kit():
     # Muovi per 3 secondi alla velocità 40 40
     # Muovi per 2.9 rotazioni alla velocità 30 -30
 
@@ -131,12 +131,12 @@ def uscita_rescue_kit():
 def stanza():
     if color_sensor_front.color() == Color.BLACK:
         return 0
-    # Wait 0.3 seconds
+    wait(300)
     # Muovi per 1.5 secondi a velocità 30 30
-    # Wait 1 second
+    wait(1000)
     first_distance = ultrasonic_sensor.distance()
     # Muovi per 30 gradi a velocità 30 -30
-    # Wait 1 second
+    wait(1000)
     wall_distance = ultrasonic_sensor.distance()
     if wall_distance < first_distance:
         curva = -1
