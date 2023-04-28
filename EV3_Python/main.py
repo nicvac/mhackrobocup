@@ -105,21 +105,22 @@ e = 50
 
 # rilascio rescue kit
 def rescue_kit():
-    # Muovi per 3 secondi a velocità -40 -40
-    # Muovi per 2.9 rotazioni a velocità -30 30
-    # Muovi per 3 secondi a velocità -40 -40
-    # Muovi per 135 gradi alla velocità 75%
-    wait(500)
-    # Muovi per -135 gradi alla velocità 75%
-    wait(500)
-    # Muovi per 135 gradi alla velocità 75%
-    wait(500)
-    # Muovi per -135 gradi alla velocità 75%
-    wait(500)
-    # Muovi per 135 gradi alla velocità 75%
-    wait(500)
-    # Muovi per -135 gradi alla velocità 75%
-    wait(500)
+    return 0
+    # # Muovi per 3 secondi a velocità -40 -40
+    # # Muovi per 2.9 rotazioni a velocità -30 30
+    # # Muovi per 3 secondi a velocità -40 -40
+    # # Muovi per 135 gradi alla velocità 75%
+    # wait(500)
+    # # Muovi per -135 gradi alla velocità 75%
+    # wait(500)
+    # # Muovi per 135 gradi alla velocità 75%
+    # wait(500)
+    # # Muovi per -135 gradi alla velocità 75%
+    # wait(500)
+    # # Muovi per 135 gradi alla velocità 75%
+    # wait(500)
+    # # Muovi per -135 gradi alla velocità 75%
+    # wait(500)
 
 
 #def uscita_rescue_kit():
@@ -129,46 +130,47 @@ def rescue_kit():
 
 # evacuation zone
 def stanza():
-    if color_sensor_front.color() == Color.BLACK:
-        return 0
-    wait(300)
-    # Muovi per 1.5 secondi a velocità 30 30
-    wait(1000)
-    first_distance = ultrasonic_sensor.distance()
-    # Muovi per 30 gradi a velocità 30 -30
-    wait(1000)
-    wall_distance = ultrasonic_sensor.distance()
-    if wall_distance < first_distance:
-        curva = -1
-    else:
-        curva = 1
-    # Muovi per 30 gradi a velocità 30 -30
-    while True:
-        # Start movint at 30 30 speed
-        if color_sensor_front.color() == Color.GREEN and counter_curve == 0:
-            rescue_kit()
-            uscita_rescue_kit()
-        elif color_sensor_front.color() == Color.GREEN and counter_curve > 1:
-            rescue_kit()
-            uscita_rescue_kit()
-            # Muovi per (2.8 * curva * -1) rotazioni a velocità 20 -20
-        elif color_sensor_front.color() == Color.RED or color_sensor_front.color() == Color.YELLOW and counter_curve == 0:
-            counter_curve = 2
-            # Muovi per 1.4 * curva rotazioni a velocità 20 -20
-            # Muovi per 2 secondi a velocità 25 25
-            # Muovi per 1.4 * curva rotazioni a velocità 20 -20
-            curva = curva * -1
-        elif color_sensor_front.color() == Color.RED or color_sensor_front.color() == Color.YELLOW and counter_curve > 1 and verdi_visti == 0:
-            # Muovi per 2.8 * curva * -1 rotazioni a velocità 20 -20
-        elif color_sensor_front.color() == Color.RED or color_sensor_front.color() == Color.YELLOW and counter_curve > 1 and verdi_visti > 0:
-            # Muovi per 2 rotazioni a velocità -30 -30
-            return 0
-        elif ultrasonic_sensor.distance() < 6:
-            # Muovi per 1.4 * curva rotazioni a velocità 20 -20
-            # Muovi per 2 secondi a velocità 25 25
-            # Muovi per 1.4 * curva rotazioni a velocità 20 -20
-            curva = curva * -1
-            counter_curve += 1
+    return 0
+#     if color_sensor_front.color() == Color.BLACK:
+#         return 0
+#     wait(300)
+#     # Muovi per 1.5 secondi a velocità 30 30
+#     wait(1000)
+#     first_distance = ultrasonic_sensor.distance()
+#     # Muovi per 30 gradi a velocità 30 -30
+#     wait(1000)
+#     wall_distance = ultrasonic_sensor.distance()
+#     if wall_distance < first_distance:
+#         curva = -1
+#     else:
+#         curva = 1
+#     # Muovi per 30 gradi a velocità 30 -30
+#     while True:
+#         # Start movint at 30 30 speed
+#         if color_sensor_front.color() == Color.GREEN and counter_curve == 0:
+#             rescue_kit()
+#             uscita_rescue_kit()
+#         elif color_sensor_front.color() == Color.GREEN and counter_curve > 1:
+#             rescue_kit()
+#             uscita_rescue_kit()
+#             # Muovi per (2.8 * curva * -1) rotazioni a velocità 20 -20
+#         elif color_sensor_front.color() == Color.RED or color_sensor_front.color() == Color.YELLOW and counter_curve == 0:
+#             counter_curve = 2
+#             # Muovi per 1.4 * curva rotazioni a velocità 20 -20
+#             # Muovi per 2 secondi a velocità 25 25
+#             # Muovi per 1.4 * curva rotazioni a velocità 20 -20
+#             curva = curva * -1
+#         elif color_sensor_front.color() == Color.RED or color_sensor_front.color() == Color.YELLOW and counter_curve > 1 and verdi_visti == 0:
+#             # Muovi per 2.8 * curva * -1 rotazioni a velocità 20 -20
+#         elif color_sensor_front.color() == Color.RED or color_sensor_front.color() == Color.YELLOW and counter_curve > 1 and verdi_visti > 0:
+#             # Muovi per 2 rotazioni a velocità -30 -30
+#             return 0
+#         elif ultrasonic_sensor.distance() < 6:
+#             # Muovi per 1.4 * curva rotazioni a velocità 20 -20
+#             # Muovi per 2 secondi a velocità 25 25
+#             # Muovi per 1.4 * curva rotazioni a velocità 20 -20
+#             curva = curva * -1
+#             counter_curve += 1
 
     
 
@@ -176,38 +178,49 @@ def stanza():
 
 # aggira ostacolo
 def ostacolo():
-    # Muovi per "curva_ostacolo" gradi a velocità -30 30
-    if color_sensor_right.color() == Color.BLACK or color_sensor_left.color() == Color.BLACK:
-        # Muovi per "curva_ostacolo" * -1 gradi alla velocità -30 30
-        aggira()
-        return 0
+    return 0
+    # # Muovi per "curva_ostacolo" gradi a velocità -30 30
+    # if color_sensor_right.color() == Color.BLACK or color_sensor_left.color() == Color.BLACK:
+    #     # Muovi per "curva_ostacolo" * -1 gradi alla velocità -30 30
+    #     aggira()
+    #     return 0
 
-    else:
-        # Muovi per "curva_ostacolo" * -1 gradi alla velocità -30 30
-        # Muovi per "curva_ostacolo" * -1 gradi alla velocità -30 30
+    # else:
+    #     # Muovi per "curva_ostacolo" * -1 gradi alla velocità -30 30
+    #     # Muovi per "curva_ostacolo" * -1 gradi alla velocità -30 30
         
-        if color_sensor_right.color() == Color.BLACK or color_sensor_left.color() == Color.BLACK:
-        # Muovi per "curva_ostacolo" * -1 gradi alla velocità -30 30
-        aggira()
-        return 0
+    #     if color_sensor_right.color() == Color.BLACK or color_sensor_left.color() == Color.BLACK:
+    #     # Muovi per "curva_ostacolo" * -1 gradi alla velocità -30 30
+    #     aggira()
+    #     return 0
 
-        else:
-            # Muovi per 3 rotazioni a velocità -30 -30 (agguingere il blocco in cui si rimette dritto)
-            stanza()
+    #     else:
+    #         # Muovi per 3 rotazioni a velocità -30 -30 (agguingere il blocco in cui si rimette dritto)
+    #         stanza()
 
 
 # scansione per aggirare la linea
 def scan():
     i = 0
-    # Muovi perr 0.2 rotazioni a velocità 20 20
+    robot.straight(20)
     while color_sensor_right.color() != Color.BLACK  or color_sensor_left.color() != Color.BLACK or color_sensor_right.color() != Color.BLACK or color_sensor_left.color() != Color.BLACK or light_sensor_front.reflection() < 40:
         if i < 13:
             # Muovi per "e" gradi a velocità 60 -60
+            robot.settings(30, 100, 5)
+            robot.turn(60)
+            robot.stop()
         elif i < 35:
             # Muovi per "e" gradi a velocità -60 60 
+            robot.settings(30, 100, 5)
+            robot.turn(-60)
+            robot.stop()
         else:
             # Muovi per  500 gradi a velocità 60 -60
+            robot.settings(30, 100, 60)
+            robot.turn(60)
+            robot.stop()
             # Muovi per 0.5 rotazioni a velocità 50 50
+            robot.straight(20)
             i = 0
         i += 1
 
@@ -227,21 +240,37 @@ while True:
     elif light_sensor_front.reflection() < 10 and color_sensor_right.color() == Color.BLACK and color_sensor_left.color() == Color.BLACK:
         flag_scan = True
         # Muovi per 0.5 secondi alla velocità 30 30
+        robot.straight(20)
     elif color_sensor_right.color() == Color.BLACK or color_sensor_right.color() == Color.BLUE:
         # Start moving at -40 50 speed
+        left_motor.coast(-50)
+        right_motor.coast(40)
         flag_scan = True
     elif color_sensor_left.color() == Color.BLACK or color_sensor_left.color() == Color.BLUE:
         # Start moving at 50 -40 speed
+        left_motor.coast(50)
+        right_motor.coast(-40)
         flag_scan = True
     elif color_sensor_right.color() == Color.GREEN and color_sensor_left.color() == Color.GREEN:
         # Muovi per 2.27 secondi alla velocità -50 50
+        robot.settings(30, 100, 180)
+        robot.turn(50)
+        robot.stop()
     elif color_sensor_right.color() == Color.GREEN:
         # Muovi per 1 secondo alla velocità -20 60
+        robot.settings(30, 100, 90)
+        robot.move(30)
+        robot.stop()
     elif color_sensor_left.color() == Color.GREEN:
         # Muovi per 1 secondo alla velocità 60 -20
-    elif color_sensor_rigt.color() == Color.WHITE and color_sensor_left.color() == Color.WHITE and light_sensor_front.reflection() > 50 and light_sensor_front.reflection() < 90 and flag_scan == True:
+        robot.settings(30, 100, 90)
+        robot.move(-30)
+        robot.stop()
+    elif color_sensor_right.color() == Color.WHITE and color_sensor_left.color() == Color.WHITE and light_sensor_front.reflection() > 50 and light_sensor_front.reflection() < 90 and flag_scan == True:
         scan()
-    elif True: # Da sostituire con distanza 1 minore di 5 cm
+    elif ultrasonic_sensor.distance() < 5: # Da sostituire con distanza 1 minore di 5 cm
         ostacolo()
     else:
-        # Start moving at 40 40 speed
+        # Start moving at 40 40 
+        left_motor.coast(40, 40)
+        right_motor.coast(40, 40)
