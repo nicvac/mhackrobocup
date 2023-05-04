@@ -37,7 +37,11 @@ light_sensor_front = ColorSensor(Port.S4)
 color_sensor_front = ColorSensor(Port.S4)
 
 # Sensore ultrasuoni
-ultrasonic_sensor = UltrasonicSensor(Port.S1)
+ultrasonic_sensor = UltrasonicSensor(Port.S1) 
+#S1 Frontale
+#S2 Sinsitra
+#S3 Destra
+#S4 Dietro 
 
 # Configurazione robot
 robot = DriveBase(left_motor, right_motor, wheel_diameter=wheel, axle_track=axle)
