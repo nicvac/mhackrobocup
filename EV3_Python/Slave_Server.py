@@ -12,11 +12,15 @@ from pybricks.media.ev3dev import SoundFile, ImageFile
 
 from pybricks.messaging import BluetoothMailboxServer, TextMailbox, NumericMailbox
 
-ultrasonic_sensor = UltrasonicSensor(Port.S1)
+ultrasonic_sensor_front = UltrasonicSensor(Port.S1)
+ultrasonic_sensor_left = UltrasonicSensor(Port.S2)
+ultrasonic_sensor_right = UltrasonicSensor(Port.S3)
+ultrasonic_sensor_back = UltrasonicSensor(Port.S4)
 
 server = BluetoothMailboxServer()
 mbox = TextMailbox('greeting', server)
 extDist = NumericMailbox('extDist', server)
+extReq = NumericMailbox('extReq', server)
 
 # The server must be started before the client!
 print('waiting for connection...')
@@ -30,6 +34,14 @@ print(mbox.read())
 mbox.send('hello to you!')
 
 while True:
-    mbox.wait()
-    extDist.send(ultrasonic_sensor.distance())
+    extReq.wait()
+    req = extReq.read()
+    if req == 1:
+        extDist.send(ultrasonic_sensor_front.distance())
+    elif req == 2:
+        extDist.send(ultrasonic_sensor_left.distance())
+    elif req == 3:
+        extDist.send(ultrasonic_sensor_right.distance())
+    else:
+        extDist.send(ultrasonic_sensor_back.distance())
 

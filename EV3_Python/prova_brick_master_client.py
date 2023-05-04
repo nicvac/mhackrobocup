@@ -6,11 +6,13 @@ from pybricks.tools import wait, StopWatch, DataLog
 from pybricks.media.ev3dev import SoundFile, ImageFile
 from pybricks.messaging import BluetoothMailboxClient, TextMailbox, NumericMailbox
 
+
 # This is the name of the remote EV3 or PC we are connecting to.
 SERVER = 'ev3devext'
 
 client = BluetoothMailboxClient()
 mbox = TextMailbox('greeting', client)
+extReq = NumericMailbox('extReq', client)
 extDist = NumericMailbox('extDist', client)
 
 print('establishing connection...')
@@ -30,7 +32,7 @@ while True:
     print(color_sensor_front.color())
     colore = color_sensor_front.color()
     if colore == Color.GREEN:
-        mbox.send('S1')
+        extReq.send(1)
         extDist.wait()
         print(extDist.read())
        
