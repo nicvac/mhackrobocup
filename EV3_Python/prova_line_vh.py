@@ -51,6 +51,8 @@ motor_maxpower = 1020
     # robot.turn(-90) #gira di 90 gradi senso antiorario
     # robot.stop()
 
+def isLine( color ):
+    return (color == Color.BLACK or color == Color.BLUE or color == Color.BROWN)
 
 ###############
 #DEBUG SENSORS
@@ -61,25 +63,30 @@ while True:
     print (colorl)
 '''
 
-
 #motor_maxpower /= 10 #@@@ RIMUOVI 
 #mtr_pwr_side_black = -motor_maxpower * 40/100
 #mtr_pwr_side_white =  motor_maxpower * 50/100
 mtr_pwr_side_black = -motor_maxpower * 50/100
 mtr_pwr_side_white =  motor_maxpower * 50/100
 
-
 stampa = True
 
-def isLine( color ):
-    return (color == Color.BLACK or color == Color.BLUE or color == Color.BROWN)
+curvaGomitoSoglia = 75
 
+#Contatori di linea, sinistro e destro
 lc = 0; rc = 0
 gyro_sensor.reset_angle(0)
 
+isLine_l = False; isLine_r = False
+
 while True:  
-    colorl = color_sensor_left.color()
-    colorr = color_sensor_right.color()
+    color_l = color_sensor_left.color()
+    color_r = color_sensor_right.color()
+
+    isLine_l_prev = isLine_l
+    isLine_r_prev = isLine_r
+    isLine_l = isLine(color_l)
+    isLine_r = isLine(color_l)
     
     if stampa == True:
         #print(right_motor.speed())
@@ -89,60 +96,79 @@ while True:
         dr = 1 if isLine(colorr) else 0
         print ( dl, " ", dr )
 
-    if not isLine(color_sensor_left.color()) and not isLine(color_sensor_right.color()) :
-        lc = 0; rc = 0
+    #Incremento il contatore se è linea e lo era anche al giro precedente
+    lc = lc+1 if (isLine_l and isLine_l_prev == isLine_l) else 0
+    rc = rc+1 if (isLine_r and isLine_r_prev == isLine_r) else 0
+
+    #Se riesce a correggersi in poche iterazioni, considero la posizione stabile
+    if max(lc, rc) <= 4:
         gyro_sensor.reset_angle(0)
 
+    #Nessuno dei due sensori è sulla linea => vado dritto
+    if not isLine_l and not isLine_r :
         left_motor.dc (mtr_pwr_side_white)
         right_motor.dc(mtr_pwr_side_white)
+    
+    else:
+        #Almeno uno dei due sensori è sulla linea
+        correctLeft = False; correctRight = False
+        #Se entrambi sono sulla linea, continuo con la stessa correzione con cui ho cominciato
+        if isLine_l and isLine_r:
+            if lc >= rc:
+                correctLeft = True;  correctRight = False
+            else:
+                correctLeft = False; correctRight = True
+        #Se solo uno dei due è sulla linea, applico la correzione opportuna
+        else:
+            correctLeft  = isLine_l
+            correctRight = isLine_r 
 
-    if isLine(color_sensor_left.color()) :
-        lc += 1
-        left_motor.dc ( mtr_pwr_side_black )
-        right_motor.dc( mtr_pwr_side_white )
+        if correctLeft: 
+            left_motor.dc ( mtr_pwr_side_black )
+            right_motor.dc( mtr_pwr_side_white )
+        if correctRight:
+            right_motor.dc( mtr_pwr_side_black )
+            left_motor.dc ( mtr_pwr_side_white )
 
-    if isLine(color_sensor_right.color()):
-        rc += 1
-        right_motor.dc( mtr_pwr_side_black )
-        left_motor.dc ( mtr_pwr_side_white )
+    #Detection curva a gomito: sono sulla linea da diverse iterazioni: nonostante la correzione continuo a leggere linea.
+    # tipico di una curva a gomito
+    gomitoSx = lc > curvaGomitoSoglia
+    gomitoDx = rc > curvaGomitoSoglia
 
-    if lc > 50 or rc > 50:
-        angle = gyro_sensor.angle()
-        print("Angolo: ", angle)
-        if lc > 50:
-            print("Curva stretta a sinitra.")
-        if rc > 50:
-            print("Curva stretta a destra")
+    if gomitoSx or gomitoDx:
 
+        print("Curva a gomito a sinitra.") if gomitoSx else print("Curva a gomito a destra")
+        # Mi Fermo
         right_motor.hold()
         left_motor.hold()
 
-        #Torno nella posizione prima che cominciasse la curva stretta
-        robot.turn(-angle)
+        #Ripristino l'angolazione a prima che cominciasse la curva a gomito
+        angle = gyro_sensor.angle()
+        print("Angolo da ripristinare: ", angle)
         
-        #Avanzo di mezzo robot
-        lungCingoli = 140
+        if gomitoSx:
+            robot.drive(0, 60)
+        else: # if gomitoDx:
+            robot.drive(60, 0)
+        while gyro_sensor.angle() >= 0:
+            pass
+        robot.drive(0, 0)
 
+        #Avanzo di mezzo robot, posizionando la curva a gomito sotto il robot, al centro
+        lungCingoli = 140
         robot.straight( lungCingoli/2 )
 
-        if lc > 50:
-            #robot.turn(-90)
-            robot.drive(0, 60)
-            while gyro_sensor.angle() >= 0:
-                pass
-            robot.drive(0, 0)
+        if gomitoSx:
+            pass
+            #@@@ IMPLEMENTA SCAN A SINITRA
+            #ruota in senso antiorario fino a ritrovare la linea
+            exit()
+        else:
+            pass
+            #@@@ IMPLEMENTA SCAN A DESTRA
+            exit()
 
-        else: # if rc > 50:
-            #robot.turn(90)
-            robot.drive(60, 0)
-            while gyro_sensor.angle() >= 0:
-                pass
-            robot.drive(0, 0)
-
+        #Qui ho ritrovato la linea
         lc = 0; rc = 0
         gyro_sensor.reset_angle(0)
-
-        exit()
-
-
 
