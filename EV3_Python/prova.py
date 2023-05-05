@@ -6,7 +6,7 @@ from pybricks.tools import wait, StopWatch, DataLog
 from pybricks.robotics import DriveBase
 from pybricks.media.ev3dev import SoundFile, ImageFile
 
-
+import time
 
 # Diametro ruota in mm
 wheel = 30
@@ -38,11 +38,8 @@ color_sensor_left = ColorSensor(Port.S3)
 # Configurazione robot
 robot = DriveBase(left_motor, right_motor, wheel_diameter=wheel, axle_track=axle)
 
-maxpower = 1020 
-
-
-
-
+# Motor max power deg/s
+motor_maxpower = 1020 
 
     #robot.straight(100) #muovi dritto
     #wait(500)
@@ -55,51 +52,41 @@ maxpower = 1020
     # robot.turn(-90) #gira di 90 gradi senso antiorario
 
     # robot.stop()
-# while True:
-#     left_motor.run(300)
-#     right_motor.run(300)
-# stampa = True
-
-# while True:
-
-    
-
-#     colorl = color_sensor_left.color()
-    
-#     colorr = color_sensor_right.color()
-    
-#     if stampa == True:
-#         print(right_motor.speed())
-#         print(colorl)
-#         print(colorr)
-    
-#     if colorl == Color.BLACK:
-#         left_motor.hold()
-#         while color_sensor_left.color() == Color.BLACK:
-#             left_motor.run(-408)
-#             right_motor.run(510)
-
-#     elif colorr == Color.BLACK:
-#         right_motor.hold()
-#         while color_sensor_right.color() == Color.BLACK:
-#             right_motor.run(-408)
-#             left_motor.run(510)
-
-#     # elif colorr == Color.WHITE and colorl == Color.WHITE and
-
-#     else: # colorl != Color.BLACK and colorr != Color.BLACK:
-
-#         left_motor.run(408)
-#         right_motor.run(408)
-
-#     stampa = not stampa
-
-
-
-
-
-left_motor.dc(100)
-right_motor.dc(-100)
 
 while True:
-    pass
+    left_motor.run(300)
+    right_motor.run(300)
+stampa = True
+
+while True:  
+    colorl = color_sensor_left.color()
+    
+    colorr = color_sensor_right.color()
+    
+    if stampa == True:
+        print(right_motor.speed())
+        print(colorl)
+        print(colorr)
+    
+    if colorl == Color.BLACK:
+        left_motor.hold()
+        while color_sensor_left.color() == Color.BLACK:
+            left_motor.run(-408)
+            right_motor.run(510)
+
+    elif colorr == Color.BLACK:
+        right_motor.hold()
+        while color_sensor_right.color() == Color.BLACK:
+            right_motor.run(-408)
+            left_motor.run(510)
+
+    # elif colorr == Color.WHITE and colorl == Color.WHITE and
+
+    else: # colorl != Color.BLACK and colorr != Color.BLACK:
+
+        left_motor.run(408)
+        right_motor.run(408)
+
+    stampa = not stampa
+
+
