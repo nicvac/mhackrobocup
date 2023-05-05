@@ -4,23 +4,24 @@ import cv2
 import imutils
 import time
 
-pacchetto = ""
-pacchettoPrec = ""
+posizione = 300
+Pd = 0
+ultimoErrore = 0
 
-        
+MAXSPEED = 1023
 
-
+KP = 3.41
+KD = 6
 
 #Maschera verde
-#greenLower = (76, 210, 160) 
-#greenUpper = (100, 255, 255)
+greenLower = (78, 138, 150) 
+greenUpper = (101, 188, 248)
 
 #Maschera nero
-greenLower = (0, 0, 0
-) 
-greenUpper = (180, 255, 130)
+blackLower = (0, 0, 0)
+blackUpper = (180, 255, 130)
 
-vs = cv2.VideoCapture(0)
+vs = cv2.VideoCapture(1)
 time.sleep(2.0)
 
 while True:
@@ -31,15 +32,22 @@ while True:
         break
     frame = frame[1]
 
-    frame = imutils.resize(frame, width=600)
-    blurred = cv2.GaussianBlur(frame, (11, 11), 0)
-    hsv = cv2.cvtColor(blurred, cv2.COLOR_BGR2HSV)
-    rgba = cv2.cvtColor(blurred, cv2.COLOR_BGR2RGBA)
+    
 
-    mask = cv2.inRange(hsv, greenLower, greenUpper)
+    frame = imutils.resize(frame, width=600)
+    linea = frame[220:240, 0:600]
+    blurred = cv2.GaussianBlur(linea, (11, 11), 0)
+    hsv = cv2.cvtColor(blurred, cv2.COLOR_BGR2HSV)
+    
+    mask = cv2.inRange(hsv, blackLower, blackUpper)
     mask = cv2.erode(mask, None, iterations=2)
     mask = cv2.dilate(mask, None, iterations=2)
     
+    mask2 = cv2.inRange(hsv, greenLower, greenUpper)
+    mask2 = cv2.erode(mask2, None, iterations=2)
+    mask2 = cv2.dilate(mask2, None, iterations=2)
+
+    cv2.rectangle(frame,(0,220),(600,240),(0,255,0),3)
 
     cnts = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL,
         cv2.CHAIN_APPROX_SIMPLE)
@@ -51,23 +59,42 @@ while True:
         c = max(cnts, key=cv2.contourArea)
         #((x, y), radius) = cv2.minEnclosingCircle(c)
         M = cv2.moments(c)
-        center = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
+        center = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"] + 221))
+        
         cv2.circle(frame, center, 5, (0, 0, 255), -1)
-        '''
-        if radius > 10:
-            
-            cv2.circle(frame, (int(x), int(y)), int(radius),
-                (0, 255, 255), 2)
-            cv2.circle(frame, center, 5, (0, 0, 255), -1)
-            distanza = 2237.6 * ((radius ** 2) * 3.141592653589793)**-0.603
-            pacchetto = str(center[0]) + ',' + str(center[1]) +  "\n"
-            pacchetto = pacchetto.encode("utf-8")
-            S = "Dist: " + str(distanza)
-            cv2.putText(frame, S, (5, 50), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 0, 255), 2, cv2.LINE_AA)
-        '''
 
-    cv2.imshow("Mask", mask)
 
+    posizione = center[0]
+    errore = posizione - 300
+    
+    Pd = (errore * KP) + ((errore - ultimoErrore) * KD)
+    ultimoErrore = errore
+
+    lSpeed = MAXSPEED + Pd
+    rSpeed = MAXSPEED - Pd
+
+    if (lSpeed > MAXSPEED):
+        lSpeed = MAXSPEED
+    
+    if (lSpeed < 0):
+        lSpeed = 0
+    
+    if (rSpeed > MAXSPEED): 
+        rSpeed = MAXSPEED
+    
+    if (rSpeed < 0):
+        rSpeed = 0
+    
+    S1 = "Errore: " + str(errore)
+    S2 = "lSpeed: " + str(lSpeed)
+    S3 = "rSpeed: " + str(rSpeed)
+
+    cv2.putText(frame, S1, (5, 25), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 1, cv2.LINE_AA)
+    cv2.putText(frame, S2, (5, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 1, cv2.LINE_AA)
+    cv2.putText(frame, S3, (5, 75), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 1, cv2.LINE_AA)
+    
+    cv2.imshow("Mask Nero", mask)
+    cv2.imshow("Mask Verde", mask2)
     cv2.imshow("Frame", frame)
     key = cv2.waitKey(1) & 0xFF
 
