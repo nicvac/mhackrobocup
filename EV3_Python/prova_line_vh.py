@@ -86,7 +86,7 @@ while True:
     isLine_l_prev = isLine_l
     isLine_r_prev = isLine_r
     isLine_l = isLine(color_l)
-    isLine_r = isLine(color_l)
+    isLine_r = isLine(color_r)
     
     if stampa == True:
         #print(right_motor.speed())
@@ -147,12 +147,16 @@ while True:
         print("Angolo da ripristinare: ", angle)
         
         if gomitoSx:
-            robot.drive(0, 60)
+            right_motor.dc( mtr_pwr_side_black )
+            left_motor.dc ( mtr_pwr_side_white )
         else: # if gomitoDx:
-            robot.drive(60, 0)
+            left_motor.dc ( mtr_pwr_side_black )
+            right_motor.dc( mtr_pwr_side_white )
+
         while gyro_sensor.angle() >= 0:
             pass
-        robot.drive(0, 0)
+        right_motor.hold()
+        left_motor.hold()
 
         #Avanzo di mezzo robot, posizionando la curva a gomito sotto il robot, al centro
         lungCingoli = 140
@@ -165,7 +169,7 @@ while True:
             exit()
         else:
             pass
-            #@@@ IMPLEMENTA SCAN A DESTRA
+            #@@@ IMPLEMENTA SCAN A DESTRA (senso orario)
             exit()
 
         #Qui ho ritrovato la linea
