@@ -149,7 +149,7 @@ while True:
             left_motor.dc ( mtr_side_black_degs )
             right_motor.dc( mtr_side_white_degs )
 
-        while abs(gyro_sensor.angle()) > 0: pass
+        while abs(gyro_sensor.angle()) >= 0.8 : pass
         right_motor.hold()
         left_motor.hold()
 
