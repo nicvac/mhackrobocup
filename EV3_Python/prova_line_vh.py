@@ -137,7 +137,7 @@ while True:
         right_motor.hold()
         left_motor.hold()
 
-        #Ripristino l'angolazione a prima che cominciasse la curva a gomito
+        #Ripristino la posizione allo stesso angolo di quando ero stabile (prima della curva a gomito)
         angle = gyro_sensor.angle()
         print("Angolo da ripristinare: ", angle)
         
@@ -148,8 +148,7 @@ while True:
             left_motor.dc ( mtr_side_black_degs )
             right_motor.dc( mtr_side_white_degs )
 
-        while gyro_sensor.angle() >= 0:
-            pass
+        while abs(gyro_sensor.angle()) > 0: pass
         right_motor.hold()
         left_motor.hold()
 
@@ -157,13 +156,14 @@ while True:
         lungCingoli = 140
         robot.straight( lungCingoli/2 )
 
+        #Avendo il vertice della curva a gomito sotto il mio asse perpendicolare, eseguo uno scan
         lineLocked = False
-        if gomitoSx:
-            #ruota in senso antiorario fino a ritrovare la linea
-            lineLocked = scan(-170)
-        else:
-            #ruota in senso antiorario fino a ritrovare la linea
-            lineLocked = scan(170)
+        #ruota in senso orario o antiorario (a seconda della curva a gomito) fino a ritrovare la linea
+        scanDegree = 170 * (-1 if gomitoSx)
+        lineLocked = scan(scanDegree)
+        if not lineLocked:
+            #Si mette male... non ho trovato la linea dove mi sarei aspettato. Provo dall'altra parte
+            lineLocked = scan(-scanDegree)
 
         if lineLocked :
             #Qui ho ritrovato la linea
