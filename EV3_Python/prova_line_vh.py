@@ -42,7 +42,7 @@ gyro_sensor = GyroSensor(Port.S1)
 robot = DriveBase(left_motor, right_motor, wheel_diameter=wheel, axle_track=axle)
 
 # Motor max power deg/s
-motor_maxpower = 1020 
+motor_max_degs = 1020 
 
     #robot.straight(100) #muovi dritto
     #right_motor.run_angle(300, 500)
@@ -60,11 +60,11 @@ while True:
     print (colorl)
 '''
 
-#motor_maxpower /= 10 #@@@ RIMUOVI 
-#mtr_pwr_side_black = -motor_maxpower * 40/100
-#mtr_pwr_side_white =  motor_maxpower * 50/100
-mtr_pwr_side_black = -motor_maxpower * 50/100
-mtr_pwr_side_white =  motor_maxpower * 50/100
+#motor_max_degs /= 10 #@@@ RIMUOVI 
+#mtr_side_black_degs = -motor_max_degs * 40/100
+#mtr_side_white_degs =  motor_max_degs * 50/100
+mtr_side_black_degs = -motor_max_degs * 50/100
+mtr_side_white_degs =  motor_max_degs * 50/100
 
 stampa = True
 
@@ -101,8 +101,8 @@ while True:
 
     #Nessuno dei due sensori è sulla linea => vado dritto
     if not isLine_l and not isLine_r :
-        left_motor.dc (mtr_pwr_side_white)
-        right_motor.dc(mtr_pwr_side_white)
+        left_motor.dc (mtr_side_white_degs)
+        right_motor.dc(mtr_side_white_degs)
     
     else:
         #Almeno uno dei due sensori è sulla linea
@@ -119,11 +119,11 @@ while True:
             correctRight = isLine_r 
 
         if correctLeft: 
-            left_motor.dc ( mtr_pwr_side_black )
-            right_motor.dc( mtr_pwr_side_white )
+            left_motor.dc ( mtr_side_black_degs )
+            right_motor.dc( mtr_side_white_degs )
         if correctRight:
-            right_motor.dc( mtr_pwr_side_black )
-            left_motor.dc ( mtr_pwr_side_white )
+            right_motor.dc( mtr_side_black_degs )
+            left_motor.dc ( mtr_side_white_degs )
 
     #Detection curva a gomito: sono sulla linea da diverse iterazioni: nonostante la correzione continuo a leggere linea.
     # tipico di una curva a gomito
@@ -142,11 +142,11 @@ while True:
         print("Angolo da ripristinare: ", angle)
         
         if gomitoSx:
-            right_motor.dc( mtr_pwr_side_black )
-            left_motor.dc ( mtr_pwr_side_white )
+            right_motor.dc( mtr_side_black_degs )
+            left_motor.dc ( mtr_side_white_degs )
         else: # if gomitoDx:
-            left_motor.dc ( mtr_pwr_side_black )
-            right_motor.dc( mtr_pwr_side_white )
+            left_motor.dc ( mtr_side_black_degs )
+            right_motor.dc( mtr_side_white_degs )
 
         while gyro_sensor.angle() >= 0:
             pass
@@ -157,22 +157,67 @@ while True:
         lungCingoli = 140
         robot.straight( lungCingoli/2 )
 
+        lineLocked = False
         if gomitoSx:
-            pass
-            #@@@ IMPLEMENTA SCAN A SINITRA
             #ruota in senso antiorario fino a ritrovare la linea
-            exit()
+            lineLocked = scan(-170)
         else:
-            pass
-            #@@@ IMPLEMENTA SCAN A DESTRA (senso orario)
-            exit()
+            #ruota in senso antiorario fino a ritrovare la linea
+            lineLocked = scan(170)
 
-        #Qui ho ritrovato la linea
-        lc_l = 0; lc_r = 0
-        gyro_sensor.reset_angle(0)
+        if lineLocked :
+            #Qui ho ritrovato la linea
+            lc_l = 0; lc_r = 0
+            gyro_sensor.reset_angle(0)
+        else:
+            print("MI SONO PERSO DOPO LA CURVA A GOMITO.")
+            #@@@ GESTIRE QUESTO CASO.
+            quit()
 
 
 #Ritorna vero se linea
 def isLine( color ):
     return (color == Color.BLACK or color == Color.BLUE or color == Color.BROWN)
+
+#Scan
+#Ruoto sul mio asse fino a degree angoli fino a centrare la linea fra i due sensori L e R
+#Senso orario: degree positivo
+def scan( degree ):
+
+    print("Scan di max ", angle, "°")
+
+    motor_scan_degs = motor_max_degs * 0.5 * ( -1 if degree < 0 )
+    
+    #seleziono il sensore corretto a seconda della scansione oraria/antioraria
+    color_sensor = color_sensor_left if degree > 0 else color_sensor_right
+
+    lineLocked = False
+    lineMet = False
+    linePassed = False
+
+    #Dovo aver scelto il sensore giusto, ruoto su asse fino a incontrare la linea e a sorpassarla
+    gyro_sensor.reset_angle(0)
+    robot.drive(0, motor_scan_degs)
+    deg_abs = abs(degree)
+    while abs(gyro_sensor.angle()) < deg_abs and not lineLocked:
+        color = color_sensor.color()
+        if not lineMet:
+            lineMet = isLine(color)
+        else:
+            linePassed = not isLine(color)
+        lineLocked = lineMet and linePassed
+        
+    robot.drive(0, 0)
+
+    #Se lo scan non ha trovato linee => Torno alla posizione di partenza
+    if not lineLocked:
+        robot.drive(0, -motor_scan_degs)
+        if degree < 0:
+            while ( gyro_sensor.angle() < 0 ) : pass
+        else:
+            while ( gyro_sensor.angle() > 0 ) : pass
+        robot.drive(0, 0)
+
+    return lineLocked
+
 
