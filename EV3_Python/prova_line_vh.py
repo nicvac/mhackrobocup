@@ -176,6 +176,3 @@ while True:
 def isLine( color ):
     return (color == Color.BLACK or color == Color.BLUE or color == Color.BROWN)
 
-#Scan orario
-def isLine( color ):
-    return (color == Color.BLACK or color == Color.BLUE or color == Color.BROWN)
