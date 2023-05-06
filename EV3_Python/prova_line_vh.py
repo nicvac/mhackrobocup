@@ -14,6 +14,9 @@ wheel = 30
 # Distanza dal centro delle ruote da sinistra a destra
 axle = 160
 
+# Lunghezza dei cingoli (i due sensori di colore devono essere allineati all'inizio dei cingoli)
+lungCingoli = 140
+
 # Motore grande destra
 right_motor = Motor(Port.A)
 
@@ -39,17 +42,13 @@ gyro_sensor = GyroSensor(Port.S1)
 # ultrasonic_sensor = UltrasonicSensor(Port.S1)
 
 # Configurazione robot
+#@@@ Correggere i valori di axle e wheel secondo la guida riportata qui:
+# Measuring and validating the robot dimensions, https://pybricks.com/ev3-micropython/robotics.html#
 robot = DriveBase(left_motor, right_motor, wheel_diameter=wheel, axle_track=axle)
 
 # Motor max power deg/s
+# Da specifica 1020. Da test arriva a 780 (forse a causa delle batterie scariche)
 motor_max_degs = 1020 
-
-    #robot.straight(100) #muovi dritto
-    #right_motor.run_angle(300, 500)
-    # robot.settings(30, 100, 90)
-    # robot.turn(90) 
-    # robot.turn(-90) #gira di 90 gradi senso antiorario
-    # robot.stop()
 
 ###############
 #DEBUG SENSORS
@@ -57,7 +56,7 @@ motor_max_degs = 1020
 while True:  
     colorl = color_sensor_left.color()
     colorr = color_sensor_right.color()
-    print (colorl)
+    print (colorl, " ",colorr)
 '''
 
 #motor_max_degs /= 10 #@@@ RIMUOVI 
@@ -68,10 +67,12 @@ mtr_side_white_degs =  motor_max_degs * 50/100
 
 stampa = True
 
+#Dopo X correzioni, se vedo ancora linea sullo stesso sensore per X volte ==> è una curva a gomito
 curvaGomitoSoglia = 75
 
 #Quante volte vedo CONSECUTIVAMENTE una linea, sul sensore sinistro e destro
 lc_l = 0; lc_r = 0
+
 gyro_sensor.reset_angle(0)
 
 isLine_l = False; isLine_r = False
@@ -153,7 +154,6 @@ while True:
         left_motor.hold()
 
         #Avanzo di mezzo robot, posizionando la curva a gomito sotto il robot, al centro
-        lungCingoli = 140
         robot.straight( lungCingoli/2 )
 
         #Avendo il vertice della curva a gomito sotto il mio asse perpendicolare, eseguo uno scan
