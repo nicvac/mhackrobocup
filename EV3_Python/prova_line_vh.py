@@ -51,9 +51,6 @@ motor_maxpower = 1020
     # robot.turn(-90) #gira di 90 gradi senso antiorario
     # robot.stop()
 
-def isLine( color ):
-    return (color == Color.BLACK or color == Color.BLUE or color == Color.BROWN)
-
 ###############
 #DEBUG SENSORS
 ''' 
@@ -73,8 +70,8 @@ stampa = True
 
 curvaGomitoSoglia = 75
 
-#Contatori di linea, sinistro e destro
-lc = 0; rc = 0
+#Quante volte vedo CONSECUTIVAMENTE una linea, sul sensore sinistro e destro
+lc_l = 0; lc_r = 0
 gyro_sensor.reset_angle(0)
 
 isLine_l = False; isLine_r = False
@@ -83,8 +80,6 @@ while True:
     color_l = color_sensor_left.color()
     color_r = color_sensor_right.color()
 
-    isLine_l_prev = isLine_l
-    isLine_r_prev = isLine_r
     isLine_l = isLine(color_l)
     isLine_r = isLine(color_r)
     
@@ -92,16 +87,16 @@ while True:
         #print(right_motor.speed())
         #print("L: ", colorl, "; Line: ", isLine(colorl))
         #print("R: ", colorr, "; Line: ", isLine(colorr))
-        dl = 1 if isLine(colorl) else 0
-        dr = 1 if isLine(colorr) else 0
+        dl = 1 if isLine_l else 0
+        dr = 1 if isLine_r else 0
         print ( dl, " ", dr )
 
     #Incremento il contatore se è linea e lo era anche al giro precedente
-    lc = lc+1 if (isLine_l and isLine_l_prev == isLine_l) else 0
-    rc = rc+1 if (isLine_r and isLine_r_prev == isLine_r) else 0
+    lc_l = lc_l + 1 if isLine_l else 0
+    lc_r = lc_r + 1 if isLine_r else 0
 
-    #Se riesce a correggersi in poche iterazioni, considero la posizione stabile
-    if max(lc, rc) <= 4:
+    #Finchè riesce a correggersi in poche iterazioni, considero la posizione stabile => sono ad angolo 0.
+    if max(lc_l, lc_r) <= 4:
         gyro_sensor.reset_angle(0)
 
     #Nessuno dei due sensori è sulla linea => vado dritto
@@ -114,7 +109,7 @@ while True:
         correctLeft = False; correctRight = False
         #Se entrambi sono sulla linea, continuo con la stessa correzione con cui ho cominciato
         if isLine_l and isLine_r:
-            if lc >= rc:
+            if lc_l >= lc_r:
                 correctLeft = True;  correctRight = False
             else:
                 correctLeft = False; correctRight = True
@@ -132,8 +127,8 @@ while True:
 
     #Detection curva a gomito: sono sulla linea da diverse iterazioni: nonostante la correzione continuo a leggere linea.
     # tipico di una curva a gomito
-    gomitoSx = lc > curvaGomitoSoglia
-    gomitoDx = rc > curvaGomitoSoglia
+    gomitoSx = lc_l > curvaGomitoSoglia
+    gomitoDx = lc_r > curvaGomitoSoglia
 
     if gomitoSx or gomitoDx:
 
@@ -173,6 +168,14 @@ while True:
             exit()
 
         #Qui ho ritrovato la linea
-        lc = 0; rc = 0
+        lc_l = 0; lc_r = 0
         gyro_sensor.reset_angle(0)
 
+
+#Ritorna vero se linea
+def isLine( color ):
+    return (color == Color.BLACK or color == Color.BLUE or color == Color.BROWN)
+
+#Scan orario
+def isLine( color ):
+    return (color == Color.BLACK or color == Color.BLUE or color == Color.BROWN)
