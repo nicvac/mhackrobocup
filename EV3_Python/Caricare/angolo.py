@@ -44,6 +44,5 @@ gyro_sensor = GyroSensor(Port.S1)
 robot = DriveBase(left_motor, right_motor, wheel_diameter=wheel, axle_track=axle)
 
 
-gyro_sensor.reset_angle(0)
 
-while True: print(gyro_sensor.angle())
+while True: print(color_sensor_left.reflection())
