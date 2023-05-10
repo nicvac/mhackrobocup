@@ -77,32 +77,32 @@ while True:
     mask = cv2.dilate(mask, None, iterations=2)
     
 
-    cnts = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL,
+    cntsNero = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL,
         cv2.CHAIN_APPROX_SIMPLE)
-    cnts = imutils.grab_contours(cnts)
-    center = None
+    cntsNero = imutils.grab_contours(cntsNero)
+    centerNero = None
 
-    if len(cnts) > 0:
+    if len(cntsNero) > 0:
 
-        c = max(cnts, key=cv2.contourArea)
+        c = max(cntsNero, key=cv2.contourArea)
         ((x, y), radius) = cv2.minEnclosingCircle(c)
         M = cv2.moments(c)
-        center = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
+        centerNero = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
 
         if radius > 10:
             
             cv2.circle(frame, (int(x), int(y)), int(radius),
                 (0, 255, 255), 2)
-            cv2.circle(frame, center, 5, (0, 0, 255), -1)
+            cv2.circle(frame, centerNero, 5, (0, 0, 255), -1)
             distanza = 2237.6 * ((radius ** 2) * 3.141592653589793)**-0.603
-            pacchetto = str(center[0]) + ',' + str(center[1]) +  "\n"
+            pacchetto = str(centerNero[0]) + ',' + str(centerNero[1]) +  "\n"
             pacchetto = pacchetto.encode("utf-8")
             S = "Dist: " + str(distanza)
             cv2.putText(frame, S, (5, 50), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 0, 255), 2, cv2.LINE_AA)
 
 
 
-    pts.appendleft(center)
+    pts.appendleft(centerNero)
 
     
 
