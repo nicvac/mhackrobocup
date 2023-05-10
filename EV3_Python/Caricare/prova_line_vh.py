@@ -20,11 +20,6 @@ def scan( degree , abs_ignora_degrees):
 
     print("Scan di max ", degree, "°")
 
-    # if degree < 0:
-    #     motor_scan_degs = motor_max_degs * 0.5 * ( -1)
-    # else:
-    #     motor_scan_degs = motor_max_degs * 0.5
-
     motor_scan_degs = motor_max_degs * 0.5 * ( -1 if degree < 0 else 1)
     
     #seleziono il sensore corretto a seconda della scansione oraria/antioraria
@@ -38,6 +33,7 @@ def scan( degree , abs_ignora_degrees):
     gyro_sensor.reset_angle(0)
     robot.drive(0, motor_scan_degs)
     deg_abs = abs(degree)
+
     current_angle = abs(gyro_sensor.angle())
     while current_angle < deg_abs and not lineLocked:
         if current_angle <= abs_ignora_degrees:
@@ -150,16 +146,17 @@ mtr_side_white_degs =  motor_max_degs * 50/100
 
 stampa = True
 
-
 #Dopo X correzioni, se vedo ancora linea sullo stesso sensore per X volte ==> è una curva a gomito
-#curvaGomitoSoglia = 45 #50 originale, 35 seconda : LOOP SULLA LINEA A 90
-#Fissato motor_max_degs /= 6:
-#curvaGomitoSoglia = 20 # curva a gomito a sinistra riconosciuta come a destra, non abbastanza tempo per correggere
-#curvaGomitoSoglia = 30 # Buon compromesso per la detection delle curve
-coeff = 30/(motor_max_spec_degs/6)
-curvaGomitoSoglia = motor_max_degs * coeff # calcolo soglia a seconda della velocità deg/s impostata
-#@@@ CORREGGERE: DEVE ESSERE INVERSAMENTE PROPORZIONALE
-
+# Se usi un valore troppo alto, la correzione continua fino a non vedere più il nero e quindi viene considerato percorso smooth
+# Se usi un valore troppo basso, alcune correzioni smooth vengono interrotte e fa una detect di una curva a gomito, 
+#  quando invece doveva semplicemente continuare a correggere 
+# Il valore di soglia dipende dalla velocità dei motori, perchè più veloce è il motore, meno campionamenti si fanno e quindi più bassa deve essere la soglia
+# Abbiamo visto che  per motor_max_degs = motor_max_spec_degs / 6 = 1020 / 6 = 170 ==> un buon valore di soglia è 30. 
+# Quindi per ottenere f(170)=30 e f(170*2)=30/2, ci serve una funzione lineare che passi dai punti (170,30) and (340,15):
+# Query su www.wolframalpha.com: the equation of the linear function that passes through the points (170,30) and (340,15):
+# f(x) = -(3/34)x + 45
+# curvaGomitoSoglia = 30 # 30 va bene per motor_max_degs = motor_max_spec_degs / 6
+curvaGomitoSoglia =  -(3/34) * motor_max_degs + 45
 
 #Quante volte vedo CONSECUTIVAMENTE una linea, sul sensore sinistro e destro
 lc_l = 0; lc_r = 0
@@ -172,7 +169,6 @@ while True:
 
     gl = isGreen(color_sensor_left.color())
     gr = isGreen(color_sensor_right.color())
-
 
     if gl and not gr:
         robot.straight(lungCingoli / 3)
@@ -200,7 +196,7 @@ while True:
         #print("R: ", colorr, "; Line: ", isLine(colorr))
         dl = 1 if isLine_l else 0
         dr = 1 if isLine_r else 0
-        print ( dl, " ", dr, "   ", lc_l, " ", lc_r)
+        print ( dl, "-", dr, "   ", lc_l, "-", lc_r)
 
     #Finchè riesce a correggersi in poche iterazioni, considero la posizione stabile => sono ad angolo 0.
     if max(lc_l, lc_r) <= 4:
@@ -272,11 +268,10 @@ while True:
 
         #Avendo il vertice della curva a gomito sotto il mio asse perpendicolare, eseguo uno scan
         lineLocked = False
+
         #ruota in senso orario o antiorario (a seconda della curva a gomito) fino a ritrovare la linea
-        
         scanDegree = 170 * (-1 if gomitoSx else 1)
         
-
         lineLocked = scan(scanDegree, 0)
         if not lineLocked:
             #Si mette male... non ho trovato la linea dove mi sarei aspettato. Provo dall'altra parte
