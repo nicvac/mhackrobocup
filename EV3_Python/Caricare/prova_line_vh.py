@@ -15,7 +15,7 @@ def isLine( color ):
 #Scan
 #Ruoto sul mio asse fino a degree angoli fino a centrare la linea fra i due sensori L e R
 #Senso orario: degree positivo
-def scan( degree ):
+def scan( degree , abs_ignora_degrees):
 
     print("Scan di max ", degree, "°")
 
@@ -37,13 +37,19 @@ def scan( degree ):
     gyro_sensor.reset_angle(0)
     robot.drive(0, motor_scan_degs)
     deg_abs = abs(degree)
-    while abs(gyro_sensor.angle()) < deg_abs and not lineLocked:
-        color = color_sensor.color()
-        if not lineMet:
-            lineMet = isLine(color)
+    current_angle = abs(gyro_sensor.angle())
+    while current_angle < deg_abs and not lineLocked:
+        if current_angle <= abs_ignora_degrees:
+            pass
         else:
-            linePassed = not isLine(color)
-        lineLocked = lineMet and linePassed
+            color = color_sensor.color()
+            if not lineMet:
+                lineMet = isLine(color)
+            else:
+                linePassed = not isLine(color)
+            lineLocked = lineMet and linePassed
+
+        current_angle = abs(gyro_sensor.angle())
         
     robot.drive(0, 0)
 
@@ -60,6 +66,25 @@ def scan( degree ):
 
     robot.stop()
     return lineLocked
+
+
+def isGreen(color):
+    return (color == Color.GREEN)
+
+
+def verde360():
+    robot.straight(lungCingoli / 2)
+
+    gyro_sensor.reset_angle(0)
+
+    robot.drive(0, 60)
+
+    while gyro_sensor.angle() < 180: print(gyro_sensor.angle())
+
+    robot.drive(0, 0)
+
+    robot.stop()
+
 
 
 
@@ -133,6 +158,21 @@ gyro_sensor.reset_angle(0)
 isLine_l = False; isLine_r = False
 
 while True:  
+
+    gl = isGreen(color_sensor_left.color())
+    gr = isGreen(color_sensor_right.color())
+
+
+    if gl and not gr:
+        robot.straight(lungCingoli / 3)
+        scan(-100, 40)
+    elif gr and not gl:
+        robot.straight(lungCingoli / 3)
+        scan(100, 40)
+    elif gr and gl:
+        verde360()
+
+    
     color_l = color_sensor_left.color()
     color_r = color_sensor_right.color()
     
@@ -227,10 +267,10 @@ while True:
         scanDegree = 170 * (-1 if gomitoSx else 1)
         
 
-        lineLocked = scan(scanDegree)
+        lineLocked = scan(scanDegree, 0)
         if not lineLocked:
             #Si mette male... non ho trovato la linea dove mi sarei aspettato. Provo dall'altra parte
-            lineLocked = scan(-scanDegree)
+            lineLocked = scan(-scanDegree, 0)
 
         if lineLocked :
             #Qui ho ritrovato la linea

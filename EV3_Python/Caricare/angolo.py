@@ -7,6 +7,8 @@ from pybricks.robotics import DriveBase
 from pybricks.media.ev3dev import SoundFile, ImageFile
 
 
+import time
+
 
 
 # Motore grande destra
@@ -23,12 +25,14 @@ axle = 205
 
 lungCingoli = 140
 
+maxSpeed = 1020
+
 
 # Sensore di colore destra
-csr = ColorSensor(Port.S2)
+color_sensor_right = ColorSensor(Port.S2)
 
 # Sensore di colore sinistra
-csl = ColorSensor(Port.S3)
+color_sensor_left = ColorSensor(Port.S3)
 
 # Giroscopio
 gyro_sensor = GyroSensor(Port.S1)
@@ -40,25 +44,6 @@ gyro_sensor = GyroSensor(Port.S1)
 robot = DriveBase(left_motor, right_motor, wheel_diameter=wheel, axle_track=axle)
 
 
+gyro_sensor.reset_angle(0)
 
-if csl.color() == Color.GREEN:
-    robot.straight(lungCingoli / 2)
-
-    gyro_sensor.reset_angle(0)
-
-    robot.drive(0, -60)
-
-    while gyro_sensor.angle() > -89: print(gyro_sensor.angle())
-
-    robot.drive(0, 0)
-elif csr.color() == Color.GREEN:
-    robot.straight(lungCingoli / 2)
-
-    gyro_sensor.reset_angle(0)
-
-    robot.drive(0, 60)
-
-    while gyro_sensor.angle() < 89: print(gyro_sensor.angle())
-
-    robot.drive(0, 0)
-    
+while True: print(gyro_sensor.angle())
