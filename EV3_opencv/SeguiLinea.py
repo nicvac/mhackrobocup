@@ -49,49 +49,49 @@ while True:
 
     cv2.rectangle(frame,(0,220),(600,240),(0,255,0),3)
 
-    cnts = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL,
+    cntsNero = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL,
         cv2.CHAIN_APPROX_SIMPLE)
-    cnts = imutils.grab_contours(cnts)
-    center = None
+    cntsNero = imutils.grab_contours(cntsNero)
+    centerNero = None
 
-    if len(cnts) > 0:
+    if len(cntsNero) > 0:
 
-        c = max(cnts, key=cv2.contourArea)
+        c = max(cntsNero, key=cv2.contourArea)
         #((x, y), radius) = cv2.minEnclosingCircle(c)
         M = cv2.moments(c)
-        center = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"] + 221))
+        centerNero = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"] + 221))
         
-        cv2.circle(frame, center, 5, (0, 0, 255), -1)
+        cv2.circle(frame, centerNero, 5, (0, 0, 255), -1)
 
+    if centerNero != None:
+        posizione = centerNero[0]
+        errore = posizione - 300
+        
+        Pd = (errore * KP) + ((errore - ultimoErrore) * KD)
+        ultimoErrore = errore
 
-    posizione = center[0]
-    errore = posizione - 300
-    
-    Pd = (errore * KP) + ((errore - ultimoErrore) * KD)
-    ultimoErrore = errore
+        lSpeed = MAXSPEED + Pd
+        rSpeed = MAXSPEED - Pd
 
-    lSpeed = MAXSPEED + Pd
-    rSpeed = MAXSPEED - Pd
+        if (lSpeed > MAXSPEED):
+            lSpeed = MAXSPEED
+        
+        if (lSpeed < 0):
+            lSpeed = 0
+        
+        if (rSpeed > MAXSPEED): 
+            rSpeed = MAXSPEED
+        
+        if (rSpeed < 0):
+            rSpeed = 0
+        
+        S1 = "Errore: " + str(errore)
+        S2 = "lSpeed: " + str(lSpeed)
+        S3 = "rSpeed: " + str(rSpeed)
 
-    if (lSpeed > MAXSPEED):
-        lSpeed = MAXSPEED
-    
-    if (lSpeed < 0):
-        lSpeed = 0
-    
-    if (rSpeed > MAXSPEED): 
-        rSpeed = MAXSPEED
-    
-    if (rSpeed < 0):
-        rSpeed = 0
-    
-    S1 = "Errore: " + str(errore)
-    S2 = "lSpeed: " + str(lSpeed)
-    S3 = "rSpeed: " + str(rSpeed)
-
-    cv2.putText(frame, S1, (5, 25), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 1, cv2.LINE_AA)
-    cv2.putText(frame, S2, (5, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 1, cv2.LINE_AA)
-    cv2.putText(frame, S3, (5, 75), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 1, cv2.LINE_AA)
+        cv2.putText(frame, S1, (5, 25), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 1, cv2.LINE_AA)
+        cv2.putText(frame, S2, (5, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 1, cv2.LINE_AA)
+        cv2.putText(frame, S3, (5, 75), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 1, cv2.LINE_AA)
     
     cv2.imshow("Mask Nero", mask)
     cv2.imshow("Mask Verde", mask2)
