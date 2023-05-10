@@ -15,7 +15,7 @@ def isLine( color ):
 #Scan
 #Ruoto sul mio asse fino a degree angoli fino a centrare la linea fra i due sensori L e R
 #Senso orario: degree positivo
-def scan( degree ):
+def scan( degree , abs_ignora_degrees):
 
     print("Scan di max ", degree, "°")
 
@@ -37,13 +37,19 @@ def scan( degree ):
     gyro_sensor.reset_angle(0)
     robot.drive(0, motor_scan_degs)
     deg_abs = abs(degree)
-    while abs(gyro_sensor.angle()) < deg_abs and not lineLocked:
-        color = color_sensor.color()
-        if not lineMet:
-            lineMet = isLine(color)
+    current_angle = abs(gyro_sensor.angle())
+    while current_angle < deg_abs and not lineLocked:
+        if current_angle <= abs_ignora_degrees:
+            pass
         else:
-            linePassed = not isLine(color)
-        lineLocked = lineMet and linePassed
+            color = color_sensor.color()
+            if not lineMet:
+                lineMet = isLine(color)
+            else:
+                linePassed = not isLine(color)
+            lineLocked = lineMet and linePassed
+
+        current_angle = abs(gyro_sensor.angle())
         
     robot.drive(0, 0)
 
@@ -60,6 +66,27 @@ def scan( degree ):
 
     robot.stop()
     return lineLocked
+
+
+def isGreen(color):
+    return (color == Color.GREEN)
+
+
+def verde360():
+    robot.straight(lungCingoli / 2)
+
+    gyro_sensor.reset_angle(0)
+
+    robot.drive(0, 60)
+
+    while gyro_sensor.angle() < 180: print(gyro_sensor.angle())
+
+    robot.drive(0, 0)
+
+    print("HO CORRETTO")
+
+    robot.stop()
+
 
 
 
@@ -122,8 +149,14 @@ mtr_side_white_degs =  motor_max_degs * 50/100
 
 stampa = True
 
+val = 30/motor_max_degs
+
 #Dopo X correzioni, se vedo ancora linea sullo stesso sensore per X volte ==> è una curva a gomito
-curvaGomitoSoglia = 45 #50 originale, 35 seconda
+#curvaGomitoSoglia = 45 #50 originale, 35 seconda : LOOP SULLA LINEA A 90
+#curvaGomitoSoglia = 20 : curva a gomito a sinistra riconosciuta come a destra, non abbastanza tempo per correggere
+curvaGomitoSoglia = 30
+curvaGomitoSoglia = motor_max_degs * val
+
 
 #Quante volte vedo CONSECUTIVAMENTE una linea, sul sensore sinistro e destro
 lc_l = 0; lc_r = 0
@@ -133,6 +166,21 @@ gyro_sensor.reset_angle(0)
 isLine_l = False; isLine_r = False
 
 while True:  
+
+    gl = isGreen(color_sensor_left.color())
+    gr = isGreen(color_sensor_right.color())
+
+
+    if gl and not gr:
+        robot.straight(lungCingoli / 3)
+        scan(-100, 40)
+    elif gr and not gl:
+        robot.straight(lungCingoli / 3)
+        scan(100, 40)
+    elif gr and gl:
+        verde360()
+
+    
     color_l = color_sensor_left.color()
     color_r = color_sensor_right.color()
     
@@ -140,17 +188,19 @@ while True:
     isLine_l = isLine(color_l)
     isLine_r = isLine(color_r)
     
+    
+
+    #Incremento il contatore se è linea e lo era anche al giro precedente
+    lc_l = lc_l + 1 if isLine_l else 0
+    lc_r = lc_r + 1 if isLine_r else 0
+
     if stampa == True:
         #print(right_motor.speed())
         #print("L: ", colorl, "; Line: ", isLine(colorl))
         #print("R: ", colorr, "; Line: ", isLine(colorr))
         dl = 1 if isLine_l else 0
         dr = 1 if isLine_r else 0
-        print ( dl, " ", dr, " ", left_motor.speed(), " ", right_motor.speed())
-
-    #Incremento il contatore se è linea e lo era anche al giro precedente
-    lc_l = lc_l + 1 if isLine_l else 0
-    lc_r = lc_r + 1 if isLine_r else 0
+        print ( dl, " ", dr, "   ", lc_l, " ", lc_r)
 
     #Finchè riesce a correggersi in poche iterazioni, considero la posizione stabile => sono ad angolo 0.
     if max(lc_l, lc_r) <= 4:
@@ -227,10 +277,10 @@ while True:
         scanDegree = 170 * (-1 if gomitoSx else 1)
         
 
-        lineLocked = scan(scanDegree)
+        lineLocked = scan(scanDegree, 0)
         if not lineLocked:
             #Si mette male... non ho trovato la linea dove mi sarei aspettato. Provo dall'altra parte
-            lineLocked = scan(-scanDegree)
+            lineLocked = scan(-scanDegree, 0)
 
         if lineLocked :
             #Qui ho ritrovato la linea
