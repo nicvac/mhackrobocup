@@ -83,6 +83,8 @@ def verde360():
 
     robot.drive(0, 0)
 
+    print("HO CORRETTO")
+
     robot.stop()
 
 
@@ -147,8 +149,14 @@ mtr_side_white_degs =  motor_max_degs * 50/100
 
 stampa = True
 
+val = 30/motor_max_degs
+
 #Dopo X correzioni, se vedo ancora linea sullo stesso sensore per X volte ==> è una curva a gomito
-curvaGomitoSoglia = 45 #50 originale, 35 seconda
+#curvaGomitoSoglia = 45 #50 originale, 35 seconda : LOOP SULLA LINEA A 90
+#curvaGomitoSoglia = 20 : curva a gomito a sinistra riconosciuta come a destra, non abbastanza tempo per correggere
+curvaGomitoSoglia = 30
+curvaGomitoSoglia = motor_max_degs * val
+
 
 #Quante volte vedo CONSECUTIVAMENTE una linea, sul sensore sinistro e destro
 lc_l = 0; lc_r = 0
@@ -180,17 +188,19 @@ while True:
     isLine_l = isLine(color_l)
     isLine_r = isLine(color_r)
     
+    
+
+    #Incremento il contatore se è linea e lo era anche al giro precedente
+    lc_l = lc_l + 1 if isLine_l else 0
+    lc_r = lc_r + 1 if isLine_r else 0
+
     if stampa == True:
         #print(right_motor.speed())
         #print("L: ", colorl, "; Line: ", isLine(colorl))
         #print("R: ", colorr, "; Line: ", isLine(colorr))
         dl = 1 if isLine_l else 0
         dr = 1 if isLine_r else 0
-        print ( dl, " ", dr, " ", left_motor.speed(), " ", right_motor.speed())
-
-    #Incremento il contatore se è linea e lo era anche al giro precedente
-    lc_l = lc_l + 1 if isLine_l else 0
-    lc_r = lc_r + 1 if isLine_r else 0
+        print ( dl, " ", dr, "   ", lc_l, " ", lc_r)
 
     #Finchè riesce a correggersi in poche iterazioni, considero la posizione stabile => sono ad angolo 0.
     if max(lc_l, lc_r) <= 4:
