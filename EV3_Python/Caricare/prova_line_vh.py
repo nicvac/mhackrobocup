@@ -85,7 +85,13 @@ def verde360():
     robot.stop()
 
 
+lc_counter = None
 
+reset_counter = 0
+
+reset_side_l = 1
+reset_side_r = 2
+reset_side = 0
 
 # Diametro ruota in mm
 wheel = 32.5
@@ -112,7 +118,7 @@ color_sensor_left = ColorSensor(Port.S3)
 gyro_sensor = GyroSensor(Port.S1)
 
 # Sensore in luce riflessa fronte
-#light_sensor_front = ColorSensor(Port.S4)
+light_sensor_front = ColorSensor(Port.S4)
 
 #Sensore in colore trasformato fronte
 #color_sensor_front = ColorSensor(Port.S4)
@@ -156,28 +162,38 @@ stampa = True
 # Query su www.wolframalpha.com: the equation of the linear function that passes through the points (170,30) and (340,15):
 # f(x) = -(3/34)x + 45
 # curvaGomitoSoglia = 30 # 30 va bene per motor_max_degs = motor_max_spec_degs / 6
-curvaGomitoSoglia =  -(3/34) * motor_max_degs + 45
+# curvaGomitoSoglia =  -(3/34) * motor_max_degs + 45
+# curvaGomitoSoglia = 40
+curvaGomitoSoglia = 70
+print(motor_max_degs, "  ", curvaGomitoSoglia)
 
 #Quante volte vedo CONSECUTIVAMENTE una linea, sul sensore sinistro e destro
 lc_l = 0; lc_r = 0
+lc_l_max = 0; lc_r_max = 0;
+
+bc_l = 0; bc_r = 0
 
 gyro_sensor.reset_angle(0)
 
 isLine_l = False; isLine_r = False
+
 
 while True:  
 
     gl = isGreen(color_sensor_left.color())
     gr = isGreen(color_sensor_right.color())
 
-    if gl and not gr:
-        robot.straight(lungCingoli / 3)
-        scan(-100, 40)
-    elif gr and not gl:
-        robot.straight(lungCingoli / 3)
-        scan(100, 40)
-    elif gr and gl:
-        verde360()
+    # if gl and not gr:
+    #     print("Ho vist verde a sinistra")
+    #     robot.straight(lungCingoli / 3)
+    #     scan(-100, 40)
+    # elif gr and not gl:
+    #     print("Ho vist verde a destra")
+    #     robot.straight(lungCingoli / 3)
+    #     scan(100, 40)
+    # elif gr and gl:
+    #     print("Ho vist verde da tutti e due i lati")
+    #     verde360()
 
     
     color_l = color_sensor_left.color()
@@ -186,9 +202,33 @@ while True:
     isLine_l = isLine(color_l)
     isLine_r = isLine(color_r)
     
+    lc_l_prev = lc_l
+    lc_r_prev = lc_r
+
     #Incremento il contatore se è linea e lo era anche al giro precedente
     lc_l = lc_l + 1 if isLine_l else 0
     lc_r = lc_r + 1 if isLine_r else 0
+
+    bc_l = bc_l + 1 if not isLine_l else 0
+    bc_r = bc_r + 1 if not isLine_r else 0
+
+    if bc_l >= 10 and bc_r >= 10: reset_counter = 0
+
+    if lc_l_prev > 0 and lc_l == 0 and lc_r > 0 and lc_r_prev > 0 and lc_r_prev < lc_l_prev: 
+        lc_r = 1
+        print("Resettato r")
+        lc_l_max = max(lc_l_max, lc_l_prev)
+        if reset_counter == 0:
+            reset_side = reset_side_r
+        reset_counter += 1
+    if lc_r_prev > 0 and lc_r == 0 and lc_l > 0 and lc_l_prev > 0 and lc_l_prev < lc_r_prev:
+        lc_l = 1
+        print("Resettato l")
+        lc_r_max = max(lc_r_max, lc_r_prev)
+        if reset_counter == 0:
+            reset_side = reset_side_l
+        reset_counter += 1
+
 
     if stampa == True:
         #print(right_motor.speed())
@@ -196,7 +236,7 @@ while True:
         #print("R: ", colorr, "; Line: ", isLine(colorr))
         dl = 1 if isLine_l else 0
         dr = 1 if isLine_r else 0
-        print ( dl, "-", dr, "   ", lc_l, "-", lc_r)
+        print ( dl, "-", dr, "   ", lc_l, "-", lc_r, "       ", reset_counter)
 
     #Finchè riesce a correggersi in poche iterazioni, considero la posizione stabile => sono ad angolo 0.
     if max(lc_l, lc_r) <= 4:
@@ -230,41 +270,54 @@ while True:
 
     #Detection curva a gomito: sono sulla linea da diverse iterazioni: nonostante la correzione continuo a leggere linea.
     # tipico di una curva a gomito
-    gomitoSx = lc_l > curvaGomitoSoglia
-    gomitoDx = lc_r > curvaGomitoSoglia
+    # gomitoSx = lc_l > curvaGomitoSoglia
+    # gomitoDx = lc_r > curvaGomitoSoglia
+
+    # gomitoSx = reset_counter >= 3 and reset_side == reset_side_r
+    # gomitoDx = reset_counter >= 3 and reset_side == reset_side_l
+
+    gomitoSx = reset_counter >= 3 and lc_l_max >= lc_r_max
+    gomitoDx = reset_counter >= 3 and lc_r_max >= lc_l_max
+
 
     if gomitoSx or gomitoDx:
+        reset_counter = 0
 
+        print("Contatori in fase loop: ",lc_l_max, " ", lc_r_max)
         print("Curva a gomito a sinitra.") if gomitoSx else print("Curva a gomito a destra")
         # Mi Fermo
         right_motor.hold()
         left_motor.hold()
 
+        quit()
+
         #Ripristino la posizione allo stesso angolo di quando ero stabile (prima della curva a gomito)
         angle = gyro_sensor.angle()
         print("Angolo da ripristinare: ", angle)
         
-        if gomitoSx:
-            right_motor.dc( mtr_side_black_degs )
-            left_motor.dc( mtr_side_white_degs )
-        else: # if gomitoDx:
-            left_motor.dc( mtr_side_black_degs )
-            right_motor.dc( mtr_side_white_degs )
+        if abs(angle) >= 5:
+            if gomitoSx:
+                right_motor.dc( mtr_side_black_degs )
+                left_motor.dc( mtr_side_white_degs )
+            else: # if gomitoDx:
+                left_motor.dc( mtr_side_black_degs )
+                right_motor.dc( mtr_side_white_degs )
 
-        current_angle = gyro_sensor.angle()
-        if current_angle < 0:
-            while gyro_sensor.angle() < 0: pass
-        else:
-            while gyro_sensor.angle() > 0: pass
+            current_angle = gyro_sensor.angle()
+            if current_angle < 0:
+                while gyro_sensor.angle() < 0: pass
+            else:
+                while gyro_sensor.angle() > 0: pass
 
 
-
+        print("Angolo ripristinato")
         #while abs(gyro_sensor.angle()) >= 2 : pass
         right_motor.hold()
         left_motor.hold()
 
         #Avanzo di mezzo robot, posizionando la curva a gomito sotto il robot, al centro
         robot.straight( lungCingoli/4 )
+        print("Avanzo di un quarto di cinglo")
 
         #Avendo il vertice della curva a gomito sotto il mio asse perpendicolare, eseguo uno scan
         lineLocked = False
