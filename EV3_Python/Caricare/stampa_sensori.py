@@ -37,6 +37,8 @@ color_sensor_left = ColorSensor(Port.S3)
 # Giroscopio
 gyro_sensor = GyroSensor(Port.S1)
 
+light_sensor_front = ColorSensor(Port.S4)
+
 
 # Configurazione robot
 #@@@ Correggere i valori di axle e wheel secondo la guida riportata qui:
@@ -45,5 +47,7 @@ robot = DriveBase(left_motor, right_motor, wheel_diameter=wheel, axle_track=axle
 
 
 while True:
-    print(color_sensor_left.color(), "        ", color_sensor_right.color())
+    # print(color_sensor_left.color(), "        ", color_sensor_right.color())
+    print(light_sensor_front.reflection())
     time.sleep(0.3)
+

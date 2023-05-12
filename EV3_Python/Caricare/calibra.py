@@ -16,7 +16,8 @@ right_motor = Motor(Port.A)
 left_motor = Motor(Port.B)
 
 # Diametro ruota in mm
-wheel = 32.5
+#wheel = 32.5
+wheel = 35
 
 # Distanza dal centro delle ruote da sinistra a destra
 axle = 205
@@ -40,25 +41,29 @@ gyro_sensor = GyroSensor(Port.S1)
 robot = DriveBase(left_motor, right_motor, wheel_diameter=wheel, axle_track=axle)
 
 
+# robot.straight(200)
+# robot.stop()
 
-if csl.color() == Color.GREEN:
-    robot.straight(lungCingoli / 2)
+robot.turn(90)
 
-    gyro_sensor.reset_angle(0)
+# if csl.color() == Color.GREEN:
+#     robot.straight(lungCingoli / 2)
 
-    robot.drive(0, -60)
+#     gyro_sensor.reset_angle(0)
 
-    while gyro_sensor.angle() > -89: print(gyro_sensor.angle())
+#     robot.drive(0, -60)
 
-    robot.drive(0, 0)
-elif csr.color() == Color.GREEN:
-    robot.straight(lungCingoli / 2)
+#     while gyro_sensor.angle() > -89: print(gyro_sensor.angle())
 
-    gyro_sensor.reset_angle(0)
+#     robot.drive(0, 0)
+# elif csr.color() == Color.GREEN:
+#     robot.straight(lungCingoli / 2)
 
-    robot.drive(0, 60)
+#     gyro_sensor.reset_angle(0)
 
-    while gyro_sensor.angle() < 89: print(gyro_sensor.angle())
+#     robot.drive(0, 60)
 
-    robot.drive(0, 0)
+#     while gyro_sensor.angle() < 89: print(gyro_sensor.angle())
+
+#     robot.drive(0, 0)
     
