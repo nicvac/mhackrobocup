@@ -6,39 +6,9 @@ from pybricks.tools import wait, StopWatch, DataLog
 from pybricks.robotics import DriveBase
 from pybricks.media.ev3dev import SoundFile, ImageFile
 
+from resque_line_setup import *
 
 import time
-
-
-
-# Motore grande destra
-right_motor = Motor(Port.A)
-
-# Motore grande sinistra
-left_motor = Motor(Port.B)
-
-# Diametro ruota in mm
-wheel = 32.5
-
-# Distanza dal centro delle ruote da sinistra a destra
-axle = 205
-
-lungCingoli = 140
-
-maxSpeed = 1020
-
-
-# Sensore di colore destra
-color_sensor_right = ColorSensor(Port.S2)
-
-# Sensore di colore sinistra
-color_sensor_left = ColorSensor(Port.S3)
-
-# Giroscopio
-gyro_sensor = GyroSensor(Port.S1)
-
-light_sensor_front = ColorSensor(Port.S4)
-
 
 # Configurazione robot
 #@@@ Correggere i valori di axle e wheel secondo la guida riportata qui:
@@ -47,7 +17,6 @@ robot = DriveBase(left_motor, right_motor, wheel_diameter=wheel, axle_track=axle
 
 
 while True:
-    # print(color_sensor_left.color(), "        ", color_sensor_right.color())
+    print(color_sensor_left.color(), "        ", color_sensor_right.color())
     print(light_sensor_front.reflection())
     time.sleep(0.3)
-
