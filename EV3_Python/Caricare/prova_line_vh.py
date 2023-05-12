@@ -12,8 +12,7 @@ import time
 def isLine( color ):
     return (color == Color.BLACK or color == Color.BLUE or color == Color.BROWN)
 
-
-
+#Ritorna vero se linea - Luce riflessa
 def isLineF( light ):
     return (light <= 10)
 
