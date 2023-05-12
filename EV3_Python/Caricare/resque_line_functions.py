@@ -91,5 +91,23 @@ def verde360():
     robot.stop()
 
 
-def isGomitoSx():
-    return True
+def isGomitoSx(l, r):
+    print("####### DETECT Gomito ########")
+    for i in range(len(l)):
+        print(l[i], "-", r[i])
+    print("####### DETECT Gomito END ########")
+
+    isGomSx = False
+
+    i = 0; found = False
+    while i < len(l) and not found:
+        if l[i] > 10 and r[i] > 10:
+            found = True
+            if l[i] >= r[i]:
+                isGomitoSx = True
+            else: 
+                isGomitoSx = False 
+        i += 1
+        
+    print("isGomitoSx. Found: ", found, "; isGomSx: ", isGomSx)
+    return isGomSx
