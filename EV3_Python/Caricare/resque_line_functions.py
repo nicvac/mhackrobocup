@@ -90,3 +90,6 @@ def verde360():
 
     robot.stop()
 
+
+def isGomitoSx():
+    return True
