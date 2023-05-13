@@ -5,27 +5,6 @@ import time
 from resque_line_functions import *
 from resque_line_setup import *
 
-#Dopo X correzioni, se vedo ancora linea sullo stesso sensore per X volte ==> è una curva a gomito
-# Se usi un valore troppo alto, la correzione continua fino a non vedere più il nero e quindi viene considerato percorso smooth
-# Se usi un valore troppo basso, alcune correzioni smooth vengono interrotte e fa una detect di una curva a gomito, 
-#  quando invece doveva semplicemente continuare a correggere 
-# Il valore di soglia dipende dalla velocità dei motori, perchè più veloce è il motore, meno campionamenti si fanno e quindi più bassa deve essere la soglia
-# Abbiamo visto che  per motor_max_degs = motor_max_spec_degs / 6 = 1020 / 6 = 170 ==> un buon valore di soglia è 30. 
-# Quindi per ottenere f(170)=30 e f(170*2)=30/2, ci serve una funzione lineare che passi dai punti (170,30) and (340,15):
-# Query su www.wolframalpha.com: the equation of the linear function that passes through the points (170,30) and (340,15):
-# f(x) = -(3/34)x + 45
-# curvaGomitoSoglia = 30 # 30 va bene per motor_max_degs = motor_max_spec_degs / 6
-# curvaGomitoSoglia =  -(3/34) * motor_max_degs + 45
-# curvaGomitoSoglia = 40
-# curvaGomitoSoglia = 10
-# print(motor_max_degs, "  ", curvaGomitoSoglia)
-
-# Quante volte consecutive devo fare forward per resettare i contatori di correzione per il loop detection
-loop_detected_reset_soglia = 3
-#loop_detected_soglia = 70 # a 66 ha trovato 3 bianchi ed è ripartito il loop di detection
-# Se fra correzioni a destra e a sinistra (senza andare mai avanti) arrivo a questa soglia in totale ==> loop detected
-loop_detected_soglia = 60
-
 #Line counter: Quante volte vedo CONSECUTIVAMENTE una linea, su tutti i sensori
 lc_l = 0; lc_r = 0; lc_f = 0
 #Blank counter: Quante volte vedo CONSECUTIVAMENTE bianco, su tutti i sensori
@@ -52,7 +31,6 @@ def resetCountersCorrection_corrc():
 gyro_sensor.reset_angle(0)
 
 isLine_l = False; isLine_r = False
-
 
 while True:  
 
@@ -104,9 +82,11 @@ while True:
         df = 1 if isLine_f else 0
         print( ". ",dl,"-",dr,"\t",lc_l,"-",lc_r,"\t\t F: ",df," ",lc_f, "\t\t Corr:(", corrc_fwd,") ", corrc_left, " ", corrc_right)
 
-    '''
     #Ho perso la strada. Torno indietro
-    if bc_l >= 50 and bc_r >= 50 and bc_f >= 50:
+    if bc_l >= lost_soglia and bc_r >= lost_soglia and bc_f >= lost_soglia:
+        print("I TRE SENSORI VEDONO BIANCO DA ", lost_soglia, " ITERAZIONI")
+        quit()
+
         left_motor.hold()
         right_motor.hold()
         robot.drive(-100, 0)
@@ -122,7 +102,6 @@ while True:
         robot.stop()
         lineLock = scan_double(60, 0)
         continue
-    '''
 
     #Nessuno dei due sensori è sulla linea => vado dritto
     if not isLine_l and not isLine_r :
@@ -169,6 +148,7 @@ while True:
     if not loop_detected: 
         continue
 
+    print("LOOP DETECTED!")
     #Qui sono in loop di correzioni dx-sx. 
     # Procedo con uno scan. Determino se iniziare con uno scan a destra o a sinistra
     # Mi Fermo
@@ -185,11 +165,11 @@ while True:
     print("Angolo da ripristinare: ", angle_to_restore)
 
     if angle_to_restore > 0:
-        right_motor.dc( mtr_side_black_degs * 0.75 )
-        left_motor.dc( mtr_side_white_degs * 0.75)
+        right_motor.dc( mtr_side_black_degs * 0.9 )
+        left_motor.dc( mtr_side_white_degs * 0.9)
     else: # if gomitoDx:
-        left_motor.dc( mtr_side_black_degs * 0.75)
-        right_motor.dc( mtr_side_white_degs * 0.75)
+        left_motor.dc( mtr_side_black_degs * 0.9)
+        right_motor.dc( mtr_side_white_degs * 0.9)
 
     if angle_to_restore > 0:
         while gyro_sensor.angle() < 0: pass
@@ -200,7 +180,8 @@ while True:
     right_motor.hold()
     left_motor.hold()
 
-    #Avanzo di mezzo robot, posizionando la curva a gomito sotto il robot, al centro
+    #Mi posiziono in un punto ottimale per far partire lo scan
+    #Avanzo, posizionando la curva a gomito sotto il robot
     robot.straight( lungCingoli/4 )
     print("Avanzo per tenere il vertice sotto")
 

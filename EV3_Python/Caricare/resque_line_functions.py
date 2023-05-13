@@ -21,7 +21,8 @@ def scan( degree , abs_ignora_degrees):
 
     print("Scan di max ", degree, "°. Ignoro primi ", abs_ignora_degrees, "°")
 
-    motor_scan_degs = motor_max_degs * 0.5 * ( -1 if degree < 0 else 1)
+    #motor_scan_degs = motor_max_degs * 0.5 * ( -1 if degree < 0 else 1)
+    motor_scan_degs = motor_max_degs * 1.0 * ( -1 if degree < 0 else 1)
     
     #seleziono il sensore corretto a seconda della scansione oraria/antioraria
     color_sensor = color_sensor_right if degree > 0 else color_sensor_left
@@ -94,7 +95,7 @@ def verde360():
 
     robot.drive(0, 0)
 
-    print("HO CORRETTO")
+    print("verde360: HO CORRETTO")
 
     robot.stop()
 
@@ -102,24 +103,27 @@ def verde360():
 def isGomitoSx(l, r):
     print("####### DETECT Gomito ########")
     for i in range(len(l)):
-        print("... ",l[i],"-",r[i])
+        print("... [",i,"]\t\t",l[i],"-",r[i])
     print("####### DETECT Gomito END ########")
 
     isGomSx = False
 
-    #soglia = 10
-    soglia = 20
     i = 0; found = False
     while i < len(l) and not found:
-        if l[i] > soglia and r[i] > soglia:
+        if l[i] > gomito_soglia and r[i] > gomito_soglia:
             found = True
-            print("... Found ",l[i],"-",r[i])
-            if l[i] >= r[i]:
-                isGomitoSx = True
-            else: 
-                isGomitoSx = False 
-
+            print("... First step Found ",l[i],"-",r[i], " at i=",i)
+            found2 = False
+            while i < len(l) and not found2:
+                if l[i] >= r[i]+3:
+                    found2 = True
+                    isGomSx = True
+                if r[i] >= l[i]+3:
+                    found2 = True
+                    isGomSx = False
+                if found2 : print("... Second step Found ",l[i],"-",r[i], " at i=",i)
+                i += 1
         i += 1
         
-    print("... isGomitoSx. Found: ", found, "; isGomSx: ", isGomSx)
+    print("... isGomitoSx. Found: ", found2, "; isGomSx: ", isGomSx)
     return isGomSx
