@@ -1,8 +1,10 @@
 from resque_line_setup import *
 
 #Ritorna vero se linea
+#@@@ CALIBRARE I COLORI!!! A SECONDA DELL'AMBIENTE
 def isLine( color ):
-    return (color == Color.BLACK or color == Color.BLUE or color == Color.BROWN)
+    #return (color == Color.BLACK or color == Color.BLUE or color == Color.BROWN)
+    return (color == Color.BLACK or color == Color.BROWN)
 
 #Ritorna vero se linea - Luce riflessa
 def isLineF( light ):
@@ -63,7 +65,7 @@ def scan( degree , abs_ignora_degrees):
     robot.stop()
 
     #Ripristino l'angolo prima della chiamata
-    angle_save = gyro_sensor.angle( angle_save )
+    angle_save = gyro_sensor.reset_angle( angle_save )
 
     return lineLocked
 
@@ -100,20 +102,24 @@ def verde360():
 def isGomitoSx(l, r):
     print("####### DETECT Gomito ########")
     for i in range(len(l)):
-        print(l[i], "-", r[i])
+        print("... ",l[i],"-",r[i])
     print("####### DETECT Gomito END ########")
 
     isGomSx = False
 
+    #soglia = 10
+    soglia = 20
     i = 0; found = False
     while i < len(l) and not found:
-        if l[i] > 10 and r[i] > 10:
+        if l[i] > soglia and r[i] > soglia:
             found = True
+            print("... Found ",l[i],"-",r[i])
             if l[i] >= r[i]:
                 isGomitoSx = True
             else: 
                 isGomitoSx = False 
+
         i += 1
         
-    print("isGomitoSx. Found: ", found, "; isGomSx: ", isGomSx)
+    print("... isGomitoSx. Found: ", found, "; isGomSx: ", isGomSx)
     return isGomSx

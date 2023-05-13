@@ -39,6 +39,8 @@ light_sensor_front = ColorSensor(Port.S4)
 # ultrasonic_sensor = UltrasonicSensor(Port.S1)
 
 # Configurazione robot
+###########################
+### A T T E N Z I O N E ###
 #@@@ Correggere i valori di axle e wheel secondo la guida riportata qui:
 # Measuring and validating the robot dimensions, https://pybricks.com/ev3-micropython/robotics.html#
 robot = DriveBase(left_motor, right_motor, wheel_diameter=wheel, axle_track=axle)

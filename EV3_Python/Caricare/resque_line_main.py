@@ -19,24 +19,35 @@ from resque_line_setup import *
 # curvaGomitoSoglia = 40
 # curvaGomitoSoglia = 10
 # print(motor_max_degs, "  ", curvaGomitoSoglia)
-loop_detected_soglia = 70
+
+# Quante volte consecutive devo fare forward per resettare i contatori di correzione per il loop detection
+loop_detected_reset_soglia = 3
+#loop_detected_soglia = 70 # a 66 ha trovato 3 bianchi ed è ripartito il loop di detection
+# Se fra correzioni a destra e a sinistra (senza andare mai avanti) arrivo a questa soglia in totale ==> loop detected
+loop_detected_soglia = 60
 
 #Line counter: Quante volte vedo CONSECUTIVAMENTE una linea, su tutti i sensori
-lc_l = 0; lc_r = 0; lc_f = 0;
+lc_l = 0; lc_r = 0; lc_f = 0
 #Blank counter: Quante volte vedo CONSECUTIVAMENTE bianco, su tutti i sensori
-bc_l = 0; bc_r = 0; bc_f = 0;
+bc_l = 0; bc_r = 0; bc_f = 0
 
 def resetCountersLine_lc_bc():
-    lc_l = 0; lc_r = 0; lc_f = 0;
-    bc_l = 0; bc_r = 0; bc_f = 0;
+    global lc_l, lc_r, lc_f
+    global bc_l, bc_r, bc_f
+    lc_l = 0; lc_r = 0; lc_f = 0
+    bc_l = 0; bc_r = 0; bc_f = 0
 
 #Detection di un loop su asse (sx-dx-sx-dx ecc...)
 corrc_fwd = 0; corrc_left = 0; corrc_right = 0
-corrc_list_l = []; corrc_list_r = []; 
+corrc_list_l = list()
+corrc_list_r = list()
 
 def resetCountersCorrection_corrc():
+    global corrc_fwd, corrc_left, corrc_right
     corrc_fwd = 0; corrc_left = 0; corrc_right = 0
-    corrc_list_l = []; corrc_list_r = []; 
+    corrc_list_l.clear()
+    corrc_list_r.clear() 
+    #print("Correction counters corrc clear", "\t\t Corr: ", corrc_fwd," ", corrc_left, " ", corrc_right)
 
 gyro_sensor.reset_angle(0)
 
@@ -91,7 +102,7 @@ while True:
         dl = 1 if isLine_l else 0
         dr = 1 if isLine_r else 0
         df = 1 if isLine_f else 0
-        print ( dl, "-", df, "-", dr, "   ", lc_l, "-", lc_f, "-", lc_r)
+        print( ". ",dl,"-",dr,"\t",lc_l,"-",lc_r,"\t\t F: ",df," ",lc_f, "\t\t Corr:(", corrc_fwd,") ", corrc_left, " ", corrc_right)
 
     '''
     #Ho perso la strada. Torno indietro
@@ -138,15 +149,15 @@ while True:
         if correctLeft: 
             left_motor.dc ( mtr_side_black_degs )
             right_motor.dc( mtr_side_white_degs )
-            corrc_left += 1
+            corrc_left += 1; corrc_fwd = 0
 
         if correctRight:
             right_motor.dc( mtr_side_black_degs )
             left_motor.dc ( mtr_side_white_degs )
-            corrc_right += 1
+            corrc_right += 1; corrc_fwd = 0
 
     #Finchè riesce a correggersi in poche iterazioni, considero la posizione stabile => sono ad angolo 0.
-    if corrc_fwd >= 2:
+    if corrc_fwd >= loop_detected_reset_soglia:
         resetCountersCorrection_corrc()
         gyro_sensor.reset_angle(0)
 
@@ -170,19 +181,17 @@ while True:
     print("Curva a gomito a sinitra.") if gomitoSx else print("Curva a gomito a destra")
 
     #Ripristino la posizione allo stesso angolo di quando ero stabile (prima della curva a gomito)
-    angle = gyro_sensor.angle()
-    print("Angolo da ripristinare: ", angle)
-    
-    current_angle = gyro_sensor.angle()
+    angle_to_restore = -1 * gyro_sensor.angle()
+    print("Angolo da ripristinare: ", angle_to_restore)
 
-    if gomitoSx:
-        right_motor.dc( mtr_side_black_degs * 1/4 )
-        left_motor.dc( mtr_side_white_degs  * 1/4)
+    if angle_to_restore > 0:
+        right_motor.dc( mtr_side_black_degs * 0.75 )
+        left_motor.dc( mtr_side_white_degs * 0.75)
     else: # if gomitoDx:
-        left_motor.dc( mtr_side_black_degs * 1/4)
-        right_motor.dc( mtr_side_white_degs * 1/4 )
+        left_motor.dc( mtr_side_black_degs * 0.75)
+        right_motor.dc( mtr_side_white_degs * 0.75)
 
-    if current_angle < 0:
+    if angle_to_restore > 0:
         while gyro_sensor.angle() < 0: pass
     else:
         while gyro_sensor.angle() > 0: pass
@@ -193,7 +202,7 @@ while True:
 
     #Avanzo di mezzo robot, posizionando la curva a gomito sotto il robot, al centro
     robot.straight( lungCingoli/4 )
-    print("Avanzo di un quarto di cinglo")
+    print("Avanzo per tenere il vertice sotto")
 
     #Avendo il vertice della curva a gomito sotto il mio asse perpendicolare, eseguo uno scan
     lineLocked = False
