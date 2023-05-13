@@ -50,7 +50,7 @@ robot = DriveBase(left_motor, right_motor, wheel_diameter=wheel, axle_track=axle
 motor_max_spec_degs = 1020 
 #Velocità massima di avanzamento
 #motor_max_degs = motor_max_spec_degs / 6 #Soglia ottimale di movimento. Non perde le curve a gomito
-motor_max_degs = motor_max_spec_degs / 8
+motor_max_degs = motor_max_spec_degs / 8 #Più lento, ma più stabile
 #mtr_side_black_degs = -motor_max_degs * 40/100
 #mtr_side_white_degs =  motor_max_degs * 50/100
 mtr_side_black_degs = -motor_max_degs * 50/100
