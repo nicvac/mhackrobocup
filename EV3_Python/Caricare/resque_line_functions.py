@@ -14,7 +14,10 @@ def isLineF( light ):
 #abs_ignora_degrees: angolo da ignorare dall'inizio dello scan (in valore assoluto)
 def scan( degree , abs_ignora_degrees):
 
-    print("Scan di max ", degree, "°")
+    #Salvo l'angolo di partenza
+    angle_save = gyro_sensor.angle()
+
+    print("Scan di max ", degree, "°. Ignoro primi ", abs_ignora_degrees, "°")
 
     motor_scan_degs = motor_max_degs * 0.5 * ( -1 if degree < 0 else 1)
     
@@ -58,12 +61,15 @@ def scan( degree , abs_ignora_degrees):
     print("Scan lock ", lineLocked)
 
     robot.stop()
+
+    #Ripristino l'angolo prima della chiamata
+    angle_save = gyro_sensor.angle( angle_save )
+
     return lineLocked
 
 
 #Scan in una direzione. Se non trova nulla scan nell'altra direzione
 def scan_double( degree , abs_ignora_degrees):
-    lineLocked = False    
     lineLocked = scan(degree , abs_ignora_degrees)
     if not lineLocked:
         #Non ho trovato la linea dove mi sarei aspettato. Provo dall'altra parte

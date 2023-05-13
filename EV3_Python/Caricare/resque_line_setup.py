@@ -6,7 +6,6 @@ from pybricks.robotics import DriveBase
 from pybricks.media.ev3dev import SoundFile, ImageFile
 
 # Diametro ruota in mm
-wheel = 32.5
 wheel = 35
 
 # Distanza dal centro delle ruote da sinistra a destra
