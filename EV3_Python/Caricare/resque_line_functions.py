@@ -110,6 +110,7 @@ def isGomitoSx(l, r):
 
     isGomSx = False
 
+    delta = 3
     i = 0; found = False; found2 = False
     while i < len(l) and not found:
         if l[i] > gomito_soglia and r[i] > gomito_soglia:
@@ -117,10 +118,10 @@ def isGomitoSx(l, r):
             print("... First step Found ",l[i],"-",r[i], " at i=",i)
             found2 = False
             while i < len(l) and not found2:
-                if l[i] >= r[i]+3:
+                if l[i] >= r[i]+delta:
                     found2 = True
                     isGomSx = True
-                if r[i] >= l[i]+3:
+                if r[i] >= l[i]+delta:
                     found2 = True
                     isGomSx = False
                 if found2 : print("... Second step Found ",l[i],"-",r[i], " at i=",i)

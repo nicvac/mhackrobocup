@@ -86,7 +86,7 @@ loop_detected_soglia = round(motor_max_degs * m + c)
 print("loop_detected_soglia: ", loop_detected_soglia)
 
 # Quante volte consecutive vedo bianco su tutti e tre i sensori per ritenermi perso
-y1=70
+y1=140
 m, c = retta_da_due_punti(x1, y1, x1/2, y1*2)
 lost_soglia = round(motor_max_degs * m + c)
 print("lost_soglia: ", lost_soglia)
