@@ -110,7 +110,7 @@ def isGomitoSx(l, r):
 
     isGomSx = False
 
-    i = 0; found = False
+    i = 0; found = False; found2 = False
     while i < len(l) and not found:
         if l[i] > gomito_soglia and r[i] > gomito_soglia:
             found = True
