@@ -97,6 +97,17 @@ m, c = retta_da_due_punti(x1, y1, x1/2, y1*2)
 gomito_soglia = round(motor_max_degs * m + c)
 print("gomito_soglia: ", gomito_soglia)
 
+# PARAMETRI DI SCAN
+# Di quanto devo avanzare prima di cominciare uno scan
+# Ad esempio dopo un loop potrei essere su una curva a gomito. Metto il vertice sotto i cingoli avanzando di un tot e poi parte lo scan
+# Meno avanzo, meno sarà l'angolo di scan. Misurato con il goniometro il caso lungCingoli/4
+scan_forward = lungCingoli/4
+x1 = lungCingoli/2; y1 = 90+45 # Metto il vertice sull'asse, ma avanzare troppo non copre tutti gli scenari
+x2 = lungCingoli/4; y2 = 90+35 #
+m, c = retta_da_due_punti(x1, y1, x2, y2)
+scan_degree = scan_forward * m + c
+print("scan_forward: ", scan_forward, "; scan_degree: ",scan_degree)
+
 print("### #### ###")
 
 # [DEPRECATED]

@@ -182,23 +182,23 @@ while True:
 
     #Mi posiziono in un punto ottimale per far partire lo scan
     #Avanzo, posizionando la curva a gomito sotto il robot
-    robot.straight( lungCingoli/4 )
     print("Avanzo per tenere il vertice sotto")
+    robot.straight( scan_forward )
 
     #Avendo il vertice della curva a gomito sotto il mio asse perpendicolare, eseguo uno scan
     lineLocked = False
 
     #Ruota in senso orario o antiorario (a seconda della curva a gomito) fino a ritrovare la linea
-    scanDegree = 100 * (-1 if gomitoSx else 1)
+    curr_scan_degree = ( scan_degree ) * (-1 if gomitoSx else 1)
     
-    lineLocked = scan_double(scanDegree, 0)
+    lineLocked = scan_double(curr_scan_degree, 0)
 
     if not lineLocked:
         print("DOUBLE SCAN FALLITO. ESEGUO DEGLI SCAN RIPETUTI FINO A TROVARE LA STRADA")
     while not lineLocked:
         robot.straight(50) #5 cm
         robot.stop()
-        lineLocked = scan_double(scanDegree, 0)
+        lineLocked = scan_double(curr_scan_degree, 0)
 
     #Qui ho ritrovato la linea
     resetCountersLine_lc_bc()
