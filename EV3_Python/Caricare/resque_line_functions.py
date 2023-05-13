@@ -30,8 +30,10 @@ def scan( degree , abs_ignora_degrees):
     color_sensor = color_sensor_right if degree > 0 else color_sensor_left
 
     lineLocked = False
-    lineMet = False
-    linePassed = False
+    lineMet = False #Trovo una linea
+    linePassed = False #La sorpasso
+
+    lineMetFront = False #Trovo una linea con il sensore frontale
 
     #Dovo aver scelto il sensore giusto, ruoto su asse fino a incontrare la linea e a sorpassarla
     gyro_sensor.reset_angle(0)
@@ -44,14 +46,17 @@ def scan( degree , abs_ignora_degrees):
             pass
         else:
             color = color_sensor.color()
-            if not lineMet:
-                lineMet = isLine(color)
-            else:
-                linePassed = not isLine(color)
-            lineLocked = lineMet and linePassed
+            lineMet = lineMet or isLine(color)
+            linePassed = lineMet and (linePassed or not isLine(color))
+
+            if not lineMetFront:
+                refl = light_sensor_front.reflection()
+                lineMetFront = isLineF(refl)
+
+            lineLocked = lineMet and linePassed and lineMetFront
 
         current_angle = abs(gyro_sensor.angle())
-        
+
     robot.drive(0, 0)
 
     #Se lo scan non ha trovato linee => Torno alla posizione di partenza
@@ -63,6 +68,7 @@ def scan( degree , abs_ignora_degrees):
             while ( gyro_sensor.angle() > 0 ) : pass
         robot.drive(0, 0)
 
+    print("Scan: lineMet: ",lineMet,"; linePassed: ",linePassed, "; lineMetFront: ", lineMetFront)
     print("Scan lock ", lineLocked)
 
     robot.stop()
