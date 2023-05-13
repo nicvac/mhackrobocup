@@ -78,7 +78,9 @@ print("loop_detected_reset_soglia: ", loop_detected_reset_soglia)
 
 #loop_detected_soglia = 70 # a 66 ha trovato 3 bianchi ed è ripartito il loop di detection
 # Se fra correzioni a destra e a sinistra (senza andare mai avanti) arrivo a questa soglia in totale ==> loop detected
-y1=80
+#y1=80
+#y1=40
+y1=50
 m, c = retta_da_due_punti(x1, y1, x1/2, y1*2)
 loop_detected_soglia = round(motor_max_degs * m + c)
 print("loop_detected_soglia: ", loop_detected_soglia)
