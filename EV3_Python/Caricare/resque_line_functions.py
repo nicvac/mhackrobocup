@@ -14,13 +14,19 @@ def isLineF( light ):
 #Scan
 #Ruoto sul mio asse fino a degree angoli fino a centrare la linea fra i due sensori L e R
 #Senso orario: degree positivo
-#abs_ignora_degrees: angolo da ignorare dall'inizio dello scan (in valore assoluto)
-def scan( degree , abs_ignora_degrees):
+# abs_ignora_degrees: angolo da ignorare dall'inizio dello scan (in valore assoluto)
+# lock_front_also: anche il sensore frontale deve vedere linea
+# lock_front_also conviene usarlo per uno scan a valle di una curva a gomito. 
+#    perchè se la detection della curva a gomito sbaglia, il frontale non vede (quasi) mai linea
+#    e quindi faccio partire lo scan dall'altra parte (la direzione giusta)
+#    Invece non serve attivarlo dopo la detection del verde perchè il verde mi dà già 
+#    la direzione corretta, non si può sbagliare.
+def scan( degree , abs_ignora_degrees, lock_front_also):
 
     #Salvo l'angolo di partenza
     angle_save = gyro_sensor.angle()
 
-    print("Scan di max ", degree, "°. Ignoro primi ", abs_ignora_degrees, "°")
+    print("Scan di max ", degree, "°. Ignoro primi ", abs_ignora_degrees, "°; lock_front_also",lock_front_also)
 
     #Tieni una velocità bassa. Altrimenti i cingoli slittano sfalsando tutto (un po' per volta può tornare indietro)
     motor_scan_degs = motor_max_degs * 0.5 * ( -1 if degree < 0 else 1)
@@ -53,7 +59,10 @@ def scan( degree , abs_ignora_degrees):
                 refl = light_sensor_front.reflection()
                 lineMetFront = isLineF(refl)
 
-            lineLocked = lineMet and linePassed and lineMetFront
+            if lock_front_also:
+                lineLocked = lineMet and linePassed and lineMetFront
+            else:
+                lineLocked = lineMet and linePassed
 
         current_angle = abs(gyro_sensor.angle())
 
@@ -80,11 +89,11 @@ def scan( degree , abs_ignora_degrees):
 
 
 #Scan in una direzione. Se non trova nulla scan nell'altra direzione
-def scan_double( degree , abs_ignora_degrees):
-    lineLocked = scan(degree , abs_ignora_degrees)
+def scan_double( degree , abs_ignora_degrees, lock_front_also):
+    lineLocked = scan(degree , abs_ignora_degrees, lock_front_also)
     if not lineLocked:
         #Non ho trovato la linea dove mi sarei aspettato. Provo dall'altra parte
-        lineLocked = scan(-degree , abs_ignora_degrees)
+        lineLocked = scan(-degree , abs_ignora_degrees, lock_front_also)
     return lineLocked
 
 

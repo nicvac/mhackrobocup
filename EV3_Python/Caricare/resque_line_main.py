@@ -47,11 +47,11 @@ while True:
     if gl and not gr:
         print("Ho vist verde a sinistra")
         robot.straight(lungCingoli / 3)
-        scan(-100, 40)
+        scan(-100, 40, False)
     elif gr and not gl:
         print("Ho vist verde a destra")
         robot.straight(lungCingoli / 3)
-        scan(100, 40)
+        scan(100, 40, False)
     elif gr and gl:
         print("Ho vist verde da tutti e due i lati")
         verde360()
@@ -100,7 +100,7 @@ while True:
         robot.stop()
         robot.straight(30)
         robot.stop()
-        lineLock = scan_double(60, 0)
+        lineLock = scan_double(60, 0, True)
         continue
 
     #Nessuno dei due sensori è sulla linea => vado dritto
@@ -191,14 +191,14 @@ while True:
     #Ruota in senso orario o antiorario (a seconda della curva a gomito) fino a ritrovare la linea
     curr_scan_degree = ( scan_degree ) * (-1 if gomitoSx else 1)
     
-    lineLocked = scan_double(curr_scan_degree, 0)
+    lineLocked = scan_double(curr_scan_degree, 0, True)
 
     if not lineLocked:
         print("DOUBLE SCAN FALLITO. ESEGUO DEGLI SCAN RIPETUTI FINO A TROVARE LA STRADA")
     while not lineLocked:
         robot.straight(50) #5 cm
         robot.stop()
-        lineLocked = scan_double(curr_scan_degree, 0)
+        lineLocked = scan_double(curr_scan_degree, 0, True)
 
     #Qui ho ritrovato la linea
     resetCountersLine_lc_bc()
