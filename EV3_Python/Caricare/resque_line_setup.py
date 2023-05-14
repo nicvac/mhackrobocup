@@ -4,6 +4,9 @@ from pybricks.parameters import Port, Stop, Direction, Button, Color
 from pybricks.tools import wait, StopWatch, DataLog
 from pybricks.robotics import DriveBase
 from pybricks.media.ev3dev import SoundFile, ImageFile
+import time
+
+brick = EV3Brick()
 
 # Diametro ruota in mm
 wheel = 35

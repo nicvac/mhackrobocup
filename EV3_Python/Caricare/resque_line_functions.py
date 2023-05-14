@@ -116,7 +116,7 @@ def verde360():
 
     robot.stop()
 
-
+#Detect curva a gomito
 def isGomitoSx(l, r):
     print("####### DETECT Gomito ########")
     for i in range(len(l)):
@@ -144,4 +144,26 @@ def isGomitoSx(l, r):
         i += 1
         
     print("... isGomitoSx. Found: ", found2, "; isGomSx: ", isGomSx)
+    if found2:
+        brick.speaker.beep()
+        #brick.speaker.say("Yes")
+    else:
+        brick.speaker.beep(); time.sleep(0.1); brick.speaker.beep()
+        #brick.speaker.say("No")
+        isGomSx = isGomitoSx_optII(l,r)
+
+    return isGomSx
+
+
+#Guarda analisi su https://docs.google.com/spreadsheets/d/1zzRqJC8Go7ISH45u8RZzTldJTufcHLqrFenuDwdnGmc/edit?usp=sharing
+def isGomitoSx_optII(l, r):
+    print("... isGomitoSx_optII")
+    distanza = 0
+    for i in range(len(l)):
+        distanza += (l[i] - r[i])
+    
+    media = distanza / len(l)
+    isGomSx = media > 0    
+    print("... isGomitoSx. Media distanze: ", media, "; GomitoSx: ", isGomSx)
+
     return isGomSx
