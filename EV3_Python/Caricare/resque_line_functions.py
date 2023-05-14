@@ -1,5 +1,15 @@
 from resque_line_setup import *
 
+
+#Suona N beep
+def brick_speaker_beep( num ):
+    #brick.speaker.say("Yes")
+    for i in range( num ):
+        brick.speaker.beep()
+        if num > 0: 
+            time.sleep(0.1)
+
+
 #Ritorna vero se linea
 #@@@ CALIBRARE I COLORI!!! A SECONDA DELL'AMBIENTE
 def isLine( color ):
@@ -145,11 +155,9 @@ def isGomitoSx(l, r):
         
     print("... isGomitoSx. Found: ", found2, "; isGomSx: ", isGomSx)
     if found2:
-        brick.speaker.beep()
-        #brick.speaker.say("Yes")
+        brick_speaker_beep(1)
     else:
-        brick.speaker.beep(); time.sleep(0.1); brick.speaker.beep()
-        #brick.speaker.say("No")
+        brick_speaker_beep(2)
         isGomSx = isGomitoSx_optII(l,r)
 
     return isGomSx
@@ -167,3 +175,4 @@ def isGomitoSx_optII(l, r):
     print("... isGomitoSx. Media distanze: ", media, "; GomitoSx: ", isGomSx)
 
     return isGomSx
+

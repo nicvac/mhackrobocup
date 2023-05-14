@@ -40,26 +40,25 @@ while True:
     light_f = light_sensor_front.reflection()
 
     ### VERDI
-    '''
-    gl = isGreen( color_l )
-    gr = isGreen( color_r )
+    isGreen_l = isGreen( color_l )
+    isGreen_r = isGreen( color_r )
 
-    if gl and not gr:
-        print("Ho vist verde a sinistra")
+    if isGreen_l and not isGreen_r:
+        print("Ho visto verde a sinistra")
         robot.straight(lungCingoli / 3)
         scan(-100, 40, False)
-    elif gr and not gl:
-        print("Ho vist verde a destra")
+    elif isGreen_r and not isGreen_l:
+        print("Ho visto verde a destra")
         robot.straight(lungCingoli / 3)
         scan(100, 40, False)
-    elif gr and gl:
-        print("Ho vist verde da tutti e due i lati")
+    elif isGreen_r and isGreen_l:
+        print("Ho visto verde da tutti e due i lati")
         verde360()
     
-    if gl or gr: 
+    if isGreen_l or isGreen_r: 
         continue
-    '''
     
+    ### SEGUI LINEA
     isLine_l = isLine(color_l)
     isLine_r = isLine(color_r)
     isLine_f = isLineF(light_f)
@@ -82,13 +81,14 @@ while True:
         df = 1 if isLine_f else 0
         print( ". ",dl,"-",dr,"\t",lc_l,"-",lc_r,"\t\t F: ",df," ",lc_f, "\t\t Corr:(", corrc_fwd,") ", corrc_left, " ", corrc_right)
 
-    #Ho perso la strada. Torno indietro
+    #Ho perso la strada. Torno indietro e recupero il percorso
+    #@@@ QUI BISOGNA DISTINGUERE IL CASO GAP
     if bc_l >= lost_soglia and bc_r >= lost_soglia and bc_f >= lost_soglia:
         print("I TRE SENSORI VEDONO BIANCO DA ", lost_soglia, " ITERAZIONI")
-        quit()
-
         left_motor.hold()
         right_motor.hold()
+        brick_speaker_beep(3)
+
         robot.drive(-100, 0)
         lineFound = False
         while not lineFound:
@@ -121,9 +121,6 @@ while True:
         else:
             correctLeft  = isLine_l
             correctRight = isLine_r 
-
-        #@@@ TBC: abbassare mtr_side_*_degs all'aumentare di corrc_*
-        #         per essere più precisi nelle curve a gomito strettissime
 
         if correctLeft: 
             left_motor.dc ( mtr_side_black_degs )
