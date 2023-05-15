@@ -53,7 +53,7 @@ robot = DriveBase(left_motor, right_motor, wheel_diameter=wheel, axle_track=axle
 motor_max_spec_degs = 1020 
 #Velocità massima di avanzamento
 #motor_max_degs = motor_max_spec_degs / 6 #Soglia ottimale di movimento. Non perde le curve a gomito
-motor_max_degs = motor_max_spec_degs / 8 #Più lento, ma più stabile
+motor_max_degs = motor_max_spec_degs / 8 #Più lento, ma più stabile. Percorso a corna calibrato su questa velocità
 #mtr_side_black_degs = -motor_max_degs * 40/100
 #mtr_side_white_degs =  motor_max_degs * 50/100
 mtr_side_black_degs = -motor_max_degs * 50/100
@@ -72,44 +72,49 @@ def retta_da_due_punti(x1, y1, x2, y2):
     c = y1 - m * x1
     return m, c
 
+# ATTENZIONE! LE SOGLIE DIPENDONO FORTEMENTE DAL VALORE DI motor_max_degs!!!
+# PIU' ALTO E' motor_max_degs MINORI SARANNO I CAMPIONAMENTI E QUINDI LE SOGLIE CAMBIANO!
+# QUESTE SOGLIE SONO STATE CALIBRATE SU motor_max_degs = motor_max_spec_degs / 8 = 127.5
+# Tips: PUOI USARE retta_da_due_punti PER DETERMINARE IL VALORE DI UNA SOGLIA A PARTIRE DA motor_max_degs, es.:
+#   x1=motor_max_spec_degs / 8 # Velocità a cui sono stati calibrati i vari y1
+#   y1=3
+#   m, c = retta_da_due_punti(x1, y1, x1/2, y1*2) #Cioè al dimezzarsi di x raddoppia y
+#   soglia = round(motor_max_degs * m + c)
+
+
 # Quante volte consecutive devo fare forward per resettare i contatori di correzione per il loop detection
-x1=motor_max_spec_degs / 8 # Velocità a cui sono stati calibrati i vari y1
-y1=3
-m, c = retta_da_due_punti(x1, y1, x1/2, y1*2)
-loop_detected_reset_soglia = round(motor_max_degs * m + c)
+loop_detected_reset_soglia = 3
 print("loop_detected_reset_soglia: ", loop_detected_reset_soglia)
 
 #loop_detected_soglia = 70 # a 66 ha trovato 3 bianchi ed è ripartito il loop di detection
 # Se fra correzioni a destra e a sinistra (senza andare mai avanti) arrivo a questa soglia in totale ==> loop detected
 #y1=80
 #y1=40
-y1=50
-m, c = retta_da_due_punti(x1, y1, x1/2, y1*2)
-loop_detected_soglia = round(motor_max_degs * m + c)
+loop_detected_soglia = 50
 print("loop_detected_soglia: ", loop_detected_soglia)
 
 # Quante volte consecutive vedo bianco su tutti e tre i sensori per ritenermi perso
-y1=140
-m, c = retta_da_due_punti(x1, y1, x1/2, y1*2)
-lost_soglia = round(motor_max_degs * m + c)
+lost_soglia = 140
 print("lost_soglia: ", lost_soglia)
 
 # Soglia per detection curva a gomito Sx o Dx
-y1=20
-m, c = retta_da_due_punti(x1, y1, x1/2, y1*2)
-gomito_soglia = round(motor_max_degs * m + c)
+gomito_soglia = 20
 print("gomito_soglia: ", gomito_soglia)
 
 # PARAMETRI DI SCAN
 # Di quanto devo avanzare prima di cominciare uno scan
 # Ad esempio dopo un loop potrei essere su una curva a gomito. Metto il vertice sotto i cingoli avanzando di un tot e poi parte lo scan
 # Meno avanzo, meno sarà l'angolo di scan. Misurato con il goniometro il caso lungCingoli/4
-scan_forward = lungCingoli/4
-x1 = lungCingoli/2; y1 = 90+45 # Metto il vertice sull'asse, ma avanzare troppo non copre tutti gli scenari
-x2 = lungCingoli/4; y2 = 90+35 #
-m, c = retta_da_due_punti(x1, y1, x2, y2)
-scan_degree = scan_forward * m + c
-print("scan_forward: ", scan_forward, "; scan_degree: ",scan_degree)
+def scan_forward_2_scan_degree( scan_forward_mm ):
+    x1 = lungCingoli/2; y1 = 90+45 # Metto il vertice sull'asse, ma avanzare troppo non copre tutti gli scenari
+    x2 = lungCingoli/4; y2 = 90+35 #
+    m, c = retta_da_due_punti(x1, y1, x2, y2)
+    scan_degree = scan_forward_mm * m + c
+    print("scan_forward: ", scan_forward_mm, "; scan_degree: ",scan_degree)
+    return scan_degree
+
+scan_forward_def = lungCingoli/4
+print("scan_forward_def: ", scan_forward_def)
 
 print("### #### ###")
 

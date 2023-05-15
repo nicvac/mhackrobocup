@@ -45,12 +45,14 @@ while True:
 
     if isGreen_l and not isGreen_r:
         print("Ho visto verde a sinistra")
+        scan_deg = scan_forward_2_scan_degree(lungCingoli / 3)
         robot.straight(lungCingoli / 3)
-        scan(-100, 40, False)
+        scan(-scan_deg, 40, False)
     elif isGreen_r and not isGreen_l:
         print("Ho visto verde a destra")
+        scan_deg = scan_forward_2_scan_degree(lungCingoli / 3)
         robot.straight(lungCingoli / 3)
-        scan(100, 40, False)
+        scan(scan_deg, 40, False)
     elif isGreen_r and isGreen_l:
         print("Ho visto verde da tutti e due i lati")
         verde360()
@@ -180,12 +182,13 @@ while True:
     #Mi posiziono in un punto ottimale per far partire lo scan
     #Avanzo, posizionando la curva a gomito sotto il robot
     print("Avanzo per tenere il vertice sotto")
-    robot.straight( scan_forward )
+    robot.straight( scan_forward_def )
 
     #Avendo il vertice della curva a gomito sotto il mio asse perpendicolare, eseguo uno scan
     lineLocked = False
 
     #Ruota in senso orario o antiorario (a seconda della curva a gomito) fino a ritrovare la linea
+    scan_degree = scan_forward_2_scan_degree(scan_forward_def)
     curr_scan_degree = ( scan_degree ) * (-1 if gomitoSx else 1)
     
     lineLocked = scan_double(curr_scan_degree, 0, True)
