@@ -41,6 +41,9 @@ light_sensor_front = ColorSensor(Port.S4)
 # Sensore ultrasuoni
 # ultrasonic_sensor = UltrasonicSensor(Port.S1)
 
+# Motore medio
+medium_motor = Motor(Port.D)
+
 # Configurazione robot
 ###########################
 ### A T T E N Z I O N E ###

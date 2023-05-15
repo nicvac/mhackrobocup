@@ -1,15 +1,15 @@
 #!/usr/bin/env pybricks-micropython
 
-from resque_line_setup import *
-from resque_line_functions import *
+from rescue_line_setup import *
+from rescue_line_functions import *
 
 import time
 
 #Stampa sensori
-while True:  
-    print(color_sensor_left.color(), " - ", color_sensor_right.color(), "\t\t F:", light_sensor_front.reflection() )
-    #print(light_sensor_front.reflection())
-    time.sleep(0.5)
+# while True:  
+#     print(color_sensor_left.color(), " - ", color_sensor_right.color(), "\t\t F:", light_sensor_front.reflection() )
+#     #print(light_sensor_front.reflection())
+#     time.sleep(0.5)
 
 
 #Test scan
@@ -19,3 +19,6 @@ while True:
 #     robot.straight(50) #5 cm
 #     robot.stop()
 #     lineLocked = scan_double(scanDegree, 0)
+
+while True:
+    print(gyro_sensor.speed())

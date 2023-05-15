@@ -1,4 +1,4 @@
-from resque_line_setup import *
+from rescue_line_setup import *
 
 
 #Suona N beep

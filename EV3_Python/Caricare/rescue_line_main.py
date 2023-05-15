@@ -2,8 +2,8 @@
 
 import time
 
-from resque_line_functions import *
-from resque_line_setup import *
+from rescue_line_functions import *
+from rescue_line_setup import *
 
 #Line counter: Quante volte vedo CONSECUTIVAMENTE una linea, su tutti i sensori
 lc_l = 0; lc_r = 0; lc_f = 0
@@ -83,27 +83,27 @@ while True:
         df = 1 if isLine_f else 0
         print( ". ",dl,"-",dr,"\t",lc_l,"-",lc_r,"\t\t F: ",df," ",lc_f, "\t\t Corr:(", corrc_fwd,") ", corrc_left, " ", corrc_right)
 
-    #Ho perso la strada. Torno indietro e recupero il percorso
+    #Ho perso la strada. Torno indietro e recupero il percorso Triplo bianco
     #@@@ QUI BISOGNA DISTINGUERE IL CASO GAP
-    if bc_l >= lost_soglia and bc_r >= lost_soglia and bc_f >= lost_soglia:
-        print("I TRE SENSORI VEDONO BIANCO DA ", lost_soglia, " ITERAZIONI")
-        left_motor.hold()
-        right_motor.hold()
-        brick_speaker_beep(3)
+    # if bc_l >= lost_soglia and bc_r >= lost_soglia and bc_f >= lost_soglia:
+    #     print("I TRE SENSORI VEDONO BIANCO DA ", lost_soglia, " ITERAZIONI")
+    #     left_motor.hold()
+    #     right_motor.hold()
+    #     brick_speaker_beep(3)
 
-        robot.drive(-100, 0)
-        lineFound = False
-        while not lineFound:
-            color_l = color_sensor_left.color()
-            color_r = color_sensor_right.color()
-            light_f = light_sensor_front.reflection()
-            lineFound = isLine(color_l) or isLine(color_r) or isLineF(light_f)
+    #     robot.drive(-100, 0)
+    #     lineFound = False
+    #     while not lineFound:
+    #         color_l = color_sensor_left.color()
+    #         color_r = color_sensor_right.color()
+    #         light_f = light_sensor_front.reflection()
+    #         lineFound = isLine(color_l) or isLine(color_r) or isLineF(light_f)
             
-        robot.stop()
-        robot.straight(30)
-        robot.stop()
-        lineLock = scan_double(60, 0, True)
-        continue
+    #     robot.stop()
+    #     robot.straight(30)
+    #     robot.stop()
+    #     lineLock = scan_double(60, 0, True)
+    #     continue
 
     #Nessuno dei due sensori è sulla linea => vado dritto
     if not isLine_l and not isLine_r :
