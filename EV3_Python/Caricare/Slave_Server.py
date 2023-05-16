@@ -29,9 +29,9 @@ print('connected!')
 
 # In this program, the server waits for the client to send the first message
 # and then sends a reply.
-mbox.wait()
-print(mbox.read())
-mbox.send('hello to you!')
+# mbox.wait()
+# print(mbox.read())
+# mbox.send('hello to you!')
 
 while True:
     extReq.wait()
