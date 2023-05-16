@@ -64,35 +64,37 @@ robot = DriveBase(left_motor, right_motor, wheel_diameter=wheel, axle_track=axle
 # Motor max power deg/s
 # Da specifica 1020. Da test arriva a 780 (forse a causa delle batterie scariche)
 motor_max_spec_degs = 1020 
-#Velocità massima di avanzamento
-#motor_max_degs = motor_max_spec_degs / 6 #Soglia ottimale di movimento. Non perde le curve a gomito
-motor_max_degs = motor_max_spec_degs / 8 #Più lento, ma più stabile. Percorso a corna calibrato su questa velocità
-#mtr_side_black_degs = -motor_max_degs * 40/100
-#mtr_side_white_degs =  motor_max_degs * 50/100
-mtr_side_black_degs = -motor_max_degs * 50/100
-mtr_side_white_degs =  motor_max_degs * 50/100
+#Limite della velocità imposto da noi
+motor_max_degs = motor_max_spec_degs / 8 
+#Più lento, ma più stabile. Percorso a corna calibrato su questa velocità
+motor_max_pwrperc = 63.75
+mtr_side_black_pwrperc = -motor_max_pwrperc
+mtr_side_white_pwrperc =  motor_max_pwrperc
 
 stampa = True
 
 print("### SETUP ###")
 print("motor_max_degs: ",motor_max_degs)
+print("motor_max_pwrperc: ",motor_max_pwrperc)
+print("mtr_side_black_pwrperc: ",mtr_side_black_pwrperc)
+print("mtr_side_white_pwrperc: ",mtr_side_white_pwrperc)
 
 #La uso per il calcolo dinamico delle soglie
-# Diversi parametri soglia sono calibrati su motor_max_degs=200
-# Al variare di motor_max_degs devono variare anche le soglie
+# Diversi parametri soglia sono calibrati su motor_max_pwrperc
+# Al variare di motor_max_pwrperc devono variare anche le soglie
 def retta_da_due_punti(x1, y1, x2, y2):
     m = (y2 - y1) / (x2 - x1)
     c = y1 - m * x1
     return m, c
 
-# ATTENZIONE! LE SOGLIE DIPENDONO FORTEMENTE DAL VALORE DI motor_max_degs!!!
-# PIU' ALTO E' motor_max_degs MINORI SARANNO I CAMPIONAMENTI E QUINDI LE SOGLIE CAMBIANO!
-# QUESTE SOGLIE SONO STATE CALIBRATE SU motor_max_degs = motor_max_spec_degs / 8 = 127.5
-# Tips: PUOI USARE retta_da_due_punti PER DETERMINARE IL VALORE DI UNA SOGLIA A PARTIRE DA motor_max_degs, es.:
-#   x1=motor_max_spec_degs / 8 # Velocità a cui sono stati calibrati i vari y1
+# ATTENZIONE! LE SOGLIE DIPENDONO FORTEMENTE DAL VALORE DI motor_max_pwrperc!!!
+# PIU' ALTO E' motor_max_pwrperc MINORI SARANNO I CAMPIONAMENTI E QUINDI LE SOGLIE CAMBIANO!
+# QUESTE SOGLIE SONO STATE CALIBRATE SU motor_max_pwrperc = 63.75
+# Tips: PUOI USARE retta_da_due_punti PER DETERMINARE IL VALORE DI UNA SOGLIA A PARTIRE DA motor_max_pwrperc, es.:
+#   x1=motor_max_pwrperc # Velocità a cui sono stati calibrati i vari y1
 #   y1=3
 #   m, c = retta_da_due_punti(x1, y1, x1/2, y1*2) #Cioè al dimezzarsi di x raddoppia y
-#   soglia = round(motor_max_degs * m + c)
+#   soglia = round(motor_max_pwrperc * m + c)
 
 
 # Quante volte consecutive devo fare forward per resettare i contatori di correzione per il loop detection
@@ -130,19 +132,3 @@ scan_forward_def = lungCingoli/4
 print("scan_forward_def: ", scan_forward_def)
 
 print("### #### ###")
-
-# [DEPRECATED]
-#Dopo X correzioni, se vedo ancora linea sullo stesso sensore per X volte ==> è una curva a gomito
-# Se usi un valore troppo alto, la correzione continua fino a non vedere più il nero e quindi viene considerato percorso smooth
-# Se usi un valore troppo basso, alcune correzioni smooth vengono interrotte e fa una detect di una curva a gomito, 
-#  quando invece doveva semplicemente continuare a correggere 
-# Il valore di soglia dipende dalla velocità dei motori, perchè più veloce è il motore, meno campionamenti si fanno e quindi più bassa deve essere la soglia
-# Abbiamo visto che  per motor_max_degs = motor_max_spec_degs / 6 = 1020 / 6 = 170 ==> un buon valore di soglia è 30. 
-# Quindi per ottenere f(170)=30 e f(170*2)=30/2, ci serve una funzione lineare che passi dai punti (170,30) and (340,15):
-# Query su www.wolframalpha.com: the equation of the linear function that passes through the points (170,30) and (340,15):
-# f(x) = -(3/34)x + 45
-# curvaGomitoSoglia = 30 # 30 va bene per motor_max_degs = motor_max_spec_degs / 6
-# curvaGomitoSoglia =  -(3/34) * motor_max_degs + 45
-# curvaGomitoSoglia = 40
-# curvaGomitoSoglia = 10
-# print(motor_max_degs, "  ", curvaGomitoSoglia)

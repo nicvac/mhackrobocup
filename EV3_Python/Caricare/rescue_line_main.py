@@ -107,8 +107,8 @@ while True:
 
     #Nessuno dei due sensori è sulla linea => vado dritto
     if not isLine_l and not isLine_r :
-        left_motor.dc(mtr_side_white_degs)
-        right_motor.dc(mtr_side_white_degs)
+        left_motor.dc(mtr_side_white_pwrperc)
+        right_motor.dc(mtr_side_white_pwrperc)
         corrc_fwd += 1
     else:
         #Almeno uno dei due sensori è sulla linea
@@ -125,13 +125,13 @@ while True:
             correctRight = isLine_r 
 
         if correctLeft: 
-            left_motor.dc ( mtr_side_black_degs )
-            right_motor.dc( mtr_side_white_degs )
+            left_motor.dc ( mtr_side_black_pwrperc )
+            right_motor.dc( mtr_side_white_pwrperc )
             corrc_left += 1; corrc_fwd = 0
 
         if correctRight:
-            right_motor.dc( mtr_side_black_degs )
-            left_motor.dc ( mtr_side_white_degs )
+            right_motor.dc( mtr_side_black_pwrperc )
+            left_motor.dc ( mtr_side_white_pwrperc )
             corrc_right += 1; corrc_fwd = 0
 
     #Finchè riesce a correggersi in poche iterazioni, considero la posizione stabile => sono ad angolo 0.
@@ -164,11 +164,11 @@ while True:
     print("Angolo da ripristinare: ", angle_to_restore)
 
     if angle_to_restore > 0:
-        right_motor.dc( mtr_side_black_degs * 0.9 )
-        left_motor.dc( mtr_side_white_degs * 0.9)
+        right_motor.dc( mtr_side_black_pwrperc * 0.9 )
+        left_motor.dc( mtr_side_white_pwrperc * 0.9)
     else: # if gomitoDx:
-        left_motor.dc( mtr_side_black_degs * 0.9)
-        right_motor.dc( mtr_side_white_degs * 0.9)
+        left_motor.dc( mtr_side_black_pwrperc * 0.9)
+        right_motor.dc( mtr_side_white_pwrperc * 0.9)
 
     if angle_to_restore > 0:
         while gyro_sensor.angle() < 0: pass

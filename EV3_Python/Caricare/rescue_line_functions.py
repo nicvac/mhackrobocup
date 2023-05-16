@@ -40,7 +40,6 @@ def scan( degree , abs_ignora_degrees, lock_front_also):
 
     #Tieni una velocità bassa. Altrimenti i cingoli slittano sfalsando tutto (un po' per volta può tornare indietro)
     motor_scan_degs = motor_max_degs * 0.5 * ( -1 if degree < 0 else 1)
-    #motor_scan_degs = motor_max_degs * 1.0 * ( -1 if degree < 0 else 1)
     
     #seleziono il sensore corretto a seconda della scansione oraria/antioraria
     color_sensor = color_sensor_right if degree > 0 else color_sensor_left

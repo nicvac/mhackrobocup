@@ -29,9 +29,9 @@ from rescue_line_setup import *
 
 #     robot.drive(0, 0)
 
-motori = motor_max_degs / 2
+motori = motor_max_pwrperc
 
-back_motor.hold()
+#back_motor.hold()
 
 left_motor.dc( motori )
 right_motor.dc( motori )
