@@ -6,7 +6,7 @@
 // error: errore permesso fra le letture
 inline double getDistanceCm( SDTYPE sdtype, int stableCount = 1, double error = 0.5 ) {
   int count = 0;
-  double distCurr(0);
+  double distCurr0);
   double distPrev(0);
 
   do {

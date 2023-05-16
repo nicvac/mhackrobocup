@@ -26,6 +26,13 @@ right_motor = Motor(Port.A)
 # Motore grande sinistra
 left_motor = Motor(Port.B)
 
+
+# Motore grande sopra sinistra
+upper_left_motor = Motor(Port.C)
+
+# Motore grande sopra destra
+upper_right_motor = Motor(Port.D)
+
 # Sensore di colore destra
 color_sensor_right = ColorSensor(Port.S2)
 
@@ -45,7 +52,7 @@ light_sensor_front = ColorSensor(Port.S4)
 # ultrasonic_sensor = UltrasonicSensor(Port.S1)
 
 # Motore medio
-medium_motor = Motor(Port.D)
+# medium_motor = Motor(Port.D)
 
 # Configurazione robot
 ###########################
