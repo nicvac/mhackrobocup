@@ -30,4 +30,14 @@ def evacTrovaERaggiungiPalla( EV_TYPE & evacuationType ):
 
         if dirScanDetected:
             print("evacCentratiRispettoAlloggetto begin. dirScan: ", dirScan)
+            evacCentratiRispettoAlloggetto( dirScan )
+            print("evacCentratiRispettoAlloggetto end.")
+
+        isPallina = evacIsPallina( evacuationType )
+    
+    robot.turn(180) #da modificare con il giroscopio
+
+    evacCatturaPallina()
+
+    print("fine")
 
