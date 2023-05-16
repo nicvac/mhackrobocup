@@ -21,6 +21,17 @@ def isLine( color ):
 def isLineF( light ):
     return (light <= 10)
 
+#Rotazioni con giroscopio
+def robot_gyro_turn( degree ):
+    if degree == 0: return
+    save = gyro_sensor.angle()
+    gyro_sensor.reset_angle(0)
+    robot.drive(0, motor_scan_degs * (1 if degree > 0 else -1))
+    while abs(gyro_sensor.angle()) < abs(degree): pass
+    robot.drive(0, 0)
+    robot.stop()
+    gyro_sensor.reset_angle(save)
+
 #Scan
 #Ruoto sul mio asse fino a degree angoli fino a centrare la linea fra i due sensori L e R
 #Senso orario: degree positivo

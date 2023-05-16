@@ -3,56 +3,35 @@ from rescue_line_setup import *
 from math import *
 from rescue_line_functions import *
 
-upper_left_motor.run_angle(300, 90)
-upper_right_motor.run_angle(300, 90)
-upper_left_motor.hold()
-upper_right_motor.hold()
-
-SERVER = 'ev3devExt'
-
-client = BluetoothMailboxClient()
-mbox = TextMailbox('greeting', client)
-extReq = NumericMailbox('extReq', client)
-extDist = NumericMailbox('extDist', client)
-
-print('establishing connection...')
-client.connect(SERVER)
-print('connected!')
-
-
+#Dimensione della pallina
 sizePallinaCm = 4.5
 
-distFinaleCm = 7.0
+#La distanza finale fra robot e oggetto da raggiungere
+distFinaleCm = 2.0
 
+#La distanza fra il robot e la pallina da catturare
+distPallina = 7.0
+
+#Dimensioni della stanza
 dimRoom1 = 90
 dimRoom2 = 120
 dimRoomDiag = sqrt( dimRoom1 * dimRoom1 + dimRoom2 * dimRoom2)
 
+#Dimensioni Evacuation points
 dimEcavPoint = 30
 dimEvacPointAltezza = sqrt( dimEcavPoint * dimEcavPoint + dimEcavPoint * dimEcavPoint ) / 2
 
+#Tipo di Evacuation zone da raggiungere
 EV_VERDE = 0
 EV_ROSSA = 1
 EV_USCITA = 2
 
+#VERSO
 SGORARIO=0
 SGANTIORARIO=1
 
-
-def ruotaSuAsse(senso):
-    if senso == -1:
-        left_motor.dc(-60)
-        right_motor.dc(60)
-    else:
-        left_motor.dc(60)
-        right_motor.dc(-60)
-    
-
-#ferma tutti i motori
-def motoriFerma ():
-    left_motor.hold()
-    right_motor.hold()
-
+# Nella stanza uso il robot al contrario rispetto al seguilinea
+robot = DriveBase(right_motor, left_motor, wheel_diameter=wheel, axle_track=axle)
 
 #Trasforma la distanza in mm del sensore in cm
 def getDistanceCm():
@@ -70,10 +49,9 @@ def evacDetectScanDirection( scanMinCm ):
 
     gyro_sensor.reset_angle(0)
 
-
     # Ruota come un radar, in senso antiorario per 10 gradi
     angleLimit = 10.0
-    robot.drive(0, -300)
+    robot.drive(0, -motor_scan_degs)
     cTurnAngle = gyro_sensor.angle()
     trovato = False
     while not trovato and abs(cTurnAngle) <= angleLimit:
@@ -82,25 +60,18 @@ def evacDetectScanDirection( scanMinCm ):
         if tempDist <= scanMinCm + 0.5:
             trovato = True
 
+    robot.drive(0, 0)
     robot.stop()
 
     # Rimettiti in posizione, prima di questa scansione
     # Ruota In senso orario di N gradi per compensare la rotazione antioraria usata durante la scansione per riagganciare l'oggetto
-    robot.drive(0, 300)
-    gyro_sensor.reset_angle(0)
-    while gyro_sensor.angle() < abs(cTurnAngle):
-        pass
-    robot.stop()
+    robot_gyro_turn(abs(cTurnAngle))
 
     dirScan = SGANTIORARIO if trovato else SGORARIO
 
-    print("Fine")
+    print("evacDetectScanDirection Fine")
 
     return dirScan
-
-
-
-
 
 
 # Gira in senso antioratio, come un radar, per individuare uno spike nella distanza
@@ -116,9 +87,10 @@ def evacIndividuaSpike():
     gyro_sensor.reset_angle(0)
 
     # Ruota come un radar, in senso antiorario
-    ruotaSuAsse(-1)
+    robot.drive(0, -motor_scan_degs)
 
     # Individua lo spike. Fa due giri su se stesso. Se non trova nulla restituisce false.
+    gyro_sensor.reset_angle(0)
     cTurnAngle = 0
 
     isScanInteresting = False
@@ -136,12 +108,13 @@ def evacIndividuaSpike():
         nellaStanza = currCm < (dimRoomDiag/2.0 - dimEvacPointAltezza)
         isScanInteresting = isSpike and daLontanoAVicino and nellaStanza
     
-    motoriFerma()
+    robot.drive(0,0)
+    robot.stop()
 
     # Ritorna l'ultima distanza
     distCm = currCm
     
-    print("Fine")
+    print("evacIndividuaSpike Fine")
 
     return isScanInteresting, distCm
 
@@ -152,20 +125,17 @@ def evacRaggiungiOggetto( oggDistCm ):
     print("evacRaggiungiOggetto")
 
     # Il verso di rotazione deve essere determinato solo una volta in questa funzione.
-    dirScanDetected = False
     dirScan = SGANTIORARIO
+    dirScanDetected = False
 
     scanDistCurrCm = oggDistCm
     scanMinCm = oggDistCm
 
     isAgganciato = True
 
-    print("evacRaggiungiOggetto", " ",scanDistCurrCm, " ", distFinaleCm)
-
-    while scanDistCurrCm > distFinaleCm:
-        print("evacRaggiungiOggetto: entrato nel while", scanDistCurrCm, " ", distFinaleCm)
+    while scanDistCurrCm >= distFinaleCm:
         # Avanza finchè la distanza si riduce
-        robot.drive(300, 0)
+        robot.drive(motor_max_degs, 0)
         while isAgganciato and (scanDistCurrCm > distFinaleCm):
             scanDistCurrCm = getDistanceCm()
 
@@ -174,8 +144,8 @@ def evacRaggiungiOggetto( oggDistCm ):
             else:
                 isAgganciato = False
         
+        robot.drive(0, 0)
         robot.stop()
-        #motoriFerma()
 
         # Qui sono sganciato oppure ho raggiunto l'oggetto
         # Se ho rggiunto l'oggetto esco dal ciclo principale
@@ -191,45 +161,60 @@ def evacRaggiungiOggetto( oggDistCm ):
             dirScanDetected = True
 
         # Gira nella direzione individuata, finchè non riaggancio l'oggetto
-        robot.drive(0, 300)
+        robot.drive(0, motor_scan_degs * (1 if dirScan == SGORARIO else -1 ))
         while not isAgganciato:
             scanDistCurrCm = getDistanceCm()
             isAgganciato = scanDistCurrCm <= scanDistCurrCm + 0.5
         
-        motoriFerma()
+        robot.drive(0, 0)
+        robot.stop()
 
         # Una volta riagganciato, giro di ulteriori 5 gradi per centrare meglio l'oggetto
-        # angolo = -5 if dirScan == SGANTIORARIO else 5
-        # robot.turn(angolo, True)
+        angolo = 5 * (1 if dirScan == SGORARIO else -1 )
+        robot.turn(angolo)
     
-    print("Fine")
-    quit()
-    return dirScanDetected, dirScan
+    print("evacRaggiungiOggetto Fine")
+    return dirScan, dirScanDetected
 
 
 
 # Raggiunto l'oggetto, ruoto il robot per centrare al meglio l'oggetto.
 # Ruoto finchè non raggiungo la distanza minima.
 def evacCentratiRispettoAlloggetto( dirScan ):
+
     print("evacCentratiRispettoAlloggetto")
 
     curCm = getDistanceCm()
     scanMinCm = curCm
 
-    ruotaSuAsse(1 if dirScan == SGORARIO else SGANTIORARIO)
+    robot.drive(0, motor_scan_degs * (1 if dirScan == SGORARIO else -1 ) )
 
     minimoMigliorato = True
 
     while minimoMigliorato:
         currCm = getDistanceCm()
-        minimoMigliorato = currCm <= scanMinCm
+        minimoMigliorato = (currCm <= scanMinCm)
     
-    motoriFerma()
+    robot.stop()
 
-    print("Fine")
+    print("evacCentratiRispettoAlloggetto Fine")
 
 
+#L'oggetto raggiunto è una pallina
+#Restituisce vero se abbiamo raggiunto una pallina
+#Restituisce evacuationType: il colore della evacuation zone in cui portare la pallina
+def evacIsPallina():
+    print("evacIsPallina")
+    evacuationType = EV_VERDE
+    isPallina = True
+    #@@@  DA SCRIVERE
+    # RESTITUISCI FALSE SE LEGGI UNA LINEA DI ENTRATA O USCITA
+    print("evacIsPallina Fine")
+    return isPallina, evacuationType
+
+#Cattura la pallina
 def evacCatturaPallina():
+    # @@@
     # upper_left_motor.run_angle(300, -100)
     # upper_right_motor.run_angle(300, -100)
 
@@ -243,10 +228,12 @@ def evacCatturaPallina():
 
 
 # MAIN
-# Trova una palla nella stanza e la raggiunge
-# Restituisce evacuationType: il colore della evacuation zone in cui portare la pallina oppure uscita (non ci sono palline)
-#def evacTrovaERaggiungiPalla():
-while True:
+#Questa funzione va chiamata dal centro stanza!
+#Trova una palla nella stanza e la raggiunge
+#Restituisce evacuationType: il colore della evacuation zone in cui portare la pallina oppure uscita (non ci sono palline)
+def evacTrovaERaggiungiPalla():
+    print("evacTrovaERaggiungiPalla")
+
     isPallina = False
     
     while not isPallina:
@@ -258,14 +245,14 @@ while True:
         print("evacIndividuaSpike end. oggDistCm: ", oggDistCm, "; trovato: ", trovato)
 
         if not trovato:
-            evacuationType = EV_USCITA
-            # return
+            return EV_USCITA
                 
         # Tieni agganciato l'oggetto ed avvicinati
         print("evacRaggiungiOggetto begin")
         dirScanDetected = False
         
         dirScan, dirScanDetected = evacRaggiungiOggetto(oggDistCm)
+        print("evacRaggiungiOggetto end. oggDistCm: ",oggDistCm,"; dirScan: ",dirScan,"; dirScanDetected: ", dirScanDetected); 
 
 
         #Raggiunto l'oggetto ad una distanza di distFinaleCm
@@ -276,14 +263,32 @@ while True:
             print("evacCentratiRispettoAlloggetto end.")
 
         #Controlliamo se l'oggetto raggiunto è una pallina
-        #isPallina = evacIsPallina( evacuationType )
-        isPallina = True
+        isPallina, evacuationType = evacIsPallina()
 
-    #Ruoto su me stesso in modo da posizionare la gabbia per catturare la pallina
 
-   #Cattura la pallina 
+    #Qui sono vicino alla pallina. Devo essere distante di 7 cm per catturare la pallina
+    robot.straight( -(distPallina - distFinaleCm) )
+
+    #Cattura la pallina 
     evacCatturaPallina()
 
-    print("fine")
-    # return evacuationType
+    print("evacTrovaERaggiungiPalla END")
+    return evacuationType
 
+
+# MAIN
+upper_left_motor.run_angle(300, 90)
+upper_right_motor.run_angle(300, 90)
+upper_left_motor.hold()
+upper_right_motor.hold()
+
+client = BluetoothMailboxClient()
+mbox = TextMailbox('greeting', client)
+extReq = NumericMailbox('extReq', client)
+extDist = NumericMailbox('extDist', client)
+
+print('establishing connection...')
+client.connect(SERVER)
+print('connected!')
+
+evacTrovaERaggiungiPalla()

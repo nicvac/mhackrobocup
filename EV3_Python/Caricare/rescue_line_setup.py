@@ -11,6 +11,9 @@ import time
 
 brick = EV3Brick()
 
+#Il brick server (fornisce le distanze)
+SERVER = 'ev3devExt'
+
 # Diametro ruota in mm
 wheel = 35
 
@@ -70,6 +73,9 @@ motor_max_degs = motor_max_spec_degs / 8
 motor_max_pwrperc = 63.75
 mtr_side_black_pwrperc = -motor_max_pwrperc
 mtr_side_white_pwrperc =  motor_max_pwrperc
+
+#Velocità da usare per gli scan
+motor_scan_degs = motor_max_degs * 0.5
 
 stampa = True
 
