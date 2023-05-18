@@ -1,5 +1,9 @@
 from rescue_line_setup import *
 
+#Confronto a meno di un errore
+def simile( a, b, errore = 1.0 ):
+  return ( abs(a - b) <= errore )
+
 
 #Suona N beep
 def brick_speaker_beep( num ):

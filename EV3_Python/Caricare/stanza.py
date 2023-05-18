@@ -33,14 +33,17 @@ SGANTIORARIO=1
 # Nella stanza uso il robot al contrario rispetto al seguilinea
 robot = DriveBase(right_motor, left_motor, wheel_diameter=wheel, axle_track=axle)
 
-#Trasforma la distanza in mm del sensore in cm
+#Ritorna la distanza del sensore server in cm
+def getDistanceMM():
+        extReq.send(4)
+        extDist.wait()
+        return extDist.read()
+
+#Ritorna la distanza in cm, con contatore di stabilità
 def getDistanceCm():
-    extReq.send(4)
-    extDist.wait()
-    distanzaMm = extDist.read()
-    distanzaCm = distanzaMm / 10
-    print(distanzaCm)
-    return distanzaCm
+    curr = getDistanceMM() / 10
+    #print(curr)
+    return curr
     
 # Determina il verso di rotazione da usare per riagganciare l'oggetto.
 # Il verso di rotazione va determinato solo una volta e si userà sempre lo stesso per riagganciare l'oggetto
@@ -51,7 +54,7 @@ def evacDetectScanDirection( scanMinCm ):
 
     # Ruota come un radar, in senso antiorario per 10 gradi
     angleLimit = 10.0
-    robot.drive(0, -motor_scan_degs)
+    robot.drive(0, -evac_motor_scan_degs)
     cTurnAngle = gyro_sensor.angle()
     trovato = False
     while not trovato and abs(cTurnAngle) <= angleLimit:
@@ -87,7 +90,7 @@ def evacIndividuaSpike():
     gyro_sensor.reset_angle(0)
 
     # Ruota come un radar, in senso antiorario
-    robot.drive(0, -motor_scan_degs)
+    robot.drive(0, -evac_motor_scan_degs)
 
     # Individua lo spike. Fa due giri su se stesso. Se non trova nulla restituisce false.
     gyro_sensor.reset_angle(0)
@@ -102,6 +105,7 @@ def evacIndividuaSpike():
         diffCm = abs(prevCm - currCm)
 
         cTurnAngle = gyro_sensor.angle()
+        print("distCm Angle: ", currCm, " ", cTurnAngle)
 
         daLontanoAVicino = prevCm > currCm + 1.0
         isSpike = diffCm >= sizePallinaCm
@@ -161,7 +165,7 @@ def evacRaggiungiOggetto( oggDistCm ):
             dirScanDetected = True
 
         # Gira nella direzione individuata, finchè non riaggancio l'oggetto
-        robot.drive(0, motor_scan_degs * (1 if dirScan == SGORARIO else -1 ))
+        robot.drive(0, evac_motor_scan_degs * (1 if dirScan == SGORARIO else -1 ))
         while not isAgganciato:
             scanDistCurrCm = getDistanceCm()
             isAgganciato = scanDistCurrCm <= scanDistCurrCm + 0.5
@@ -187,7 +191,7 @@ def evacCentratiRispettoAlloggetto( dirScan ):
     curCm = getDistanceCm()
     scanMinCm = curCm
 
-    robot.drive(0, motor_scan_degs * (1 if dirScan == SGORARIO else -1 ) )
+    robot.drive(0, evac_motor_scan_degs * (1 if dirScan == SGORARIO else -1 ) )
 
     minimoMigliorato = True
 
@@ -277,8 +281,11 @@ def evacTrovaERaggiungiPalla():
 
 
 # MAIN
-upper_left_motor.run_angle(300, 90)
-upper_right_motor.run_angle(300, 90)
+
+evac_motor_scan_degs = 30
+
+#upper_left_motor.run_angle(300, 100)
+#upper_right_motor.run_angle(300, 90) #Devono girare insieme.
 upper_left_motor.hold()
 upper_right_motor.hold()
 
