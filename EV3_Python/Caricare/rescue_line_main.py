@@ -69,10 +69,12 @@ while True:
     lc_l = lc_l + 1 if isLine_l else 0
     lc_r = lc_r + 1 if isLine_r else 0
     lc_f = lc_f + 1 if isLine_f else 0
-    #Blank counter
+    
+    #Blank counter: Incremento il contatore se non è linea e non lo era anche al giro precedente
     bc_l = bc_l + 1 if not isLine_l else 0
     bc_r = bc_r + 1 if not isLine_r else 0
     bc_f = bc_f + 1 if not isLine_f else 0
+
 
     corrc_list_l.append(lc_l)
     corrc_list_r.append(lc_r)
@@ -105,11 +107,15 @@ while True:
     #     lineLock = scan_double(60, 0, True)
     #     continue
 
+    
+
+
     #Nessuno dei due sensori è sulla linea => vado dritto
     if not isLine_l and not isLine_r :
         left_motor.dc(mtr_side_white_pwrperc)
         right_motor.dc(mtr_side_white_pwrperc)
         corrc_fwd += 1
+        
     else:
         #Almeno uno dei due sensori è sulla linea
         correctLeft = False; correctRight = False
