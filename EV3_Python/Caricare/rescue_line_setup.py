@@ -74,6 +74,11 @@ motor_max_pwrperc = 63.75
 mtr_side_black_pwrperc = -motor_max_pwrperc
 mtr_side_white_pwrperc =  motor_max_pwrperc
 
+
+
+ignoreDistanceSensorCounter = 0
+
+
 #Velocità da usare per gli scan
 motor_scan_degs = motor_max_degs * 0.5
 
@@ -137,4 +142,23 @@ def scan_forward_2_scan_degree( scan_forward_mm ):
 scan_forward_def = lungCingoli/4
 print("scan_forward_def: ", scan_forward_def)
 
+
+
+
+
 print("### #### ###")
+
+
+
+print("OPERAZIONE DI CONNESSIONE AL SERVER AVVIATA, COMMENTARE SE NON SERVE")
+
+SERVER = 'ev3devExt'
+
+client = BluetoothMailboxClient()
+mbox = TextMailbox('greeting', client)
+extReq = NumericMailbox('extReq', client)
+extDist = NumericMailbox('extDist', client)
+
+print('establishing connection...')
+client.connect(SERVER)
+print('connected!')

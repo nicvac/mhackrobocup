@@ -32,7 +32,12 @@ gyro_sensor.reset_angle(0)
 
 isLine_l = False; isLine_r = False
 
+
 while True:  
+    
+    isObstacle = checkIfObstacle()
+    if isObstacle: aggiraOstacolo()
+    
 
     #Lettura di tutti i sensori nel loop corrente
     color_l = color_sensor_left.color()

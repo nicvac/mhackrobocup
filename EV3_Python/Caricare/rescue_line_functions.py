@@ -190,3 +190,116 @@ def isGomitoSx_optII(l, r):
 
     return isGomSx
 
+
+
+def checkIfObstacle():
+    # porta 1 - sensore avanti
+    extReq.send(1)
+    extDist.wait()
+    distanceCm = extDist.read() / 10
+    # print("Distanza rilevata: ", distanceCm)
+    if distanceCm <= 9:
+        return True
+    else:
+        return False
+
+
+def aggiraOstacolo():
+
+    robot.straight(-100)
+    robot.stop()
+
+    gyro_sensor.reset_angle(0)
+    # salva la distanza del sensore di sinistra ( porta 2 - sensore sinistra )
+    extReq.send(2)
+    extDist.wait()
+    distanceLeft = extDist.read() / 10
+
+    # salva la distanza del sensore di destra ( porta 3 - sensore destra )
+    extReq.send(3)
+    extDist.wait()
+    distanceRight = extDist.read() / 10
+
+    gyro_sensor.reset_angle(0)
+    
+    # caso in cui c'è un muro a destra
+    # se la distanza di sinistra è maggiore della distanza di destra, non c'è un muro a sinistra
+    # esegue tutto il programma dal lato sinistro
+    if distanceLeft > distanceRight:
+
+        # gira sull'asse di 50 gradi
+        left_motor.dc(-50)
+        right_motor.dc(50)
+        while abs(gyro_sensor.angle()) < 50:
+            print(gyro_sensor.angle())
+        
+        left_motor.hold()
+        right_motor.hold()
+
+        # si allontana dalla linea di 5 centimetri per avviare la scansione con i sensori che vedono bianco bianco bianco
+        robot.straight(50)
+        robot.stop()
+
+        # inizia a muoversi circumnavigando l'ostacolo
+        left_motor.dc(80)
+        right_motor.dc(20)
+        
+
+        while True:
+            colorl = color_sensor_left.color()
+            colorr = color_sensor_right.color()
+            lightf = light_sensor_front.reflection()
+
+            isLineLeft = isLine(colorl)
+            isLineRight = isLine(colorr)
+            isLineFront = isLineF(lightf)
+
+            # se vede con uno dei tre sensori la linea nera interrompe la funzione aggira ostacolo e torna al seguilinea
+            if isLineLeft or isLineRight or isLineFront:
+                left_motor.hold()
+                right_motor.hold()
+                return
+
+        # aggira ostacolo a sinistra
+
+    # caso in cui c'è un muro a sinistra
+    # se la distanza di destra è maggiore della distanza di sinistra, non c'è un muro a destra
+    # esegue tutto il programma dal lato destro
+    elif distanceRight > distanceLeft:
+        
+        # gira sull'asse di 50 gradi
+        left_motor.dc(50)
+        right_motor.dc(-50)
+        while abs(gyro_sensor.angle()) < 50:
+            print(gyro_sensor.angle())
+        left_motor.hold()
+        right_motor.hold()
+
+
+        # si allontana dalla linea di 5 centimetri per avviare la scansione con i sensori che vedono bianco bianco bianco
+        robot.straight(50)
+        robot.stop()
+
+
+        # inizia a muoversi circumnavigando l'ostacolo
+        left_motor.dc(20)
+        right_motor.dc(80)
+        
+        while True:
+            colorl = color_sensor_left.color()
+            colorr = color_sensor_right.color()
+            lightf = light_sensor_front.reflection()
+
+            isLineLeft = isLine(colorl)
+            isLineRight = isLine(colorr)
+            isLineFront = isLineF(lightf)
+
+            # se vede con uno dei tre sensori la linea nera interrompe la funzione aggira ostacolo e torna al seguilinea
+            if isLineLeft or isLineRight or isLineFront:
+                left_motor.hold()
+                right_motor.hold()
+                return
+        
+
+        
+
