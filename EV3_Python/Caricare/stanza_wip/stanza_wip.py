@@ -43,7 +43,7 @@ while i < len(cm_list):
     sample_prev = cm_list[ idx_start-1 ] if idx_start-1 >= 0 else cm_list[ idx_start ]
     sd = stdev(data)
 
-    #2. Se sd alta, controllo se il segnale fa su e giù
+    #2. Controllo inoltre se il segnale fa su e giù (va a zigzag)
     diff = data[0] - sample_prev
     to_up = (diff > 0)
     upanddown = 1 # La prima discesa è data per la prima distanza rilevante con sample_prev rilevata
@@ -68,7 +68,7 @@ while i < len(cm_list):
         idx_sample = i+1 #tranquillo con gli indici ne ho almeno w davanti, per costruzione
         diff = cm_list[idx_sample-1] - cm_list[idx_sample] 
         if diff >= 5:
-            #prima del sample scelto voglio almeno x misurazioni stabili
+            #prima del sample scelto voglio almeno 2 misurazioni stabili
             s_prev_1 = cm_list[idx_sample-1] if idx_sample-1 >= 0 else cm_list[idx_sample]
             s_prev_2 = cm_list[idx_sample-2] if idx_sample-2 >= 0 else cm_list[idx_sample]
             if abs(s_prev_2 - s_prev_1) <= 1:
@@ -80,3 +80,23 @@ while i < len(cm_list):
     print("After noise check: i: ", i)
 
 print("Risultato: ", samples)
+
+#Scelgo il miglior sample: quello con più sample stabili precedenti
+samples_best = dict()
+for idx_s in range(0, len(samples), 1):
+    j_curr = samples[idx_s] - 1
+    sample_curr = cm_list[j_curr] if j_curr >= 0 else cm_list[0]
+    
+    is_stable=True
+    stable_count = -1 #La prima volta prev e curr combaciano
+    while is_stable and j_curr >= 0:
+        sample_prev = sample_curr
+        sample_curr = cm_list[j_curr]
+        is_stable = abs(sample_prev - sample_curr) <= 1
+        if is_stable:
+            stable_count += 1
+        j_curr -= 1
+
+    samples_best[stable_count] = samples[idx_s]
+
+print("Best samples: ", samples_best)
