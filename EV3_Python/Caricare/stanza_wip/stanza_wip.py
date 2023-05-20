@@ -63,6 +63,7 @@ while i < len(cm_list):
     print("Sd in [",idx_start,",", idx_stop ,"]: ", sd, "; upanddown", upanddown, "=> isNoise: ", isnoise)
 
     if isnoise:
+        #@@@ Migliorare qui. Non buttare via tutti i 5 sample. Butta via solo la parte a "zigzag"
         i = idx_stop+1
     else:
         idx_sample = i+1 #tranquillo con gli indici ne ho almeno w davanti, per costruzione
@@ -99,4 +100,6 @@ for idx_s in range(0, len(samples), 1):
 
     samples_best[stable_count] = samples[idx_s]
 
+#@@@ Migliorare qui. Il best sample è il più vicino, con un stable_count sufficientemente grande,
+#     non quello con il miglior stable_count
 print("Best samples: ", samples_best)
