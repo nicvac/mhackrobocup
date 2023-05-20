@@ -9,8 +9,8 @@
 from statistics import variance
 from statistics import stdev
 
-from load_p117g import *
-#from load_p090g import *
+#from load_p117g import *
+from load_p090g import *
 
 samples = list()
 
@@ -63,8 +63,15 @@ while i < len(cm_list):
     print("Sd in [",idx_start,",", idx_stop ,"]: ", sd, "; upanddown", upanddown, "=> isNoise: ", isnoise)
 
     if isnoise:
-        #@@@ Migliorare qui. Non buttare via tutti i 5 sample. Butta via solo la parte a "zigzag"
         i = idx_stop+1
+        # Non butto via tutti i 5 sample della finestra data. Recupero i sample finali se questi si raccordano con il sample dopo la finetra
+        procedi = True
+        while procedi:
+            cm_next = cm_list[i] if i < len(cm_list) else cm_list[-1]
+            cm_curr = cm_list[i-1]
+            procedi = (abs(cm_next - cm_curr) <=1) #Questa condizione sarà falsa almeno una volta entro la finetra data (perchè noise=true)
+            i = i-1
+        
     else:
         idx_sample = i+1 #tranquillo con gli indici ne ho almeno w davanti, per costruzione
         diff = cm_list[idx_sample-1] - cm_list[idx_sample] 
