@@ -6,11 +6,13 @@
 # Vedi dati su 
 # https://docs.google.com/spreadsheets/d/1zzRqJC8Go7ISH45u8RZzTldJTufcHLqrFenuDwdnGmc/edit?usp=sharing
 
+# @@@ IDEA: Se non trova nulla (o lo stable count è piccolo), puoi invertire cm_list e provare in senso inverso
+
 from statistics import variance
 from statistics import stdev
 
-#from load_p117g import *
-from load_p090g import *
+from load_p117g import *
+#from load_p090g import *
 
 samples = list()
 
@@ -75,22 +77,18 @@ while i < len(cm_list):
     else:
         idx_sample = i+1 #tranquillo con gli indici ne ho almeno w davanti, per costruzione
         diff = cm_list[idx_sample-1] - cm_list[idx_sample] 
+        #Se la differenza la il sample precedente e quello corrente è >= size pallina ==> buon candidato
         if diff >= 5:
-            #prima del sample scelto voglio almeno 2 misurazioni stabili
-            s_prev_1 = cm_list[idx_sample-1] if idx_sample-1 >= 0 else cm_list[idx_sample]
-            s_prev_2 = cm_list[idx_sample-2] if idx_sample-2 >= 0 else cm_list[idx_sample]
-            if abs(s_prev_2 - s_prev_1) <= 1:
-                samples.append(idx_sample)
-            else:
-                print("Sample ",idx_sample, " scartato perchè i due sample precedenti instabili")
+            samples.append(idx_sample)
         i +=1
 
     print("After noise check: i: ", i)
 
 print("Risultato: ", samples)
 
-#Scelgo il miglior sample: quello con più sample stabili precedenti
-samples_best = dict()
+#Catalogo i sample in base alla loro distanza e alla stabilità dei sample precedenti
+samples_best_stable = dict()
+samples_best_near = dict()
 for idx_s in range(0, len(samples), 1):
     j_curr = samples[idx_s] - 1
     sample_curr = cm_list[j_curr] if j_curr >= 0 else cm_list[0]
@@ -105,8 +103,11 @@ for idx_s in range(0, len(samples), 1):
             stable_count += 1
         j_curr -= 1
 
-    samples_best[stable_count] = samples[idx_s]
+    samples_best_stable[stable_count] = samples[idx_s]
+    samples_best_near[ samples[idx_s] ] = stable_count
+
 
 #@@@ Migliorare qui. Il best sample è il più vicino, con un stable_count sufficientemente grande,
 #     non quello con il miglior stable_count
-print("Best samples: ", samples_best)
+print("Best samples: ", samples_best_stable)
+
