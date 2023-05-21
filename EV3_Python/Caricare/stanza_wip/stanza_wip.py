@@ -6,13 +6,31 @@
 # Vedi dati su 
 # https://docs.google.com/spreadsheets/d/1zzRqJC8Go7ISH45u8RZzTldJTufcHLqrFenuDwdnGmc/edit?usp=sharing
 
-# @@@ IDEA: Se non trova nulla (o lo stable count è piccolo), puoi invertire cm_list e provare in senso inverso
+# @@@ IDEA: Se non trova nulla (o lo stable count è piccolo), puoi invertire cm_list ed eseguire questo algoritmo in senso inverso
+# @@@ MIGLIORAMENTO
+# @@@ Ora mi restituisce ad esempio Best samples:  {17: 103, 4: 109, 8: 118}.
+#     Significa che il sample 103 ha 17 campioni stabili prima dello spike, ecc...
+#     Da questi best sample bisogna individuare il migliore.
+#     Alcuni criteri: - il campione con la distanza più vicina con una stabilità sufficientemente grande
+#                     - il campione con la stabilità maggiore
+#                ---> - il campione la cui distanza risale *stabilmente* di almeno 5 centimetri. 
+#                       Restituire il campione nel mezzo fra lo spike detection e lo spike inverso di risalita.
 
 from statistics import variance
 from statistics import stdev
 
 from load_p117g import *
 #from load_p090g import *
+
+#La distanza fra due campioni entro cui riterli stabili
+soglia_stabile_cm = 1
+#Rumore: Dimensione della finestra da analizzare
+win_size = 5
+#Rumore: Se la deviazione standard di win_size campioni supera questa soglia => rumore
+soglia_devstd = 1.5
+#Rumore: Se vado tre volte su e giù => zigzag, rumore
+soglia_updown = 3
+
 
 samples = list()
 
@@ -22,7 +40,7 @@ while i < len(cm_list):
     while is_smooth and i<len(cm_list)-1:
         refcm = cm_list[i]
         nextcm = cm_list[i+1]
-        is_smooth = (abs(refcm - nextcm) <= 1)
+        is_smooth = (abs(refcm - nextcm) <= soglia_stabile_cm)
         i += 1
 
     i -= 1
@@ -32,9 +50,8 @@ while i < len(cm_list):
     #Faccio una analisi in avanti per controllare se si tratta di rumore 
 
     #Analizzo una finestra in avanti di 5 campioni.
-    w = 5
     idx_start = i+1
-    idx_stop = idx_start + w -1
+    idx_stop = idx_start + win_size -1
 
     if not idx_stop < len(cm_list): break
 
@@ -55,12 +72,11 @@ while i < len(cm_list):
         diff = data[j+1] - data[j]
         to_up = (diff > 0)
 
-        if abs(diff) > 1: #1.5:
+        if abs(diff) > soglia_stabile_cm:
             if to_up != to_up_prev:
                 upanddown += 1
 
-    #isnoise = (sd >= 1.5)
-    isnoise = (sd >= 1.5 and upanddown >= 3)
+    isnoise = (sd >= soglia_devstd and upanddown >= soglia_updown)
 
     print("Sd in [",idx_start,",", idx_stop ,"]: ", sd, "; upanddown", upanddown, "=> isNoise: ", isnoise)
 
@@ -71,11 +87,11 @@ while i < len(cm_list):
         while procedi:
             cm_next = cm_list[i] if i < len(cm_list) else cm_list[-1]
             cm_curr = cm_list[i-1]
-            procedi = (abs(cm_next - cm_curr) <=1) #Questa condizione sarà falsa almeno una volta entro la finetra data (perchè noise=true)
+            procedi = (abs(cm_next - cm_curr) <= soglia_stabile_cm ) #Questa condizione sarà falsa almeno una volta entro la finetra data (perchè noise=true)
             i = i-1
         
     else:
-        idx_sample = i+1 #tranquillo con gli indici ne ho almeno w davanti, per costruzione
+        idx_sample = i+1 #tranquillo con gli indici, ne ho almeno win_size davanti, per costruzione
         diff = cm_list[idx_sample-1] - cm_list[idx_sample] 
         #Se la differenza la il sample precedente e quello corrente è >= size pallina ==> buon candidato
         if diff >= 5:
@@ -98,7 +114,7 @@ for idx_s in range(0, len(samples), 1):
     while is_stable and j_curr >= 0:
         sample_prev = sample_curr
         sample_curr = cm_list[j_curr]
-        is_stable = abs(sample_prev - sample_curr) <= 1
+        is_stable = abs(sample_prev - sample_curr) <= soglia_stabile_cm
         if is_stable:
             stable_count += 1
         j_curr -= 1
@@ -107,7 +123,5 @@ for idx_s in range(0, len(samples), 1):
     samples_best_near[ samples[idx_s] ] = stable_count
 
 
-#@@@ Migliorare qui. Il best sample è il più vicino, con un stable_count sufficientemente grande,
-#     non quello con il miglior stable_count
 print("Best samples: ", samples_best_stable)
 
