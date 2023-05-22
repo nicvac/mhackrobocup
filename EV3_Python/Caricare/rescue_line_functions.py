@@ -301,5 +301,12 @@ def aggiraOstacolo():
                 return
         
 
+
+def skip():
+    robot.straight(50)
+    robot.stop()
+
+    
+
         
 

@@ -78,6 +78,8 @@ mtr_side_white_pwrperc =  motor_max_pwrperc
 
 ignoreDistanceSensorCounter = 0
 
+correzionePerIncrocio = 0
+
 
 #Velocità da usare per gli scan
 motor_scan_degs = motor_max_degs * 0.5
@@ -150,15 +152,15 @@ print("### #### ###")
 
 
 
-print("OPERAZIONE DI CONNESSIONE AL SERVER AVVIATA, COMMENTARE SE NON SERVE")
+# print("OPERAZIONE DI CONNESSIONE AL SERVER AVVIATA, COMMENTARE SE NON SERVE")
 
-SERVER = 'ev3devExt'
+# SERVER = 'ev3devExt'
 
-client = BluetoothMailboxClient()
-mbox = TextMailbox('greeting', client)
-extReq = NumericMailbox('extReq', client)
-extDist = NumericMailbox('extDist', client)
+# client = BluetoothMailboxClient()
+# mbox = TextMailbox('greeting', client)
+# extReq = NumericMailbox('extReq', client)
+# extDist = NumericMailbox('extDist', client)
 
-print('establishing connection...')
-client.connect(SERVER)
-print('connected!')
+# print('establishing connection...')
+# client.connect(SERVER)
+# print('connected!')
