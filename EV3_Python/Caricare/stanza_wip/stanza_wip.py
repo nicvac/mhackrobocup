@@ -22,6 +22,18 @@ from statistics import stdev
 from load_p117g import *
 #from load_p090g import *
 
+class Sample:
+    def __init__(self, idx_spike_down):
+        self.idx_spike_down = idx_spike_down
+        self.idx_spike_up = 0
+        self.idx_sampled = 0
+        self.stable_prev = 0
+        self.angle = 0
+
+    def dump(self):
+        #print(f"Ciao, sono {self.nome} e ho {self.età} anni.")
+        print(f"Sample: idx_spike_down: {self.idx_spike_down}; idx_spike_up: {self.idx_spike_up}; idx_sampled: {self.idx_sampled}; stable_prev: {self.stable_prev}; angle: {self.angle}")
+
 #La distanza fra due campioni entro cui riterli stabili
 soglia_stabile_cm = 1
 #Rumore: Dimensione della finestra da analizzare
@@ -95,18 +107,16 @@ while i < len(cm_list):
         diff = cm_list[idx_sample-1] - cm_list[idx_sample] 
         #Se la differenza la il sample precedente e quello corrente è >= size pallina ==> buon candidato
         if diff >= 5:
-            samples.append(idx_sample)
+            samples.append(Sample(idx_sample))
         i +=1
 
     print("After noise check: i: ", i)
 
 print("Risultato: ", samples)
 
-#Catalogo i sample in base alla loro distanza e alla stabilità dei sample precedenti
-samples_best_stable = dict()
-samples_best_near = dict()
+#Calcolo per ogni sample trovato il contatore di stabilità sui sample precedenti
 for idx_s in range(0, len(samples), 1):
-    j_curr = samples[idx_s] - 1
+    j_curr = samples[idx_s].idx_spike_down - 1
     sample_curr = cm_list[j_curr] if j_curr >= 0 else cm_list[0]
     
     is_stable=True
@@ -119,9 +129,53 @@ for idx_s in range(0, len(samples), 1):
             stable_count += 1
         j_curr -= 1
 
-    samples_best_stable[stable_count] = samples[idx_s]
-    samples_best_near[ samples[idx_s] ] = stable_count
+    samples[idx_s].stable_prev = stable_count
 
 
-print("Best samples: ", samples_best_stable)
+
+# Per ogni sample trovato calcolo la risalita 
+for i in range(0, len(samples), 1):
+    sample = samples[i]
+    idx = sample.idx_spike_down
+    found = False
+    while not found and idx+1 < len(cm_list):
+        sample_curr = cm_list[idx]
+        sample_next = cm_list[idx+1]
+        sample_curr_idx = idx
+        found = abs(sample_curr - sample_next) > soglia_stabile_cm
+        idx += 1
+    
+    if found:
+        if sample_next > sample_curr:
+            sample.idx_spike_up = sample_curr_idx
+            sample.idx_sampled = round( (sample.idx_spike_up + sample.idx_spike_down) /2)
+        else:
+            sample.idx_spike_up = -1
+    else:
+        sample.idx_spike_up = -1
+
+    
+print("Samples found: ")
+for i in range(0, len(samples), 1):
+    samples[i].dump()
+
+#Choose best sample
+samples_sorted = sorted(samples, key=lambda x: x.stable_prev, reverse=True )
+
+print("Samples sorted: ")
+for i in range(0, len(samples_sorted), 1):
+    samples_sorted[i].dump()
+
+found = False
+sample = None
+i=0
+while not found:
+    sample = samples_sorted[i]
+    found = sample.idx_spike_up != -1
+    i += 1
+
+print("To return: ")
+sample.angle = deg_list[sample.idx_sampled]
+sample.dump()
+
 
