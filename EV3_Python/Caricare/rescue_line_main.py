@@ -1,7 +1,6 @@
 #!/usr/bin/env pybricks-micropython
 
 import time
-
 from rescue_line_functions import *
 from rescue_line_setup import *
 
@@ -35,8 +34,8 @@ isLine_l = False; isLine_r = False
 
 while True:  
     
-    isObstacle = checkIfObstacle()
-    if isObstacle: aggiraOstacolo()
+    # isObstacle = checkIfObstacle()
+    # if isObstacle: aggiraOstacolo()
     
 
     #Lettura di tutti i sensori nel loop corrente
@@ -48,28 +47,72 @@ while True:
     isGreen_l = isGreen( color_l )
     isGreen_r = isGreen( color_r )
 
-    if isGreen_l and not isGreen_r:
-        print("Ho visto verde a sinistra")
-        scan_deg = scan_forward_2_scan_degree(lungCingoli / 3)
-        robot.straight(lungCingoli / 3)
-        scan(-scan_deg, 40, False)
-    elif isGreen_r and not isGreen_l:
-        print("Ho visto verde a destra")
-        scan_deg = scan_forward_2_scan_degree(lungCingoli / 3)
-        robot.straight(lungCingoli / 3)
-        scan(scan_deg, 40, False)
-    elif isGreen_r and isGreen_l:
-        print("Ho visto verde da tutti e due i lati")
-        verde360()
+    if isGreen_l or isGreen_r:
+        # risolvere errore verde a caso nel percorso oppure non vede il doppio verde
+        # quando vede un verde con uno dei due sensori resetta l'ultimo angolo stabile e fa un passetto in avanti per essere
+        # sicuri di essere al centro del quadratino verde
+        oldAngle = gyro_sensor.angle()
+        resetAngleGreen()
+        robot.straight(5)
+        # qui fa il controllo normalmente. Se non vede nessun verde nella posizione stabile non esegue nessuna correzione
+        if isGreen_l and not isGreen_r:
+            print("Ho visto verde a sinistra")
+            scan_deg = scan_forward_2_scan_degree(lungCingoli / 3)
+            robot.straight(lungCingoli / 3)
+            scan(-scan_deg, 40, False)
+        elif isGreen_r and not isGreen_l:
+            print("Ho visto verde a destra")
+            scan_deg = scan_forward_2_scan_degree(lungCingoli / 3)
+            robot.straight(lungCingoli / 3)
+            scan(scan_deg, 40, False)
+        elif isGreen_r and isGreen_l:
+            print("Ho visto verde da tutti e due i lati")
+            verde360()
+        else:
+            # forse è il caso di fargli riprendere l'angolo prima che ha visto il verde. Se lo vede durante una curva
+            # stretta è probabile che ristabilisca l'anglo stabile lontano dalla linea, quindi non vede niente e si perde
+            # bisogna fare comunque un po' di tentavi
+            resetBackAngleAfterNoGreen(oldAngle)
+            continue
     
-    if isGreen_l or isGreen_r: 
-        continue
+    # if isGreen_l or isGreen_r: 
+    #     continue
     
     ### SEGUI LINEA
     isLine_l = isLine(color_l)
     isLine_r = isLine(color_r)
     isLine_f = isLineF(light_f)
+
+    ### GAP
+    #Da testare, se i sensori laterali vedono bianco e il frontale vede nero, e poi il fontale vede bianco => vai avanti e controlla i sensori laterali
+    # flag_gap = False
+    # if not isLine_l and not isLine_r and isLine_f:
+    #     flag_gap = True
+    # else:
+    #     flag_gap = False
+    # if flag_gap:
+    #     left_motor.dc(80)
+    #     right_motor.dc(80)
+
+
+
+    # Da testare, se tutti e tre i sensori vedono nero fa uno skip in avanti
+    # Problemi possibili:
+    # Nelle corna tutti e tre i sensori possono vedere nero, quindi può fare lo skip in una direzione sbagliata e perdersi
+    if isLine_l and isLine_r and isLine_f:
+        skip()
+        correzionePerIncrocio = 0
+        print("Skip incrocio nero nero nero")
+    elif isLine_l and not isLine_r and isLine_f and correzionePerIncrocio >= 50:
+        skip()
+        correzionePerIncrocio = 0
+        print("Skip incrocio nero sinistra nero avanti bianco destra")
+    if isLine_r and not isLine_l and isLine_f and correzionePerIncrocio >= 50:
+        skip()
+        correzionePerIncrocio = 0
+        print("Skip incrocio nero destra nero avanti bianco sinistra")
     
+
     #Line counter: Incremento il contatore se è linea e lo era anche al giro precedente
     lc_l = lc_l + 1 if isLine_l else 0
     lc_r = lc_r + 1 if isLine_r else 0
@@ -83,12 +126,13 @@ while True:
 
     corrc_list_l.append(lc_l)
     corrc_list_r.append(lc_r)
+
     if stampa == True:
         #print(right_motor.speed())
         dl = 1 if isLine_l else 0
         dr = 1 if isLine_r else 0
         df = 1 if isLine_f else 0
-        print( ". ",dl,"-",dr,"\t",lc_l,"-",lc_r,"\t\t F: ",df," ",lc_f, "\t\t Corr:(", corrc_fwd,") ", corrc_left, " ", corrc_right)
+        print( ". ",dl,"-",dr,"\t",lc_l,"-",lc_r,"\t\t F: ",df," ",lc_f, "\t\t Corr:(", corrc_fwd,") ", corrc_left, " ", corrc_right, "\t Incrocio: ", correzionePerIncrocio)
 
     #Ho perso la strada. Torno indietro e recupero il percorso Triplo bianco
     #@@@ QUI BISOGNA DISTINGUERE IL CASO GAP
@@ -120,6 +164,7 @@ while True:
         left_motor.dc(mtr_side_white_pwrperc)
         right_motor.dc(mtr_side_white_pwrperc)
         corrc_fwd += 1
+        correzionePerIncrocio += 1
         
     else:
         #Almeno uno dei due sensori è sulla linea
@@ -138,12 +183,12 @@ while True:
         if correctLeft: 
             left_motor.dc ( mtr_side_black_pwrperc )
             right_motor.dc( mtr_side_white_pwrperc )
-            corrc_left += 1; corrc_fwd = 0
+            corrc_left += 1; corrc_fwd = 0; correzionePerIncrocio = 0
 
         if correctRight:
             right_motor.dc( mtr_side_black_pwrperc )
             left_motor.dc ( mtr_side_white_pwrperc )
-            corrc_right += 1; corrc_fwd = 0
+            corrc_right += 1; corrc_fwd = 0; correzionePerIncrocio = 0
 
     #Finchè riesce a correggersi in poche iterazioni, considero la posizione stabile => sono ad angolo 0.
     if corrc_fwd >= loop_detected_reset_soglia:
@@ -189,6 +234,19 @@ while True:
     print("Angolo ripristinato")
     right_motor.hold()
     left_motor.hold()
+
+
+    # caso per gestire la cuva a T. Se ripristina l'angolo e vede nero con il sensore di fronte non fa partire la scansione
+    incrocio = rilevaIncrocio()
+
+    # se ha trovato l'incrocio resetta tutti i contatoiri. 
+    # È fondamentale perchè se trova l'incrocio e lo supera, ma i contatori non si sono resettati, fa partire la scansione
+    # perchè si ricorda dell'incrocio di prima
+    if incrocio:
+        resetCountersCorrection_corrc()
+        continue
+    else:
+        pass
 
     #Mi posiziono in un punto ottimale per far partire lo scan
     #Avanzo, posizionando la curva a gomito sotto il robot

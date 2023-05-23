@@ -78,6 +78,8 @@ mtr_side_white_pwrperc =  motor_max_pwrperc
 
 ignoreDistanceSensorCounter = 0
 
+correzionePerIncrocio = 0
+
 
 #Velocità da usare per gli scan
 motor_scan_degs = motor_max_degs * 0.5

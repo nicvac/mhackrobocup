@@ -301,5 +301,65 @@ def aggiraOstacolo():
                 return
         
 
-        
 
+def skip():
+    robot.straight(50)
+    robot.stop()
+
+
+def rilevaIncrocio():
+    # il sensore davanti passa un attimo in modalità colore per essere sicuri di non sbagliare con la lettura della luce
+    new_color_f = light_sensor_front.color()
+    
+    new_is_line_f = isLine(new_color_f)
+    # se, dopo aver resettato l'angolo, il sensore vede la linea fa uno skip in avanti e supera l'incrocio
+    # da provare con tutti i casi in cui potrebbe partire la scansione.
+    # va messo prima dell "avanzo per tenere il vertice sotto" perchè se ci troviamo in curve strette rischiamo di vedere la linea avanti.
+    # testato con l'incrocio a T a sinistra e a destra e funziona.
+    if new_is_line_f:
+        robot.straight(30)
+        robot.stop()
+        print("Ho trovato un incrocio a T, non serve eseguire la scansione")
+        return True
+    else:
+        return False
+    
+
+
+def resetAngleGreen():
+    restoreAngle = -1 * gyro_sensor.angle()
+    
+    if restoreAngle > 0:
+        right_motor.dc( mtr_side_black_pwrperc * 0.9 )
+        left_motor.dc( mtr_side_white_pwrperc * 0.9)
+    else: # if gomitoDx:
+        left_motor.dc( mtr_side_black_pwrperc * 0.9)
+        right_motor.dc( mtr_side_white_pwrperc * 0.9)
+
+    if restoreAngle > 0:
+        while gyro_sensor.angle() < 0: pass
+    else:
+        while gyro_sensor.angle() > 0: pass
+
+    print("Ripristinato angolo stabile prima di trovare il verde")
+    left_motor.hold()
+    right_motor.hold()
+
+
+def resetBackAngleAfterNoGreen(angle):
+    currAngle = gyro_sensor.angle()
+    if currAngle < angle:
+        right_motor.dc( mtr_side_black_pwrperc * 0.9 )
+        left_motor.dc( mtr_side_white_pwrperc * 0.9)
+    else: # if gomitoDx:
+        left_motor.dc( mtr_side_black_pwrperc * 0.9)
+        right_motor.dc( mtr_side_white_pwrperc * 0.9)
+
+    if currAngle < angle:
+        while gyro_sensor.angle() < 0: pass
+    else:
+        while gyro_sensor.angle() > 0: pass
+
+    print("Ripristinato angolo di quando ho visto il verde, ignoro i verdi per qualche istante")
+    left_motor.hold()
+    right_motor.hold()
