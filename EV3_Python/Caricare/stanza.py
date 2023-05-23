@@ -38,7 +38,7 @@ robot = DriveBase(right_motor, left_motor, wheel_diameter=wheel, axle_track=axle
 
 #Ritorna la distanza del sensore server in cm
 def getDistanceMM():
-        extReq.send(4)
+        extDist.send(4)
         extDist.wait()
         return extDist.read()
 
