@@ -156,7 +156,6 @@ SERVER = 'ev3devExt'
 
 client = BluetoothMailboxClient()
 mbox = TextMailbox('greeting', client)
-extReq = NumericMailbox('extReq', client)
 extDist = NumericMailbox('extDist', client)
 
 print('establishing connection...')

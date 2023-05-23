@@ -3,6 +3,9 @@ from rescue_line_setup import *
 from math import *
 from rescue_line_functions import *
 
+#@@@ TEMP
+from stanza_wip import stanza_func
+
 #Dimensione della pallina
 sizePallinaCm = 4.5
 
@@ -289,13 +292,39 @@ evac_motor_scan_degs = 30
 upper_left_motor.hold()
 upper_right_motor.hold()
 
-client = BluetoothMailboxClient()
-mbox = TextMailbox('greeting', client)
-extReq = NumericMailbox('extReq', client)
-extDist = NumericMailbox('extDist', client)
+#@@@ evacTrovaERaggiungiPalla()
 
-print('establishing connection...')
-client.connect(SERVER)
-print('connected!')
+#@@@ DEBUG: Togliere questo codice dopo aver testato
+########
+########
+########
 
-evacTrovaERaggiungiPalla()
+cm_list = list()
+deg_list = list()
+
+print("evacIndividuaSpike")
+
+gyro_sensor.reset_angle(0)
+
+# Ruota come un radar, in senso antiorario
+print("TEST 125g ")
+robot.drive(0, -evac_motor_scan_degs)
+gyro_sensor.reset_angle(0)
+cTurnAngle = 0
+while abs(cTurnAngle) <= 180:
+    currCm = getDistanceCm()
+    cTurnAngle = gyro_sensor.angle()
+    print("distCm Angle: ", currCm, " ", cTurnAngle)
+    cm_list.append(currCm)
+    deg_list.append(cTurnAngle)
+robot.drive(0,0)
+robot.stop()
+
+stanza_func.evac_get_sample(cm_list, deg_list)
+
+
+#@@@ 
+
+
+
+

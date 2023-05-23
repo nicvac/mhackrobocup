@@ -20,7 +20,6 @@ ultrasonic_sensor_back = UltrasonicSensor(Port.S4)
 server = BluetoothMailboxServer()
 mbox = TextMailbox('greeting', server)
 extDist = NumericMailbox('extDist', server)
-extReq = NumericMailbox('extReq', server)
 
 # The server must be started before the client!
 print('waiting for connection...')
@@ -34,8 +33,8 @@ print('connected!')
 # mbox.send('hello to you!')
 
 while True:
-    extReq.wait()
-    req = extReq.read()
+    extDist.wait()
+    req = extDist.read()
     if req == 1:
         extDist.send(ultrasonic_sensor_front.distance())
     elif req == 2:
