@@ -363,3 +363,8 @@ def resetBackAngleAfterNoGreen(angle):
     print("Ripristinato angolo di quando ho visto il verde, ignoro i verdi per qualche istante")
     left_motor.hold()
     right_motor.hold()
+
+def getDistanceCmPort(port):
+    extDist.send(port)
+    extDist.wait()
+    return extDist.read() / 10
