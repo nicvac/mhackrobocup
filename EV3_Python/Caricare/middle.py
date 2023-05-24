@@ -60,6 +60,7 @@ def stanza(destraSinistra, lungoCorto):
         distance = getDistanceCmPort(back)
     stop()
 
+    gyro_sensor.reset_angle(0)
 
 
 # Trova se si trova a sinistra o a destra della stanza. 
