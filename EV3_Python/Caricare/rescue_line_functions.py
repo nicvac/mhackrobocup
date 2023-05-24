@@ -1,4 +1,5 @@
 from rescue_line_setup import *
+from client_functions import *
 
 #Confronto a meno di un errore
 def simile( a, b, errore = 1.0 ):
@@ -193,10 +194,7 @@ def isGomitoSx_optII(l, r):
 
 
 def checkIfObstacle():
-    # porta 1 - sensore avanti
-    extReq.send(1)
-    extDist.wait()
-    distanceCm = extDist.read() / 10
+    distanceCm = getDistanceCm(DIST_FRONT)
     # print("Distanza rilevata: ", distanceCm)
     if distanceCm <= 9:
         return True
@@ -211,14 +209,11 @@ def aggiraOstacolo():
 
     gyro_sensor.reset_angle(0)
     # salva la distanza del sensore di sinistra ( porta 2 - sensore sinistra )
-    extReq.send(2)
-    extDist.wait()
-    distanceLeft = extDist.read() / 10
+    distanceLeft = getDistanceCm(DIST_LEFT)
+
 
     # salva la distanza del sensore di destra ( porta 3 - sensore destra )
-    extReq.send(3)
-    extDist.wait()
-    distanceRight = extDist.read() / 10
+    distanceRight = getDistanceCm(DIST_RIGHT)
 
     gyro_sensor.reset_angle(0)
     
@@ -363,8 +358,3 @@ def resetBackAngleAfterNoGreen(angle):
     print("Ripristinato angolo di quando ho visto il verde, ignoro i verdi per qualche istante")
     left_motor.hold()
     right_motor.hold()
-
-def getDistanceCmPort(port):
-    extDist.send(port)
-    extDist.wait()
-    return extDist.read() / 10

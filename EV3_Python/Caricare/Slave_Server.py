@@ -18,8 +18,7 @@ ultrasonic_sensor_right = UltrasonicSensor(Port.S3)
 ultrasonic_sensor_back = UltrasonicSensor(Port.S4)
 
 server = BluetoothMailboxServer()
-mbox = TextMailbox('greeting', server)
-extDist = NumericMailbox('extDist', server)
+#mbox = TextMailbox('greeting', server)
 
 # The server must be started before the client!
 print('waiting for connection...')
@@ -33,6 +32,7 @@ print('connected!')
 # mbox.send('hello to you!')
 
 while True:
+    extDist = NumericMailbox('extDist', server)
     extDist.wait()
     req = extDist.read()
     if req == 1:

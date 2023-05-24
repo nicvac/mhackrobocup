@@ -4,15 +4,10 @@ from pybricks.parameters import Port, Stop, Direction, Button, Color
 from pybricks.tools import wait, StopWatch, DataLog
 from pybricks.robotics import DriveBase
 from pybricks.media.ev3dev import SoundFile, ImageFile
-from pybricks.messaging import BluetoothMailboxClient, TextMailbox, NumericMailbox
 
 import time
 
-
 brick = EV3Brick()
-
-#Il brick server (fornisce le distanze)
-SERVER = 'ev3devExt'
 
 # Diametro ruota in mm
 wheel = 35
@@ -152,14 +147,3 @@ print("### #### ###")
 
 
 
-print("OPERAZIONE DI CONNESSIONE AL SERVER AVVIATA, COMMENTARE SE NON SERVE")
-
-SERVER = 'ev3devExt'
-
-client = BluetoothMailboxClient()
-mbox = TextMailbox('greeting', client)
-extDist = NumericMailbox('extDist', client)
-
-print('establishing connection...')
-client.connect(SERVER)
-print('connected!')

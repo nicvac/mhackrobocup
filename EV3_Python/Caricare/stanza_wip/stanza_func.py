@@ -14,6 +14,7 @@
 #from load_p090g import *
 #from load_p117g import *
 #from load_p125g import *
+#from load_p129g import *
 
 def mean(data):
     """Return the sample arithmetic mean of data."""
@@ -68,6 +69,10 @@ def evac_get_sample(cm_list, deg_list):
     soglia_devstd = 1.5
     #Rumore: Se vado tre volte su e giù => zigzag, rumore
     soglia_updown = 3
+    #Durande la detection dello spike di risalita, la distanza fra due campioni entro cui riterli stabili
+    soglia_stabile_risalita_cm = 2
+    #Durande la detection dello spike di risalita, la distanza fra l'ultimo campione stabile e lo spike di risalita
+    soglia_spike_risalita_cm = 3.5
 
     samples = list()
 
@@ -166,11 +171,11 @@ def evac_get_sample(cm_list, deg_list):
             sample_curr = cm_list[idx]
             sample_next = cm_list[idx+1]
             sample_curr_idx = idx
-            found = abs(sample_curr - sample_next) > soglia_stabile_cm
+            found = abs(sample_curr - sample_next) > soglia_stabile_risalita_cm
             idx += 1
         
         if found:
-            if sample_next > sample_curr:
+            if sample_next >= sample_curr + soglia_spike_risalita_cm:
                 sample.idx_spike_up = sample_curr_idx
                 sample.idx_sampled = round( (sample.idx_spike_up + sample.idx_spike_down) /2)
             else:

@@ -1,19 +1,15 @@
 #!/usr/bin/env pybricks-micropython
 from rescue_line_setup import *
 from rescue_line_functions import *
-
+from client_functions import *
 
 robot = 14
 halfRobot = robot/2
 
-front = 1
-left = 2
-right = 3
-back = 4
 
-sensorReadingFront = getDistanceCmPort(1)
-sensorReadingLeft = getDistanceCmPort(2)
-sensorReadingRight = getDistanceCmPort(3)
+sensorReadingFront = getDistanceCm(DIST_FRONT)
+sensorReadingLeft = getDistanceCm(DIST_LEFT)
+sensorReadingRight = getDistanceCm(DIST_RIGHT)
 
 side = 0
 longOrShort = 0
@@ -43,10 +39,10 @@ def stanza(destraSinistra, lungoCorto):
         pass
     stop()
 
-    distance = getDistanceCmPort(back)
+    distance = getDistanceCm(DIST_BACK)
     dritto()
     while distance < firstMiddle - halfRobot():
-        distance = getDistanceCmPort(back)
+        distance = getDistanceCm(DIST_BACK)
     stop()
 
     gyro_sensor.reset_angle(0)
@@ -55,9 +51,9 @@ def stanza(destraSinistra, lungoCorto):
         pass
     stop()
 
-    distance = getDistanceCmPort(back)
+    distance = getDistanceCm(DIST_BACK)
     while distance < secondMiddle - halfRobot:
-        distance = getDistanceCmPort(back)
+        distance = getDistanceCm(DIST_BACK)
     stop()
 
     gyro_sensor.reset_angle(0)

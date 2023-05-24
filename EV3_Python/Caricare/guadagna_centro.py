@@ -2,25 +2,17 @@
 from rescue_line_setup import *
 from math import *
 from rescue_line_functions import *
+from client_functions import *
 
 def getRoomSize():
     global distTraSensori
-    sx = getDistanceCm(2)
-    dx = getDistanceCm(3)
+    sx = getDistanceCm(DIST_LEFT)
+    dx = getDistanceCm(DIST_RIGHT)
     storicoDimensioneSx.append(sx)
     storicoDimensioneDx.append(dx)
     somma = sx + dx + distTraSensori
     return somma
 
-def getDistanceMM(sensore):
-        extDist.send(sensore)
-        extDist.wait()
-        return extDist.read()
-
-def getDistanceCm(sensore):
-    curr = getDistanceMM(sensore) / 10
-    #print(curr)
-    return curr
 
 #Avanza di 45 cm 
 robot.reset()
@@ -79,12 +71,12 @@ while(robot.distance() < abs(distanzaSx - distanzaDx) / 2):
     pass
 
 '''
-avanti = getDistanceCm(1)
-dietro = getDistanceCm(4)
+avanti = getDistanceCm(DIST_FRONT)
+dietro = getDistanceCm(DIST_BACK)
 while(abs(avanti - dietro) > 3):
     print(str(dietro) + " / " + str(avanti))
-    avanti = getDistanceCm(1)
-    dietro = getDistanceCm(4)
+    avanti = getDistanceCm(DIST_FRONT)
+    dietro = getDistanceCm(DIST_BACK)
 '''
 
 robot.stop()
