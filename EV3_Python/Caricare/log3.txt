@@ -1,4 +1,5 @@
-120°
+Pallina +- 50°
+
 Starting: brickrun --directory="/home/robot/Caricare" "/home/robot/Caricare/stanza.py"
 ----------
 ### SETUP ###
@@ -20,392 +21,422 @@ Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  35.7   0
+distCm Angle:  34.5   0
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  36.1   0
+distCm Angle:  34.5   0
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  36.1   1
+distCm Angle:  34.0   0
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  35.7   3
+distCm Angle:  34.5   1
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  35.7   4
+distCm Angle:  34.9   3
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  35.5   5
+distCm Angle:  33.8   4
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  35.5   6
+distCm Angle:  33.8   5
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  35.3   7
+distCm Angle:  33.4   6
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  35.3   8
+distCm Angle:  32.6   7
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  35.3   10
+distCm Angle:  33.4   9
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  34.9   11
+distCm Angle:  32.9   10
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  34.8   12
+distCm Angle:  32.8   11
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  34.70000000000001   13
+distCm Angle:  32.9   13
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  35.5   14
+distCm Angle:  32.9   14
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  34.70000000000001   15
+distCm Angle:  32.8   14
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  35.5   16
+distCm Angle:  32.8   16
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  35.7   17
+distCm Angle:  33.0   17
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  35.7   18
+distCm Angle:  33.0   18
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  35.7   20
+distCm Angle:  33.4   20
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  35.7   21
+distCm Angle:  34.0   21
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  36.6   21
+distCm Angle:  32.6   22
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  36.20000000000001   23
+distCm Angle:  32.6   24
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  36.20000000000001   24
+distCm Angle:  32.6   25
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  36.5   25
+distCm Angle:  32.6   26
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  37.0   26
+distCm Angle:  32.6   27
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  37.4   27
+distCm Angle:  32.6   28
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  37.4   28
+distCm Angle:  32.6   30
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  38.0   29
+distCm Angle:  26.5   30
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  38.0   30
+distCm Angle:  32.6   32
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  37.6   32
+distCm Angle:  25.9   33
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  38.4   33
+distCm Angle:  25.5   34
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  39.3   35
+distCm Angle:  24.9   35
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  39.3   37
+distCm Angle:  23.6   36
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  40.4   38
+distCm Angle:  23.6   37
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  37.6   40
+distCm Angle:  23.6   38
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  38.0   40
+distCm Angle:  24.3   39
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  39.3   42
+distCm Angle:  24.3   40
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  38.9   43
+distCm Angle:  23.6   41
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  39.70000000000001   44
+distCm Angle:  23.7   42
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  42.9   45
+distCm Angle:  23.3   44
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  44.3   46
+distCm Angle:  23.3   44
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  42.0   47
+distCm Angle:  23.3   45
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  44.70000000000001   48
+distCm Angle:  23.3   47
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  43.50000000000001   50
+distCm Angle:  22.7   48
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  42.8   51
+distCm Angle:  23.3   49
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  43.7   52
+distCm Angle:  23.3   50
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  43.9   53
+distCm Angle:  23.3   51
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  43.9   54
+distCm Angle:  23.4   52
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  43.9   56
+distCm Angle:  23.3   53
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  43.9   57
+distCm Angle:  22.8   54
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  44.3   58
+distCm Angle:  22.8   55
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  43.9   59
+distCm Angle:  22.8   56
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  44.6   60
+distCm Angle:  23.6   57
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  45.2   62
+distCm Angle:  23.5   58
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  36.5   62
+distCm Angle:  23.7   59
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  44.8   63
+distCm Angle:  24.3   60
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  44.70000000000001   65
+distCm Angle:  25.5   61
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  45.5   66
+distCm Angle:  26.3   62
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  45.5   67
+distCm Angle:  25.9   64
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  45.4   68
+distCm Angle:  25.9   65
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  45.6   69
+distCm Angle:  32.6   66
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  46.2   70
+distCm Angle:  32.6   66
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  46.2   72
+distCm Angle:  32.6   68
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  46.9   73
+distCm Angle:  32.6   69
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  47.9   74
+distCm Angle:  32.6   70
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  47.1   75
+distCm Angle:  32.6   71
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  48.4   77
+distCm Angle:  32.1   72
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  48.1   79
+distCm Angle:  44.5   73
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  48.3   80
+distCm Angle:  42.9   74
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  49.20000000000001   81
+distCm Angle:  32.6   75
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  49.0   82
+distCm Angle:  43.9   77
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  50.4   83
+distCm Angle:  44.3   78
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  49.8   84
+distCm Angle:  43.9   78
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  49.9   85
+distCm Angle:  44.6   80
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  53.4   86
+distCm Angle:  45.2   81
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  52.3   88
+distCm Angle:  44.8   82
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  51.8   89
+distCm Angle:  44.70000000000001   83
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  52.3   90
+distCm Angle:  44.70000000000001   84
+Richiedo la misura della distanza
+
+Richiedo la misura dell'angolo
+
+distCm Angle:  45.6   85
+Richiedo la misura della distanza
+
+Richiedo la misura dell'angolo
+
+distCm Angle:  46.2   87
+Richiedo la misura della distanza
+
+Richiedo la misura dell'angolo
+
+distCm Angle:  47.3   88
+Richiedo la misura della distanza
+
+Richiedo la misura dell'angolo
+
+distCm Angle:  51.9   89
+Richiedo la misura della distanza
+
+Richiedo la misura dell'angolo
+
+distCm Angle:  45.5   90
+Richiedo la misura della distanza
+
+Richiedo la misura dell'angolo
+
+distCm Angle:  50.4   91
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
@@ -415,451 +446,488 @@ Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  52.3   93
+distCm Angle:  51.1   93
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  32.6   95
+distCm Angle:  51.1   94
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  32.1   95
+distCm Angle:  45.6   95
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  52.3   96
+distCm Angle:  47.4   96
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  32.6   98
+distCm Angle:  45.2   97
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  32.6   99
+distCm Angle:  45.5   98
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  32.6   99
+distCm Angle:  43.9   100
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  32.1   100
+distCm Angle:  44.8   101
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  32.6   101
+distCm Angle:  44.3   102
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  24.3   103
+distCm Angle:  43.7   103
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  22.8   104
+distCm Angle:  43.3   104
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  22.9   105
+distCm Angle:  42.8   105
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  22.5   106
+distCm Angle:  42.5   107
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  21.2   108
+distCm Angle:  42.5   108
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  20.9   110
+distCm Angle:  42.4   109
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  20.9   111
+distCm Angle:  41.8   110
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  20.9   112
+distCm Angle:  41.8   111
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  20.9   112
+distCm Angle:  41.8   112
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  20.9   113
+distCm Angle:  41.8   113
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  20.9   114
+distCm Angle:  41.2   114
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  20.5   115
+distCm Angle:  41.2   115
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  20.5   116
+distCm Angle:  41.1   115
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  20.5   117
+distCm Angle:  41.2   117
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  20.5   119
+distCm Angle:  40.3   118
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  20.5   120
+distCm Angle:  41.00000000000001   120
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  20.5   121
+distCm Angle:  41.00000000000001   121
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  20.5   122
+distCm Angle:  40.8   122
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  20.5   123
+distCm Angle:  40.10000000000001   123
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  20.4   124
+distCm Angle:  40.8   124
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  20.4   125
+distCm Angle:  40.4   126
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  21.1   126
+distCm Angle:  40.4   127
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  21.1   128
+distCm Angle:  40.8   128
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  21.7   129
+distCm Angle:  39.9   129
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  21.7   132
+distCm Angle:  39.2   130
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  21.3   133
+distCm Angle:  39.9   132
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  21.9   134
+distCm Angle:  39.70000000000001   133
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  21.9   136
+distCm Angle:  39.70000000000001   134
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  23.3   138
+distCm Angle:  40.6   134
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  23.9   139
+distCm Angle:  38.0   135
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  24.3   140
+distCm Angle:  35.7   137
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  32.6   142
+distCm Angle:  35.5   137
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  30.3   143
+distCm Angle:  35.5   138
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  35.7   144
+distCm Angle:  34.8   139
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  32.6   145
+distCm Angle:  40.8   140
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  32.6   146
+distCm Angle:  34.9   142
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  32.20000000000001   147
+distCm Angle:  34.70000000000001   142
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  29.6   149
+distCm Angle:  34.5   144
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  30.4   150
+distCm Angle:  34.5   145
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  29.4   151
+distCm Angle:  33.0   146
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  29.4   152
+distCm Angle:  33.0   147
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  29.8   153
+distCm Angle:  32.8   148
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  29.4   154
+distCm Angle:  32.9   149
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  29.6   155
+distCm Angle:  32.6   151
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  28.8   156
+distCm Angle:  32.6   152
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  28.6   158
+distCm Angle:  32.1   153
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  28.1   160
+distCm Angle:  32.1   154
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  28.1   161
+distCm Angle:  32.6   155
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  28.2   162
+distCm Angle:  32.6   156
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  28.2   163
+distCm Angle:  32.6   157
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  28.2   164
+distCm Angle:  32.20000000000001   158
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  28.2   165
+distCm Angle:  32.0   159
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  27.7   166
+distCm Angle:  32.0   160
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  27.8   167
+distCm Angle:  32.0   162
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  27.8   169
+distCm Angle:  30.4   163
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  27.3   170
+distCm Angle:  30.8   164
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  27.7   171
+distCm Angle:  30.8   165
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  27.3   172
+distCm Angle:  30.3   166
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  27.3   173
+distCm Angle:  32.0   167
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  27.1   174
+distCm Angle:  30.3   167
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  27.1   175
+distCm Angle:  30.3   168
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  27.1   177
+distCm Angle:  29.7   169
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  27.1   178
+distCm Angle:  30.4   170
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  27.1   179
+distCm Angle:  30.4   171
 Richiedo la misura della distanza
 
 Richiedo la misura dell'angolo
 
-distCm Angle:  27.1   181
-smooth fino a  32
-Sd in [ 33 , 37 ]:  0.989141041510258 ; upanddown 2 => isNoise:  False
-After noise check: i:  33
-smooth fino a  33
-Sd in [ 34 , 38 ]:  0.7874007874011809 ; upanddown 1 => isNoise:  False
-After noise check: i:  34
-smooth fino a  35
-Sd in [ 36 , 40 ]:  2.16739474946305 ; upanddown 1 => isNoise:  False
-After noise check: i:  36
-smooth fino a  38
-Sd in [ 39 , 43 ]:  0.9682974749528167 ; upanddown 4 => isNoise:  False
-After noise check: i:  39
-smooth fino a  39
-Sd in [ 40 , 44 ]:  0.9810198774744583 ; upanddown 4 => isNoise:  False
-After noise check: i:  40
-smooth fino a  40
-Sd in [ 41 , 45 ]:  0.9046546302318927 ; upanddown 3 => isNoise:  False
-After noise check: i:  41
-smooth fino a  41
-Sd in [ 42 , 46 ]:  0.6144916598294903 ; upanddown 2 => isNoise:  False
-After noise check: i:  42
-smooth fino a  42
-Sd in [ 43 , 47 ]:  0.4079215610874235 ; upanddown 1 => isNoise:  False
-After noise check: i:  43
-smooth fino a  53
-Sd in [ 54 , 58 ]:  3.466410246926927 ; upanddown 2 => isNoise:  False
-After noise check: i:  54
-smooth fino a  54
-Sd in [ 55 , 59 ]:  0.3544009029333867 ; upanddown 1 => isNoise:  False
-After noise check: i:  55
-smooth fino a  65
-Sd in [ 66 , 70 ]:  0.4242640687119295 ; upanddown 1 => isNoise:  False
-After noise check: i:  66
-smooth fino a  70
-Sd in [ 71 , 75 ]:  1.437497826085313 ; upanddown 2 => isNoise:  False
-After noise check: i:  71
-smooth fino a  73
-Sd in [ 74 , 78 ]:  0.7520638270785259 ; upanddown 3 => isNoise:  False
-After noise check: i:  74
-smooth fino a  74
-Sd in [ 75 , 79 ]:  0.4715930449020623 ; upanddown 3 => isNoise:  False
-After noise check: i:  75
-smooth fino a  77
-Sd in [ 78 , 82 ]:  9.588826831265647 ; upanddown 4 => isNoise:  True
+distCm Angle:  30.4   172
+Richiedo la misura della distanza
+
+Richiedo la misura dell'angolo
+
+distCm Angle:  29.7   173
+Richiedo la misura della distanza
+
+Richiedo la misura dell'angolo
+
+distCm Angle:  29.7   174
+Richiedo la misura della distanza
+
+Richiedo la misura dell'angolo
+
+distCm Angle:  29.7   175
+Richiedo la misura della distanza
+
+Richiedo la misura dell'angolo
+
+distCm Angle:  30.4   177
+Richiedo la misura della distanza
+
+Richiedo la misura dell'angolo
+
+distCm Angle:  29.6   177
+Richiedo la misura della distanza
+
+Richiedo la misura dell'angolo
+
+distCm Angle:  29.7   178
+Richiedo la misura della distanza
+
+Richiedo la misura dell'angolo
+
+distCm Angle:  29.6   179
+Richiedo la misura della distanza
+
+Richiedo la misura dell'angolo
+
+distCm Angle:  29.6   180
+smooth fino a  4
+Sd in [ 5 , 9 ]:  0.4381780460041313 ; upanddown 1 => isNoise:  False
+After noise check: i:  5
+smooth fino a  19
+Sd in [ 20 , 24 ]:  0.0 ; upanddown 1 => isNoise:  False
+After noise check: i:  20
+smooth fino a  26
+Sd in [ 27 , 31 ]:  2.808843178249723 ; upanddown 3 => isNoise:  True
+After noise check: i:  31
+smooth fino a  31
+Sd in [ 32 , 36 ]:  0.3429285639896445 ; upanddown 1 => isNoise:  False
+After noise check: i:  32
+smooth fino a  55
+Sd in [ 56 , 60 ]:  2.691913817342599 ; upanddown 2 => isNoise:  False
+After noise check: i:  56
+smooth fino a  59
+Sd in [ 60 , 64 ]:  0.0 ; upanddown 1 => isNoise:  False
+After noise check: i:  60
+smooth fino a  66
+Sd in [ 67 , 71 ]:  4.553504145161173 ; upanddown 3 => isNoise:  True
+After noise check: i:  69
+smooth fino a  69
+Sd in [ 70 , 74 ]:  0.4874423042781594 ; upanddown 1 => isNoise:  False
+After noise check: i:  70
+smooth fino a  79
+Sd in [ 80 , 84 ]:  2.434419848752471 ; upanddown 3 => isNoise:  True
 After noise check: i:  82
 smooth fino a  82
-Sd in [ 83 , 87 ]:  0.2 ; upanddown 1 => isNoise:  False
+Sd in [ 83 , 87 ]:  2.147184202624451 ; upanddown 1 => isNoise:  False
 After noise check: i:  83
+smooth fino a  86
+Sd in [ 87 , 91 ]:  1.119642800182272 ; upanddown 4 => isNoise:  False
+After noise check: i:  87
 smooth fino a  87
-Sd in [ 88 , 92 ]:  0.9891410415102595 ; upanddown 1 => isNoise:  False
+Sd in [ 88 , 92 ]:  1.153429668423697 ; upanddown 3 => isNoise:  False
 After noise check: i:  88
 smooth fino a  88
-Sd in [ 89 , 93 ]:  0.840476055578028 ; upanddown 1 => isNoise:  False
+Sd in [ 89 , 93 ]:  0.5817215828899608 ; upanddown 2 => isNoise:  False
 After noise check: i:  89
-smooth fino a  91
-Sd in [ 92 , 96 ]:  0.1200000000000003 ; upanddown 1 => isNoise:  False
-After noise check: i:  92
-smooth fino a  115
-Sd in [ 116 , 120 ]:  3.814918085621237 ; upanddown 2 => isNoise:  False
-After noise check: i:  116
-smooth fino a  118
-Sd in [ 119 , 123 ]:  1.718836815989232 ; upanddown 4 => isNoise:  True
-After noise check: i:  121
-smooth fino a  121
-Sd in [ 122 , 126 ]:  1.243221621433605 ; upanddown 1 => isNoise:  False
-After noise check: i:  122
-smooth fino a  124
-Sd in [ 125 , 129 ]:  0.3709447398198281 ; upanddown 1 => isNoise:  False
-After noise check: i:  125
+smooth fino a  90
+Sd in [ 91 , 95 ]:  0.5138093031466044 ; upanddown 1 => isNoise:  False
+After noise check: i:  91
+smooth fino a  122
+Sd in [ 123 , 127 ]:  1.093617849159386 ; upanddown 1 => isNoise:  False
+After noise check: i:  123
+smooth fino a  123
+Sd in [ 124 , 128 ]:  2.19143788412996 ; upanddown 2 => isNoise:  False
+After noise check: i:  124
+smooth fino a  127
+Sd in [ 128 , 132 ]:  2.464467488119897 ; upanddown 2 => isNoise:  False
+After noise check: i:  128
+smooth fino a  128
+Sd in [ 129 , 133 ]:  0.6764613810115106 ; upanddown 1 => isNoise:  False
+After noise check: i:  129
+smooth fino a  132
+Sd in [ 133 , 137 ]:  0.1496662954709573 ; upanddown 1 => isNoise:  False
+After noise check: i:  133
+smooth fino a  147
+Sd in [ 148 , 152 ]:  0.6053098380168623 ; upanddown 2 => isNoise:  False
+After noise check: i:  148
 smooth fino a  151
+Sd in [ 152 , 156 ]:  0.7709734106958555 ; upanddown 2 => isNoise:  False
+After noise check: i:  152
+smooth fino a  152
+Sd in [ 153 , 157 ]:  0.2638181191654583 ; upanddown 1 => isNoise:  False
+After noise check: i:  153
+smooth fino a  165
 Samples found: 
-Sample: idx_spike_down:  54 ; idx_spike_up:  54 ; idx_sampled:  54 ; stable_curr:  0 ; stable_prev:  10 ; angle:  62
-Sample: idx_spike_down:  83 ; idx_spike_up:  -1 ; idx_sampled:  83 ; stable_curr:  -84 ; stable_prev:  0 ; angle:  98
-Sample: idx_spike_down:  88 ; idx_spike_up:  118 ; idx_sampled:  103 ; stable_curr:  30 ; stable_prev:  4 ; angle:  120
+Sample: idx_spike_down:  87 ; idx_spike_up:  -1 ; idx_sampled:  87 ; stable_curr:  -88 ; stable_prev:  3 ; angle:  95
+Sample: idx_spike_down:  129 ; idx_spike_up:  -1 ; idx_sampled:  129 ; stable_curr:  -130 ; stable_prev:  0 ; angle:  142
 Samples sorted: 
-Sample: idx_spike_down:  88 ; idx_spike_up:  118 ; idx_sampled:  103 ; stable_curr:  30 ; stable_prev:  4 ; angle:  120
-Sample: idx_spike_down:  54 ; idx_spike_up:  54 ; idx_sampled:  54 ; stable_curr:  0 ; stable_prev:  10 ; angle:  62
-Sample: idx_spike_down:  83 ; idx_spike_up:  -1 ; idx_sampled:  83 ; stable_curr:  -84 ; stable_prev:  0 ; angle:  98
-To return: 
-Sample: idx_spike_down:  88 ; idx_spike_up:  118 ; idx_sampled:  103 ; stable_curr:  30 ; stable_prev:  4 ; angle:  120
+Sample: idx_spike_down:  87 ; idx_spike_up:  -1 ; idx_sampled:  87 ; stable_curr:  -88 ; stable_prev:  3 ; angle:  95
+Sample: idx_spike_down:  129 ; idx_spike_up:  -1 ; idx_sampled:  129 ; stable_curr:  -130 ; stable_prev:  0 ; angle:  142
+Traceback (most recent call last):
+  File "/home/robot/Caricare/stanza.py", line 313, in <module>
+  File "/home/robot/Caricare/stanza_wip/stanza_func.py", line 207, in evac_get_sample
+IndexError: list index out of range
 ----------
-Completed successfully.
+Exited with error code 1.
