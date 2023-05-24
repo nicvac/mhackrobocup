@@ -31,148 +31,34 @@ def stop():
 
 ### FUNZIONI PER GUADAGNARE IL CENTRO
 
-def leftShort():
-    print("Ho rilevato l'entrata a sinistra sul lato corto della stanza\n")
+def stanza(destraSinistra, lungoCorto):
+    rotazione2 = destraSinistra * -1
+
+    firstMiddle = 40 if lungoCorto == 1 else 60
+    secondMiddle = 60 if lungoCorto == 1 else 40
 
     gyro_sensor.reset_angle(0)
-    ruotaSuAsse(1)
+    ruotaSuAsse(destraSinistra)
     while abs(gyro_sensor.angle()) < 90:
         pass
     stop()
 
-    print("Ho ruotato a destra perchè ho visto il muro a sinistra, raggiungo il centro del lato corto\n")
-
-    distance = getDistanceCmPort(4)
-    dritto()  
-    while distance < (40 - halfRobot):
-        distance = getDistanceCmPort(4)
-    stop()
-
-    print("Sono al centro del lato corto della stanza\n\nRuoto sull'asse in senso antiorario")
-
-    gyro_sensor.reset_angle(0)
-    ruotaSuAsse(-1)
-    while abs(gyro_sensor.angle()) < 90:
-        pass
-    stop()
-
-    print("Sono pronto a raggiungere il centro della stanza sul lato lungo")
-
-    distance = getDistanceCmPort(4)
+    distance = getDistanceCmPort(back)
     dritto()
-    while distance < 60 - halfRobot:
-        distance = getDistanceCmPort(4)
+    while distance < firstMiddle - halfRobot():
+        distance = getDistanceCmPort(back)
     stop()
 
-    print("HO RAGGIUNTO IL CENTRO")
-
-
-def rightShort():
-    print("Ho rilevato l'entrata a destra sul lato corto della stanza\n")
-
     gyro_sensor.reset_angle(0)
-    ruotaSuAsse(-1)
+    ruotaSuAsse(rotazione2)
     while abs(gyro_sensor.angle()) < 90:
         pass
     stop()
 
-    print("Ho ruotato a sinistra perchè ho visto il muro a destra, raggiungo il centro del lato corto\n")
-
-    distance = getDistanceCmPort(4)
-    dritto()  
-    while distance < (40 - halfRobot):
-        distance = getDistanceCmPort(4)
+    distance = getDistanceCmPort(back)
+    while distance < secondMiddle - halfRobot:
+        distance = getDistanceCmPort(back)
     stop()
-
-    print("Sono al centro del lato corto della stanza\n\nRuoto sull'asse in senso orario")
-
-    gyro_sensor.reset_angle(0)
-    ruotaSuAsse(1)
-    while abs(gyro_sensor.angle()) < 90:
-        pass
-    stop()
-
-    print("Sono pronto a raggiungere il centro della stanza sul lato lungo")
-
-    distance = getDistanceCmPort(4)
-    dritto()
-    while distance < 60 - halfRobot:
-        distance = getDistanceCmPort(4)
-    stop()
-
-    print("HO RAGGIUNTO IL CENTRO")
-
-
-def leftLong():
-    print("Ho rilevato l'entrata a sinistra sul lato lungo della stanza\n")
-
-    gyro_sensor.reset_angle(0)
-    ruotaSuAsse(1)
-    while abs(gyro_sensor.angle()) < 90:
-        pass
-    stop()
-
-    print("Ho ruotato a destra perchè ho visto il muro a sinistra, raggiungo il centro del lato lungo\n")
-
-    distance = getDistanceCmPort(4)
-    dritto()  
-    while distance < (60 - halfRobot):
-        distance = getDistanceCmPort(4)
-    stop()
-
-    print("Sono al centro del lato lungo della stanza\n\nRuoto sull'asse in senso antiorario")
-
-    gyro_sensor.reset_angle(0)
-    ruotaSuAsse(-1)
-    while abs(gyro_sensor.angle()) < 90:
-        pass
-    stop()
-
-    print("Sono pronto a raggiungere il centro della stanza sul lato corto")
-
-    distance = getDistanceCmPort(4)
-    dritto()
-    while distance < 40 - halfRobot:
-        distance = getDistanceCmPort(4)
-    stop()
-
-    print("HO RAGGIUNTO IL CENTRO")
-
-def rightLong():
-    print("Ho rilevato l'entrata a destra sul lato lungo della stanza\n")
-
-    gyro_sensor.reset_angle(0)
-    ruotaSuAsse(-1)
-    while abs(gyro_sensor.angle()) < 90:
-        pass
-    stop()
-
-    print("Ho ruotato a sinistra perchè ho visto il muro a destra, raggiungo il centro del lato lungo\n")
-
-    distance = getDistanceCmPort(4)
-    dritto()  
-    while distance < (60 - halfRobot):
-        distance = getDistanceCmPort(4)
-    stop()
-
-    print("Sono al centro del lato lungo della stanza\n\nRuoto sull'asse in senso orario")
-
-    gyro_sensor.reset_angle(0)
-    ruotaSuAsse(1)
-    while abs(gyro_sensor.angle()) < 90:
-        pass
-    stop()
-
-    print("Sono pronto a raggiungere il centro della stanza sul lato corto")
-
-    distance = getDistanceCmPort(4)
-    dritto()
-    while distance < 40 - halfRobot:
-        distance = getDistanceCmPort(4)
-    stop()
-
-    print("HO RAGGIUNTO IL CENTRO")
-    
 
 
 
@@ -181,7 +67,7 @@ def rightLong():
 if sensorReadingLeft < sensorReadingRight:
     side = 1
 else:
-    side = 2
+    side = -1
 
 ### CONTROLLO PALLINE
 # controllo aggiuntivo per capire se ci sono palline:
@@ -194,20 +80,9 @@ else:
 if sensorReadingFront > 50:
     longOrShort = 1
 else:
-    longOrShort = 2
+    longOrShort = -1
 
-if side == 1 and longOrShort == 1:
-    # Si trova a sinistra nel lato corto della stanza
-    leftShort()
-elif side == 2 and longOrShort == 2:
-    # Si trova a destra nel lato corto della stanza
-    rightShort()
-elif side == 1 and longOrShort == 2:
-    # Si trova a sinistra nel lato lungo della stanza
-    leftLong()
-elif side == 2 and longOrShort == 2:
-    # Si trova a destra nel lato lungo della stanza
-    rightLong()
 
+stanza(side, longOrShort)
 
 # Una volta raggiunto il centro non resettiamo più l'angolo, così teniamo sempre il "nord"
