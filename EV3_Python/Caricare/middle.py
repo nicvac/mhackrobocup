@@ -42,6 +42,7 @@ def stanzaFunc(destraSinistra, lungoCorto):
     distance = getDistanceCm(DIST_BACK)
     dritto()
     while distance < firstMiddle - halfRobot:
+        print("Ho richiesto la distanza")
         distance = getDistanceCm(DIST_BACK)
     stop()
 
