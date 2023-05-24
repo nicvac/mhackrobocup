@@ -35,7 +35,7 @@ SGORARIO=0
 SGANTIORARIO=1
 
 # Nella stanza uso il robot al contrario rispetto al seguilinea
-robot = DriveBase(right_motor, left_motor, wheel_diameter=wheel, axle_track=axle)
+# robot = DriveBase(right_motor, left_motor, wheel_diameter=wheel, axle_track=axle)
 
     
 # Determina il verso di rotazione da usare per riagganciare l'oggetto.
@@ -292,16 +292,13 @@ upper_right_motor.hold()
 cm_list = list()
 deg_list = list()
 
-print("evacIndividuaSpike")
+print("IndividuaSpike")
 
-gyro_sensor.reset_angle(0)
-
-# Ruota come un radar, in senso antiorario
-print("TEST 125g ")
-robot.drive(0, -evac_motor_scan_degs)
+# Ruota come un radar
+robot.drive(0, evac_motor_scan_degs)
 gyro_sensor.reset_angle(0)
 cTurnAngle = 0
-while abs(cTurnAngle) <= 180:
+while abs(cTurnAngle) < 180:
     currCm = getDistanceCm(DIST_BACK)
     cTurnAngle = gyro_sensor.angle()
     print("distCm Angle: ", currCm, " ", cTurnAngle)
@@ -310,7 +307,15 @@ while abs(cTurnAngle) <= 180:
 robot.drive(0,0)
 robot.stop()
 
-stanza_func.evac_get_sample(cm_list, deg_list)
+#Punto la pallina
+pallina = stanza_func.evac_get_sample(cm_list, deg_list)
+robot.drive(0, -evac_motor_scan_degs)
+while abs( gyro_sensor.angle() ) < abs(pallina.angle):
+    pass
+robot.drive(0,0)
+robot.stop()
+
+
 
 
 #@@@ 

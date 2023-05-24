@@ -211,5 +211,7 @@ def evac_get_sample(cm_list, deg_list):
     print("To return: ")
     sample.dump()
 
+    return sample
+
 
 #evac_get_sample(cm_list, deg_list)
