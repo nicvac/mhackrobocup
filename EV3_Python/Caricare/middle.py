@@ -3,8 +3,8 @@ from rescue_line_setup import *
 from rescue_line_functions import *
 from client_functions import *
 
-robot = 14
-halfRobot = robot/2
+robotFranco = 14
+halfRobot = robotFranco/2
 
 
 sensorReadingFront = getDistanceCm(DIST_FRONT)
@@ -27,7 +27,7 @@ def stop():
 
 ### FUNZIONI PER GUADAGNARE IL CENTRO
 
-def stanza(destraSinistra, lungoCorto):
+def stanzaFunc(destraSinistra, lungoCorto):
     rotazione2 = destraSinistra * -1
 
     firstMiddle = 40 if lungoCorto == 1 else 60
@@ -41,7 +41,7 @@ def stanza(destraSinistra, lungoCorto):
 
     distance = getDistanceCm(DIST_BACK)
     dritto()
-    while distance < firstMiddle - halfRobot():
+    while distance < firstMiddle - halfRobot:
         distance = getDistanceCm(DIST_BACK)
     stop()
 
@@ -52,6 +52,7 @@ def stanza(destraSinistra, lungoCorto):
     stop()
 
     distance = getDistanceCm(DIST_BACK)
+    dritto()
     while distance < secondMiddle - halfRobot:
         distance = getDistanceCm(DIST_BACK)
     stop()
@@ -80,6 +81,6 @@ else:
     longOrShort = -1
 
 
-stanza(side, longOrShort)
+stanzaFunc(side, longOrShort)
 
 # Una volta raggiunto il centro non resettiamo più l'angolo, così teniamo sempre il "nord"

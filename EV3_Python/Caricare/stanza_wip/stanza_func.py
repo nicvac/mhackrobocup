@@ -203,7 +203,7 @@ def evac_get_sample(cm_list, deg_list):
     found = False
     sample = None
     i=0
-    while not found:
+    while not found and len(samples_sorted) > 0:
         sample = samples_sorted[i]
         found = sample.idx_spike_up != -1
         i += 1

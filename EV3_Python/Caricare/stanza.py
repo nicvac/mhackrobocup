@@ -299,7 +299,9 @@ robot.drive(0, evac_motor_scan_degs)
 gyro_sensor.reset_angle(0)
 cTurnAngle = 0
 while abs(cTurnAngle) < 180:
+    print("Richiedo la misura della distanza\n")
     currCm = getDistanceCm(DIST_BACK)
+    print("Richiedo la misura dell'angolo\n")
     cTurnAngle = gyro_sensor.angle()
     print("distCm Angle: ", currCm, " ", cTurnAngle)
     cm_list.append(currCm)
@@ -310,7 +312,7 @@ robot.stop()
 #Punto la pallina
 pallina = stanza_func.evac_get_sample(cm_list, deg_list)
 robot.drive(0, -evac_motor_scan_degs)
-while abs( gyro_sensor.angle() ) < abs(pallina.angle):
+while abs( gyro_sensor.angle() ) > abs(pallina.angle):
     pass
 robot.drive(0,0)
 robot.stop()
