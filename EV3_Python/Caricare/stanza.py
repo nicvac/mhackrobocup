@@ -311,14 +311,11 @@ robot.stop()
 
 #Punto la pallina
 pallina = stanza_func.evac_get_sample(cm_list, deg_list)
+angle_dest = pallina.angle if pallina != None else 0
 robot.drive(0, -evac_motor_scan_degs)
-while abs( gyro_sensor.angle() ) > abs(pallina.angle):
-    pass
+while gyro_sensor.angle() > angle_dest: pass
 robot.drive(0,0)
 robot.stop()
-
-
-
 
 #@@@ 
 
