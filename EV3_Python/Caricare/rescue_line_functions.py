@@ -37,6 +37,15 @@ def robot_gyro_turn( degree ):
     robot.stop()
     gyro_sensor.reset_angle(save)
 
+def dritto():
+    robot.drive(100, 0)
+
+def ruotaSuAsse( verso ):
+    robot.drive(0, (30 * verso))
+
+def stop():
+    robot.stop()
+
 #Scan
 #Ruoto sul mio asse fino a degree angoli fino a centrare la linea fra i due sensori L e R
 #Senso orario: degree positivo
@@ -358,3 +367,54 @@ def resetBackAngleAfterNoGreen(angle):
     print("Ripristinato angolo di quando ho visto il verde, ignoro i verdi per qualche istante")
     left_motor.hold()
     right_motor.hold()
+
+
+def scanBeforeIntersection():
+    print("Scan di 10 gradi con il sensore davanti, vedo se tovo la linea per l'incrocio")
+    # Resetta l'angolo alla partenza
+    gyro_sensor.reset_angle(0)
+    
+    # Ruota prima a desta di 10 gradi
+    ruotaSuAsse(1)
+    while abs(gyro_sensor.angle()) < 10:
+        colorFront = light_sensor_front.color()
+        lineScanIntersection = isLine(colorFront)
+
+        if lineScanIntersection:
+            # Se, mentre ruota, trova la linea esce dalla funzione
+            stop()
+            return True
+        else:
+            pass
+    
+    stop()
+    gyro_sensor.reset_angle(0)
+    # riprende la posizione iniziale se non ha trovato la linea prima di iniziare un altro scan di 10 gradi verso sinistra
+    ruotaSuAsse(-1)
+    while abs(gyro_sensor.angle()) < 10:
+        pass
+    stop()
+
+    # inizia la rotazione di 10 gradi verso sinistra
+    gyro_sensor.reset_angle(0)
+    ruotaSuAsse(-1)
+    while abs(gyro_sensor.angle()) < 10:
+        colorFront = light_sensor_front.color()
+        lineScanIntersection = isLine(colorFront)
+
+        if lineScanIntersection:
+            # se trova la linea nello scan di 10 gradi verso sinistra interrompe la funzione.
+            stop()
+            return True
+        else:
+            pass
+
+    # se ne a destra ne ha sinistra ha trovato niente riprende la posizione di partenza e va avanti nel programma
+    stop()
+    gyro_sensor.reset_angle(0)
+    ruotaSuAsse(1)
+    while abs(gyro_sensor.angle()) < 10:
+        pass
+    stop()
+
+    return False
