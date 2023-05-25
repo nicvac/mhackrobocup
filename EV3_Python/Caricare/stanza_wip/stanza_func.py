@@ -13,7 +13,7 @@
 
 #from load_p090g import *
 #from load_p090g_b import * # <<--- NO
-from load_p120g import *
+#from load_p120g import *
 #from load_p125g import *
 #from load_p128g import *
 #from load_p129g import *
@@ -237,4 +237,4 @@ def evac_get_sample(cm_list, deg_list):
 
     return sample_to_return
 
-evac_get_sample(cm_list, deg_list)
+#evac_get_sample(cm_list, deg_list)

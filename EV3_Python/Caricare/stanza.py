@@ -276,6 +276,10 @@ def evacTrovaERaggiungiPalla():
 # MAIN
 
 evac_motor_scan_degs = 30
+evac_motor_scan_degs /= 3
+evac_motor_scan_degs = 0
+
+evac_motor_go_degs = 60
 
 #upper_left_motor.run_angle(300, 100)
 #upper_right_motor.run_angle(300, 90) #Devono girare insieme.
@@ -299,9 +303,8 @@ robot.drive(0, evac_motor_scan_degs)
 gyro_sensor.reset_angle(0)
 cTurnAngle = 0
 while abs(cTurnAngle) < 180:
-    print("Richiedo la misura della distanza\n")
+    #time.sleep(0.5)
     currCm = getDistanceCm(DIST_BACK)
-    print("Richiedo la misura dell'angolo\n")
     cTurnAngle = gyro_sensor.angle()
     print("distCm Angle: ", currCm, " ", cTurnAngle)
     cm_list.append(currCm)
@@ -312,7 +315,7 @@ robot.stop()
 #Punto la pallina
 pallina = stanza_func.evac_get_sample(cm_list, deg_list)
 angle_dest = pallina.angle if pallina != None else 0
-robot.drive(0, -evac_motor_scan_degs)
+robot.drive(0, -evac_motor_go_degs)
 while gyro_sensor.angle() > angle_dest: pass
 robot.drive(0,0)
 robot.stop()
