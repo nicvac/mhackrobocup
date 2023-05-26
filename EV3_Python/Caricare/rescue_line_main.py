@@ -1,6 +1,4 @@
 #!/usr/bin/env pybricks-micropython
-
-import time
 from rescue_line_functions import *
 from rescue_line_setup import *
 
@@ -8,6 +6,9 @@ from rescue_line_setup import *
 lc_l = 0; lc_r = 0; lc_f = 0
 #Blank counter: Quante volte vedo CONSECUTIVAMENTE bianco, su tutti i sensori
 bc_l = 0; bc_r = 0; bc_f = 0
+#Blank counter gap: Vedo bianco però si resetta quando uno dei sensori vede nero
+fullGapCounter = 0
+
 
 def resetCountersLine_lc_bc():
     global lc_l, lc_r, lc_f
@@ -34,8 +35,11 @@ isLine_l = False; isLine_r = False
 
 while True:  
     
-    # isObstacle = checkIfObstacle()
-    # if isObstacle: aggiraOstacolo()
+    ### OSTACOLO
+    # Funzione aggira ostacolo. Da sistemare con tutti gli aggiornamenti fatti al client-server durante il percorso.
+    # Potrebbe dare problemi con le troppe letture durante il percorso, bisogna impostargli uno sleep.
+    #isObstacle = checkIfObstacle()
+    #if isObstacle: aggiraOstacolo()
     
 
     #Lettura di tutti i sensori nel loop corrente
@@ -57,13 +61,13 @@ while True:
         # qui fa il controllo normalmente. Se non vede nessun verde nella posizione stabile non esegue nessuna correzione
         if isGreen_l and not isGreen_r:
             print("Ho visto verde a sinistra")
-            scan_deg = scan_forward_2_scan_degree(lungCingoli / 3)
-            robot.straight(lungCingoli / 3)
+            scan_deg = scan_forward_2_scan_degree(lungCingoli / 2)
+            robot.straight(lungCingoli / 2)
             scan(-scan_deg, 40, False)
         elif isGreen_r and not isGreen_l:
             print("Ho visto verde a destra")
-            scan_deg = scan_forward_2_scan_degree(lungCingoli / 3)
-            robot.straight(lungCingoli / 3)
+            scan_deg = scan_forward_2_scan_degree(lungCingoli / 2)
+            robot.straight(lungCingoli / 2)
             scan(scan_deg, 40, False)
         elif isGreen_r and isGreen_l:
             print("Ho visto verde da tutti e due i lati")
@@ -83,19 +87,9 @@ while True:
     isLine_r = isLine(color_r)
     isLine_f = isLineF(light_f)
 
-    ### GAP
-    #Da testare, se i sensori laterali vedono bianco e il frontale vede nero, e poi il fontale vede bianco => vai avanti e controlla i sensori laterali
-    # flag_gap = False
-    # if not isLine_l and not isLine_r and isLine_f:
-    #     flag_gap = True
-    # else:
-    #     flag_gap = False
-    # if flag_gap:
-    #     left_motor.dc(80)
-    #     right_motor.dc(80)
 
 
-
+    ### INCROCI
     # Da testare, se tutti e tre i sensori vedono nero fa uno skip in avanti
     # Problemi possibili:
     # Nelle corna tutti e tre i sensori possono vedere nero, quindi può fare lo skip in una direzione sbagliata e perdersi
@@ -113,6 +107,7 @@ while True:
         print("Skip incrocio nero destra nero avanti bianco sinistra")
     
 
+
     #Line counter: Incremento il contatore se è linea e lo era anche al giro precedente
     lc_l = lc_l + 1 if isLine_l else 0
     lc_r = lc_r + 1 if isLine_r else 0
@@ -123,6 +118,8 @@ while True:
     bc_r = bc_r + 1 if not isLine_r else 0
     bc_f = bc_f + 1 if not isLine_f else 0
 
+    fullGapCounter = fullGapCounter + 1 if not isLine_l and not isLine_r and not isLine_f else 0
+    
 
     corrc_list_l.append(lc_l)
     corrc_list_r.append(lc_r)
@@ -132,8 +129,60 @@ while True:
         dl = 1 if isLine_l else 0
         dr = 1 if isLine_r else 0
         df = 1 if isLine_f else 0
-        print( ". ",dl,"-",dr,"\t",lc_l,"-",lc_r,"\t\t F: ",df," ",lc_f, "\t\t Corr:(", corrc_fwd,") ", corrc_left, " ", corrc_right, "\t Incrocio: ", correzionePerIncrocio)
+        print( ". ",dl,"-",dr,"\t",lc_l,"-",lc_r,"\t\t F: ",df," ",lc_f, "\t\t Corr:(", corrc_fwd,") ", corrc_left, " ", corrc_right, "\t Incrocio: ", correzionePerIncrocio, "\t Contatori Bianco Completo: ", fullGapCounter)
 
+
+    ### GAP
+    if fullGapCounter >= lost_soglia:
+        print("I sensori hanno visto 3 volte bianco per tanto tempo")
+        robot.stop()
+        left_motor.hold()
+        right_motor.hold()
+
+        print("Inizio ad andare indietro finchè uno dei miei sensori vede la linea")
+        robot.drive(-100, 0)
+
+        while True:
+            lineLeft = isLine(color_sensor_left.color())
+            lineRight = isLine(color_sensor_right.color())
+            #lineFront = isLineF(light_sensor_front.reflection())
+
+            if lineLeft or lineRight:
+                if lineLeft: print("Ho trovato la linea a sinistra")
+                if lineRight: print("Ho trovato la linea a destra")
+                #if lineFront: print("Ho trovato la linea davanti")
+                break
+        robot.stop()
+
+        side = 1 if lineLeft and not lineRight else -1
+
+        if side == 1:
+            gyro_sensor.reset_angle(0)
+            ruotaSuAsse(side)
+            while isLine(color_sensor_left.color()) and abs(gyro_sensor.angle()) < 45:
+                pass
+            robot.stop()
+            robot.straight(100)
+            robot.stop()
+            fullGapCounter = -100
+            continue
+        elif side == -1:
+            gyro_sensor.reset_angle(0)
+            ruotaSuAsse(side)
+            while isLine(color_sensor_right.color()) and abs(gyro_sensor.angle()) < 45:
+                pass
+            robot.stop()
+            robot.straight(100)
+            robot.stop()
+            fullGapCounter = -100
+            continue
+
+
+
+            
+    
+    ### BIANCO BIANCO BIANCO
+    ### GAP CHE NON FUNZIONA
     #Ho perso la strada. Torno indietro e recupero il percorso Triplo bianco
     #@@@ QUI BISOGNA DISTINGUERE IL CASO GAP
     # if bc_l >= lost_soglia and bc_r >= lost_soglia and bc_f >= lost_soglia:

@@ -1,5 +1,5 @@
 from rescue_line_setup import *
-from client_functions import *
+# from client_functions import *
 
 #Confronto a meno di un errore
 def simile( a, b, errore = 1.0 ):
@@ -224,86 +224,46 @@ def aggiraOstacolo():
     # salva la distanza del sensore di destra ( porta 3 - sensore destra )
     distanceRight = getDistanceCm(DIST_RIGHT)
 
+    verso = 1 if distanceLeft < distanceRight else -1
+
+
+    if verso == 1: print("Ho visto l'ostacolo e la strada libera sembra a destra")
+    if verso == -1: print("Ho visto l'ostacolo e la strada libera sembra a sinistra")
+
     gyro_sensor.reset_angle(0)
     
-    # caso in cui c'è un muro a destra
-    # se la distanza di sinistra è maggiore della distanza di destra, non c'è un muro a sinistra
-    # esegue tutto il programma dal lato sinistro
-    if distanceLeft > distanceRight:
-
-        # gira sull'asse di 50 gradi
-        left_motor.dc(-50)
-        right_motor.dc(50)
-        while abs(gyro_sensor.angle()) < 50:
-            print(gyro_sensor.angle())
+    # gira sull'asse di 50 gradi
+    ruotaSuAsse(verso)
+    while abs(gyro_sensor.angle()) < 50:
+        print(gyro_sensor.angle())
         
-        left_motor.hold()
-        right_motor.hold()
+    stop()
 
-        # si allontana dalla linea di 5 centimetri per avviare la scansione con i sensori che vedono bianco bianco bianco
-        robot.straight(50)
-        robot.stop()
+    # si allontana dalla linea di 5 centimetri per avviare la scansione con i sensori che vedono bianco bianco bianco
+    robot.straight(50)
+    robot.stop()
 
-        # inizia a muoversi circumnavigando l'ostacolo
-        left_motor.dc(80)
-        right_motor.dc(20)
+    # inizia a muoversi circumnavigando l'ostacolo
+    left_motor.dc(80 if verso == -1 else 30)
+    right_motor.dc(30 if verso == -1 else 80)
         
 
-        while True:
-            colorl = color_sensor_left.color()
-            colorr = color_sensor_right.color()
-            lightf = light_sensor_front.reflection()
+    while True:
+        colorl = color_sensor_left.color()
+        colorr = color_sensor_right.color()
+        lightf = light_sensor_front.color()
 
-            isLineLeft = isLine(colorl)
-            isLineRight = isLine(colorr)
-            isLineFront = isLineF(lightf)
+        isLineLeft = isLine(colorl)
+        isLineRight = isLine(colorr)
+        isLineFront = isLine(lightf)
 
-            # se vede con uno dei tre sensori la linea nera interrompe la funzione aggira ostacolo e torna al seguilinea
-            if isLineLeft or isLineRight or isLineFront:
-                left_motor.hold()
-                right_motor.hold()
-                return
-
-        # aggira ostacolo a sinistra
-
-    # caso in cui c'è un muro a sinistra
-    # se la distanza di destra è maggiore della distanza di sinistra, non c'è un muro a destra
-    # esegue tutto il programma dal lato destro
-    elif distanceRight > distanceLeft:
-        
-        # gira sull'asse di 50 gradi
-        left_motor.dc(50)
-        right_motor.dc(-50)
-        while abs(gyro_sensor.angle()) < 50:
-            print(gyro_sensor.angle())
-        left_motor.hold()
-        right_motor.hold()
+        # se vede con uno dei tre sensori la linea nera interrompe la funzione aggira ostacolo e torna al seguilinea
+        if isLineLeft or isLineRight or isLineFront:
+            left_motor.hold()
+            right_motor.hold()
+            return
 
 
-        # si allontana dalla linea di 5 centimetri per avviare la scansione con i sensori che vedono bianco bianco bianco
-        robot.straight(50)
-        robot.stop()
-
-
-        # inizia a muoversi circumnavigando l'ostacolo
-        left_motor.dc(20)
-        right_motor.dc(80)
-        
-        while True:
-            colorl = color_sensor_left.color()
-            colorr = color_sensor_right.color()
-            lightf = light_sensor_front.reflection()
-
-            isLineLeft = isLine(colorl)
-            isLineRight = isLine(colorr)
-            isLineFront = isLineF(lightf)
-
-            # se vede con uno dei tre sensori la linea nera interrompe la funzione aggira ostacolo e torna al seguilinea
-            if isLineLeft or isLineRight or isLineFront:
-                left_motor.hold()
-                right_motor.hold()
-                return
-        
 
 
 def skip():
@@ -311,22 +271,22 @@ def skip():
     robot.stop()
 
 
-def rilevaIncrocio():
-    # il sensore davanti passa un attimo in modalità colore per essere sicuri di non sbagliare con la lettura della luce
-    new_color_f = light_sensor_front.color()
+# def rilevaIncrocio():
+#     # il sensore davanti passa un attimo in modalità colore per essere sicuri di non sbagliare con la lettura della luce
+#     new_color_f = light_sensor_front.color()
     
-    new_is_line_f = isLine(new_color_f)
-    # se, dopo aver resettato l'angolo, il sensore vede la linea fa uno skip in avanti e supera l'incrocio
-    # da provare con tutti i casi in cui potrebbe partire la scansione.
-    # va messo prima dell "avanzo per tenere il vertice sotto" perchè se ci troviamo in curve strette rischiamo di vedere la linea avanti.
-    # testato con l'incrocio a T a sinistra e a destra e funziona.
-    if new_is_line_f:
-        robot.straight(30)
-        robot.stop()
-        print("Ho trovato un incrocio a T, non serve eseguire la scansione")
-        return True
-    else:
-        return False
+#     new_is_line_f = isLine(new_color_f)
+#     # se, dopo aver resettato l'angolo, il sensore vede la linea fa uno skip in avanti e supera l'incrocio
+#     # da provare con tutti i casi in cui potrebbe partire la scansione.
+#     # va messo prima dell "avanzo per tenere il vertice sotto" perchè se ci troviamo in curve strette rischiamo di vedere la linea avanti.
+#     # testato con l'incrocio a T a sinistra e a destra e funziona.
+#     if new_is_line_f:
+#         robot.straight(30)
+#         robot.stop()
+#         print("Ho trovato un incrocio a T, non serve eseguire la scansione")
+#         return True
+#     else:
+#         return False
     
 
 
