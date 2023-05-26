@@ -2,8 +2,7 @@
 # https://pybricks.com/ev3-micropython/messaging.html
 # ATTENZIONE: USANDO IL MECCANISMO DI WAIT REQUEST DAL CLIENT, SI RISCHIA DI PERDERSI LA SINCRONIA 
 #  FRA SERVERE E CLIENT, SERVER PERDE LA RICHIESTA DEL CLIENT E RIMANE INDEFINITIVAMENTE IN WAIT.
-#  QUINDI RACCOLGO I DATI DAL SENSORE E LI SPARO A RIPETIZIONE. SARA' SOLO IL CLIENT A FARE WAIT 
-#  QUANDO GLI SERVE
+#  QUINDI LA WAIT LA FA SOLO IL SERVER E IL CLIENT LEGGE A RIPETIZIONE SENZA WAIT
 
 from pybricks.messaging import BluetoothMailboxClient, TextMailbox, NumericMailbox
 
@@ -16,27 +15,19 @@ DIST_BACK = 4
 DIST_LEFT = 2
 DIST_RIGHT = 3
 
+#count = 0
+
 #Ritorna la distanza del sensore server in cm
 def getDistanceMM(sensore):
-    #Attenzione! Serve leggerli tutti per svuotare la coda del server!
-    extDistFront.wait()
-    dist_f_cm = extDistFront.read()
-    extDistBack.wait()
-    dist_b_cm = extDistBack.read()
-    extDistLeft.wait()
-    dist_l_cm = extDistLeft.read()
-    extDistRight.wait()
-    dist_r_cm = extDistRight.read()
+    #global count
+    dist_mm = None
+    while dist_mm == None:
+        extDist.send(sensore)
+        dist_mm = extDist.read()
+    #count += 1
+    #print(count)
+    return dist_mm
 
-    if sensore == DIST_FRONT:
-        dist_cm = dist_f_cm
-    elif sensore == DIST_BACK:
-        dist_cm = dist_b_cm
-    elif sensore == DIST_LEFT:
-        dist_cm = dist_l_cm
-    elif sensore == DIST_RIGHT:
-        dist_cm = dist_r_cm
-    return dist_cm
 
 #Ritorna la distanza in cm, con contatore di stabilità
 def getDistanceCm(sensore):
@@ -53,7 +44,5 @@ client.connect(SERVER)
 print('connected!')
 
 #USARE LE STESSE ETICHETTE DEL SERVER
-extDistFront = NumericMailbox('extDistFront', client)
-extDistBack  = NumericMailbox('extDistBack', client)
-extDistLeft  = NumericMailbox('extDistLeft', client)
-extDistRight  = NumericMailbox('extDistRight', client)
+extDist = NumericMailbox('extDist', client)
+

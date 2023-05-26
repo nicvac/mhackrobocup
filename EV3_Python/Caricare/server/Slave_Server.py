@@ -4,8 +4,7 @@
 # https://pybricks.com/ev3-micropython/messaging.html
 # ATTENZIONE: USANDO IL MECCANISMO DI WAIT REQUEST DAL CLIENT, SI RISCHIA DI PERDERSI LA SINCRONIA 
 #  FRA SERVERE E CLIENT, SERVER PERDE LA RICHIESTA DEL CLIENT E RIMANE INDEFINITIVAMENTE IN WAIT.
-#  QUINDI RACCOLGO I DATI DAL SENSORE E LI SPARO A RIPETIZIONE. SARA' SOLO IL CLIENT A FARE WAIT 
-#  QUANDO GLI SERVE
+#  QUINDI LA WAIT LA FA SOLO IL SERVER E IL CLIENT LEGGE A RIPETIZIONE SENZA WAIT
 
 
 from pybricks.hubs import EV3Brick
@@ -41,10 +40,13 @@ ultrasonic_sensor_back = UltrasonicSensor(Port.S4)
 
 server = BluetoothMailboxServer()
 
-extDistFront = NumericMailbox('extDistFront', server)
-extDistBack  = NumericMailbox('extDistBack', server)
-extDistLeft  = NumericMailbox('extDistLeft', server)
-extDistRight  = NumericMailbox('extDistRight', server)
+#Tipo di sensore di distanza
+DIST_FRONT = 1
+DIST_BACK = 4
+DIST_LEFT = 2
+DIST_RIGHT = 3
+
+extDist = NumericMailbox('extDist', server)
 
 # The server must be started before the client!
 brick_speaker_beep(1)
@@ -52,10 +54,20 @@ print('waiting for connection...')
 server.wait_for_connection()
 print('connected!')
 
+#count = 0
 
 while True:
-    extDistFront.send(ultrasonic_sensor_front.distance())
-    extDistBack.send(ultrasonic_sensor_back.distance())
-    extDistLeft.send(ultrasonic_sensor_left.distance())
-    extDistRight.send(ultrasonic_sensor_right.distance())
+    extDist.wait()
+    req = extDist.read()
+    if   req == DIST_FRONT:
+        extDist.send(ultrasonic_sensor_front.distance())
+    elif req == DIST_BACK:
+        extDist.send(ultrasonic_sensor_back.distance())
+    elif req == DIST_LEFT:
+        extDist.send(ultrasonic_sensor_left.distance())
+    elif req == DIST_RIGHT:
+        extDist.send(ultrasonic_sensor_right.distance())
 
+    #count += 1
+    #print(count)
+    

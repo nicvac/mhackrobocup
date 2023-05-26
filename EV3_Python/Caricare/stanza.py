@@ -277,9 +277,8 @@ def evacTrovaERaggiungiPalla():
 
 evac_motor_scan_degs = 30
 evac_motor_scan_degs /= 3
-evac_motor_scan_degs = 0
 
-evac_motor_go_degs = 60
+evac_motor_go_degs = 40
 
 #upper_left_motor.run_angle(300, 100)
 #upper_right_motor.run_angle(300, 90) #Devono girare insieme.
