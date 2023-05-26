@@ -235,18 +235,39 @@ while True:
     right_motor.hold()
     left_motor.hold()
 
+# # caso per gestire la cuva a T. Se ripristina l'angolo e vede nero con il sensore di fronte non fa partire la scansione
+    # incrocio = rilevaIncrocio()
 
-    # caso per gestire la cuva a T. Se ripristina l'angolo e vede nero con il sensore di fronte non fa partire la scansione
-    incrocio = rilevaIncrocio()
+
+
+    # Seconda prova per l'incrocio a T.
+    # Se trova il loop fa partire una scansione di 10° per lato con il sensore davanti
+    # Se trova la linea vuol dire che siamo sull'incrocio a T
+    # Controllare se basta l'angolo di 10 gradi anche nel caso peggiore.
+    # Controllare se anche le corna 
+    
+    # Fa partire lo scan con il sensore avanti per vedere se si trova all'incrocio 
+    lineFoundBack = scanBeforeIntersection()
+
+    if lineFoundBack:
+        # Se ha trovato la linea fa uno skip in avanti e supera l'incrocio, resettando tutti i counter
+        print("Ho trovato l'incrocio a T, salto lo scan.")
+        robot.straight(30)
+        stop()
+        resetCountersCorrection_corrc()
+        continue
+    else:
+        # Se non ha trovato la linea va avanti con la scansione
+        pass
 
     # se ha trovato l'incrocio resetta tutti i contatoiri. 
     # È fondamentale perchè se trova l'incrocio e lo supera, ma i contatori non si sono resettati, fa partire la scansione
     # perchè si ricorda dell'incrocio di prima
-    if incrocio:
-        resetCountersCorrection_corrc()
-        continue
-    else:
-        pass
+    # if incrocio:
+    #     resetCountersCorrection_corrc()
+    #     continue
+    # else:
+    #     pass
 
     #Mi posiziono in un punto ottimale per far partire lo scan
     #Avanzo, posizionando la curva a gomito sotto il robot
