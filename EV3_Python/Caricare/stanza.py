@@ -298,10 +298,11 @@ deg_list = list()
 print("IndividuaSpike")
 
 # Ruota come un radar
+print("TEST Tre palle, 90, 180, ~260g.")
 robot.drive(0, evac_motor_scan_degs)
 gyro_sensor.reset_angle(0)
 cTurnAngle = 0
-while abs(cTurnAngle) < 180:
+while abs(cTurnAngle) < 360+90:
     #time.sleep(0.5)
     currCm = getDistanceCm(DIST_BACK)
     cTurnAngle = gyro_sensor.angle()
