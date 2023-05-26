@@ -28,7 +28,7 @@ distanza_attuale=getDistanceCm(DIST_BACK)
 
 # robot.drive(0, 0)
 # quit
-targetCm=10
+targetCm=9
 noCorrCm=min(getDistanceCm(DIST_BACK)*(2/3), getDistanceCm(DIST_BACK)-targetCm)
 print("Avanzo senza correzioni di: ", noCorrCm)
 robot.straight(-10*noCorrCm)
@@ -49,7 +49,7 @@ while getDistanceCm(DIST_BACK) > targetCm :
                 robot.drive(0, 30)
                 print ("giro orario: " + str(gyro_sensor.angle()))
             else:
-                robot.stop()
+                #robot.stop()
                 gyro_sensor.reset_angle(0)
                 cazzo=False
                 if gyro_sensor.angle() > -20:
@@ -74,10 +74,25 @@ print("Distanza dopo il loop: ", getDistanceCm(DIST_BACK))
 robot.straight(10*(targetCm-getDistanceCm(DIST_BACK)))
 print("Distanza finale: ", getDistanceCm(DIST_BACK))
 
-upper_left_motor.run_angle(700, -100)
-upper_left_motor.hold()
-time.sleep(0.2)
-upper_left_motor.run_angle(300, 100)
-upper_left_motor.hold()
 for i in range(100):
     print(getDistanceCm(DIST_BACK))
+
+
+# upper_left_motor.run_angle(700, -130)
+# upper_left_motor.hold()
+# time.sleep(0.2)
+# upper_left_motor.run_angle(300, 130)
+# upper_left_motor.hold()
+
+upper_left_motor.reset_angle(0)
+while upper_left_motor.angle()>-100:
+    upper_left_motor.dc(-100)
+    upper_right_motor.dc(-100)
+
+upper_left_motor.hold()
+upper_right_motor.hold()
+time.sleep(5)
+upper_right_motor.stop()
+upper_left_motor.run_angle(300, 100)
+upper_left_motor.hold()
+
