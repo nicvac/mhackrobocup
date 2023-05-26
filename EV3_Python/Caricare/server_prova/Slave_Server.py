@@ -54,7 +54,7 @@ print('connected!')
 
 
 while True:
-    time.sleep(0.05)
+    time.sleep(0.02)
     extDistFront.send(ultrasonic_sensor_front.distance())
     extDistBack.send(ultrasonic_sensor_back.distance())
     extDistLeft.send(ultrasonic_sensor_left.distance())
