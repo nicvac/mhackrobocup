@@ -17,18 +17,20 @@ DIST_BACK = 4
 DIST_LEFT = 2
 DIST_RIGHT = 3
 
-#count = 0
 
-#Ritorna la distanza del sensore server in cm
+#Ritorna la distanza del sensore server in mm.
+#Gestisce la sincronizzazione dei messaggi con il server.
+#Come da guida, avrei dovuto usare una wait, ma ci sono casi di deadlock.
+#Abbiamo gestito la wait con un while e se passa un tot tempo rimandiamo la richiesta perchè il
+#server potrebbe averla persa.
 def getDistanceMM(sensore):
     c=1
-    #global count
     start = time.time()
     extDist.send(sensore)
     dist_mm = None
     while dist_mm == None:
         stop = time.time()
-        if (stop - start) > 0.1:
+        if (stop - start) > 0.15:
             c += 1
             extDist.send(sensore)
         dist_mm = extDist.read()
@@ -39,10 +41,9 @@ def getDistanceMM(sensore):
     return dist_mm
 
 
-#Ritorna la distanza in cm, con contatore di stabilità
+#Ritorna la distanza in cm
 def getDistanceCm(sensore):
     dist_cm = getDistanceMM(sensore) / 10
-    #print(dist_cm)
     return dist_cm
 
 print("OPERAZIONE DI CONNESSIONE AL SERVER AVVIATA, COMMENTARE SE NON SERVE")
