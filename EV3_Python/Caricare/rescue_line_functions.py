@@ -1,5 +1,5 @@
 from rescue_line_setup import *
-# from client_functions import *
+from client_functions import *
 
 #Confronto a meno di un errore
 def simile( a, b, errore = 1.0 ):
