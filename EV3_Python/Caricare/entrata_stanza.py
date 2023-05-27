@@ -12,6 +12,8 @@ def stanza():
 lightFront = light_sensor_front.reflection()
 
 stagnola = isStagnola(lightFront)
+robot.drive(0,0)
+stop()
 
 if stagnola:
     currentAngle = gyro_sensor.angle()
