@@ -37,6 +37,9 @@ isLine_l = False; isLine_r = False
 
 while True:  
     
+    #SE PREMO UN PULSANTE (TRANNE STOP!!!) RIAVVIA IL SERVER ED ESCE DAL PROGRAMMA
+    check_quit_and_restart_server()
+
     ### OSTACOLO
     # Funzione aggira ostacolo. Da sistemare con tutti gli aggiornamenti fatti al client-server durante il percorso.
     # Potrebbe dare problemi con le troppe letture durante il percorso, bisogna impostargli uno sleep.

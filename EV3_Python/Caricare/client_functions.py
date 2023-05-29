@@ -4,12 +4,15 @@
 #  FRA SERVERE E CLIENT, SERVER PERDE LA RICHIESTA DEL CLIENT E RIMANE INDEFINITIVAMENTE IN WAIT.
 #  QUINDI LA WAIT LA FA SOLO IL SERVER E IL CLIENT LEGGE A RIPETIZIONE SENZA WAIT
 
+from pybricks.hubs import EV3Brick
 from pybricks.messaging import BluetoothMailboxClient, TextMailbox, NumericMailbox
 
 from server.server_commands import *
 
 import time
+import sys
 
+clientEv3 = EV3Brick() 
 
 #Ritorna la distanza del sensore server in mm.
 #Gestisce la sincronizzazione dei messaggi con il server.
@@ -56,6 +59,17 @@ def sensorOff(sensore_off):
         print("############### offSensor: Richiesta mandata ", c, "volte")
     print("Sensor off ", sensore_off)
     return dist_mm
+
+#RIAVVIA IL SERVER ED ESCE!
+#SE PREMO QUALUNQUE PULSANTE (TRANNE PULSANTE STOP!!!)
+server_restart_request = False
+def check_quit_and_restart_server():
+    global server_restart_request
+    if server_restart_request == False and clientEv3.buttons.pressed():
+        print("RIAVVIO IL SERVER ED ESCO")
+        server_restart_request = True
+        extDist.send(CONNECTION_RESTART)
+        sys.exit()
 
 
 print("OPERAZIONE DI CONNESSIONE AL SERVER AVVIATA, COMMENTARE SE NON SERVE")

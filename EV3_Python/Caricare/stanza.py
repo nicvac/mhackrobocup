@@ -298,8 +298,6 @@ deg_list = list()
 print("IndividuaSpike")
 
 # Ruota come un radar
-print("SCAN STANZA 120X90. SOLO FRONT ACCESO")
-
 sensorOff(DIST_FRONT_OFF)
 time.sleep(0.5)
 sensorOff(DIST_LEFT_OFF)
@@ -319,6 +317,11 @@ while abs(cTurnAngle) < 360+90:
     deg_list.append(cTurnAngle)
 robot.drive(0,0)
 robot.stop()
+
+#Controlla se devo uscire (premendo qualunque tasto)
+while True:
+    check_quit_and_restart_server()
+
 
 #Punto la pallina
 # pallina = stanza_func.evac_get_sample(cm_list, deg_list)

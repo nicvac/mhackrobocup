@@ -40,42 +40,44 @@ ultrasonic_sensor_left = UltrasonicSensor(Port.S2)
 ultrasonic_sensor_right = UltrasonicSensor(Port.S3)
 ultrasonic_sensor_back = UltrasonicSensor(Port.S4)
 
-server = BluetoothMailboxServer()
-
-
-extDist = NumericMailbox('extDist', server)
-
-# The server must be started before the client!
-brick_speaker_beep(1)
-print('waiting for connection...')
-server.wait_for_connection()
-print('connected!')
-
-#count = 0
-
 switchoff = True
 
+
 while True:
-    extDist.wait()
-    req = extDist.read()
-    if   req == DIST_FRONT:
-        extDist.send(ultrasonic_sensor_front.distance())
-    elif req == DIST_BACK:
-        extDist.send(ultrasonic_sensor_back.distance())
-    elif req == DIST_LEFT:
-        extDist.send(ultrasonic_sensor_left.distance())
-    elif req == DIST_RIGHT:
-        extDist.send(ultrasonic_sensor_right.distance())
 
-    elif req == DIST_FRONT_OFF:
-        extDist.send(ultrasonic_sensor_front.distance(switchoff))
-    elif req == DIST_BACK_OFF:
-        extDist.send(ultrasonic_sensor_back.distance(switchoff))
-    elif req == DIST_LEFT_OFF:
-        extDist.send(ultrasonic_sensor_left.distance(switchoff))
-    elif req == DIST_RIGHT_OFF:
-        extDist.send(ultrasonic_sensor_right.distance(switchoff))
+    server = BluetoothMailboxServer()
+    extDist = NumericMailbox('extDist', server)
 
-    #count += 1
-    #print(count)
-    
+    # The server must be started before the client!
+    brick_speaker_beep(1)
+    print('waiting for connection...')
+    server.wait_for_connection()
+    print('connected!')
+
+    restart = False
+    while not restart:
+        extDist.wait()
+        req = extDist.read()
+        if   req == DIST_FRONT:
+            extDist.send(ultrasonic_sensor_front.distance())
+        elif req == DIST_BACK:
+            extDist.send(ultrasonic_sensor_back.distance())
+        elif req == DIST_LEFT:
+            extDist.send(ultrasonic_sensor_left.distance())
+        elif req == DIST_RIGHT:
+            extDist.send(ultrasonic_sensor_right.distance())
+
+        elif req == DIST_FRONT_OFF:
+            extDist.send(ultrasonic_sensor_front.distance(switchoff))
+        elif req == DIST_BACK_OFF:
+            extDist.send(ultrasonic_sensor_back.distance(switchoff))
+        elif req == DIST_LEFT_OFF:
+            extDist.send(ultrasonic_sensor_left.distance(switchoff))
+        elif req == DIST_RIGHT_OFF:
+            extDist.send(ultrasonic_sensor_right.distance(switchoff))
+
+        elif req == CONNECTION_RESTART:
+            server.server_close()
+            restart = True
+            time.sleep(5.0) #FONDAMENTALE!
+        
