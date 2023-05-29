@@ -6,16 +6,9 @@
 
 from pybricks.messaging import BluetoothMailboxClient, TextMailbox, NumericMailbox
 
+from server.server_commands import *
+
 import time
-
-#Il brick server (fornisce le distanze)
-SERVER = 'ev3devExt'
-
-#Tipo di sensore di distanza
-DIST_FRONT = 1
-DIST_BACK = 4
-DIST_LEFT = 2
-DIST_RIGHT = 3
 
 
 #Ritorna la distanza del sensore server in mm.
@@ -37,7 +30,7 @@ def getDistanceMM(sensore):
     #count += 1
     #print(count)
     if c > 1:
-        print("############### Richiesta mandata ", c, "volte")
+        print("############### getDistanceMM: Richiesta mandata ", c, "volte")
     return dist_mm
 
 
@@ -45,6 +38,25 @@ def getDistanceMM(sensore):
 def getDistanceCm(sensore):
     dist_cm = getDistanceMM(sensore) / 10
     return dist_cm
+
+#Spegne i sensori che non servono, per ridurre l'interferenza con il sensore che effettua la lettura
+# NON CHIAMARLO A LOOP STRETTO!!! PUO' IMPALLARE I SENSORI!!!
+def sensorOff(sensore_off):
+    c=1
+    start = time.time()
+    extDist.send(sensore_off)
+    dist_mm = None
+    while dist_mm == None:
+        stop = time.time()
+        if (stop - start) > 0.15:
+            c += 1
+            extDist.send(sensore_off)
+        dist_mm = extDist.read()
+    if c > 1:
+        print("############### offSensor: Richiesta mandata ", c, "volte")
+    print("Sensor off ", sensore_off)
+    return dist_mm
+
 
 print("OPERAZIONE DI CONNESSIONE AL SERVER AVVIATA, COMMENTARE SE NON SERVE")
 

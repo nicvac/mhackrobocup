@@ -14,6 +14,8 @@ from pybricks.tools import wait, StopWatch, DataLog
 from pybricks.media.ev3dev import SoundFile, ImageFile
 from pybricks.messaging import BluetoothMailboxServer, TextMailbox, NumericMailbox
 
+from server_commands import *
+
 import time
 
 brick = EV3Brick()
@@ -40,11 +42,6 @@ ultrasonic_sensor_back = UltrasonicSensor(Port.S4)
 
 server = BluetoothMailboxServer()
 
-#Tipo di sensore di distanza
-DIST_FRONT = 1
-DIST_BACK = 4
-DIST_LEFT = 2
-DIST_RIGHT = 3
 
 extDist = NumericMailbox('extDist', server)
 
@@ -55,6 +52,8 @@ server.wait_for_connection()
 print('connected!')
 
 #count = 0
+
+switchoff = True
 
 while True:
     extDist.wait()
@@ -67,6 +66,15 @@ while True:
         extDist.send(ultrasonic_sensor_left.distance())
     elif req == DIST_RIGHT:
         extDist.send(ultrasonic_sensor_right.distance())
+
+    elif req == DIST_FRONT_OFF:
+        extDist.send(ultrasonic_sensor_front.distance(switchoff))
+    elif req == DIST_BACK_OFF:
+        extDist.send(ultrasonic_sensor_back.distance(switchoff))
+    elif req == DIST_LEFT_OFF:
+        extDist.send(ultrasonic_sensor_left.distance(switchoff))
+    elif req == DIST_RIGHT_OFF:
+        extDist.send(ultrasonic_sensor_right.distance(switchoff))
 
     #count += 1
     #print(count)

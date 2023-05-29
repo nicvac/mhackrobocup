@@ -298,7 +298,15 @@ deg_list = list()
 print("IndividuaSpike")
 
 # Ruota come un radar
-print("TEST Tre palle, 90, 180, ~260g.")
+print("SCAN STANZA 120X90. SOLO FRONT ACCESO")
+
+sensorOff(DIST_FRONT_OFF)
+time.sleep(0.5)
+sensorOff(DIST_LEFT_OFF)
+time.sleep(0.5)
+sensorOff(DIST_RIGHT_OFF)
+time.sleep(0.5)
+
 robot.drive(0, evac_motor_scan_degs)
 gyro_sensor.reset_angle(0)
 cTurnAngle = 0
@@ -313,12 +321,12 @@ robot.drive(0,0)
 robot.stop()
 
 #Punto la pallina
-pallina = stanza_func.evac_get_sample(cm_list, deg_list)
-angle_dest = pallina.angle if pallina != None else 0
-robot.drive(0, -evac_motor_go_degs)
-while gyro_sensor.angle() > angle_dest: pass
-robot.drive(0,0)
-robot.stop()
+# pallina = stanza_func.evac_get_sample(cm_list, deg_list)
+# angle_dest = pallina.angle if pallina != None else 0
+# robot.drive(0, -evac_motor_go_degs)
+# while gyro_sensor.angle() > angle_dest: pass
+# robot.drive(0,0)
+# robot.stop()
 
 #@@@ 
 
