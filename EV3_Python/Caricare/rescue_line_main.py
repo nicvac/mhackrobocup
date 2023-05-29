@@ -1,6 +1,7 @@
 #!/usr/bin/env pybricks-micropython
 from rescue_line_functions import *
 from rescue_line_setup import *
+from guadagna_centro import *
 
 #Line counter: Quante volte vedo CONSECUTIVAMENTE una linea, su tutti i sensori
 lc_l = 0; lc_r = 0; lc_f = 0
@@ -33,6 +34,7 @@ gyro_sensor.reset_angle(0)
 isLine_l = False; isLine_r = False
 
 
+
 while True:  
     
     ### OSTACOLO
@@ -41,6 +43,25 @@ while True:
     #isObstacle = checkIfObstacle()
     #if isObstacle: aggiraOstacolo()
     
+
+    ### STAGNOLA
+    lightFront = light_sensor_front.reflection()
+    stagnola = isStagnola(lightFront)
+    if stagnola:
+        print("Ho visto la luminosità maggiore del 90%")
+        robot.drive(0,0) 
+        robot.stop()
+        stanzaTrovata = stagnolaTrovata()
+        if stanzaTrovata:
+            guadagnaCentro()
+        else:
+            print("Non ho trovato la stanza, continuo il seguilinea")
+            # far andare un attimo in avanti ed eseguire lo scan se tutti e tre vedono bianco
+    else:
+        pass
+
+    
+
 
     #Lettura di tutti i sensori nel loop corrente
     color_l = color_sensor_left.color()

@@ -46,6 +46,8 @@ def getDistanceCm(sensore):
     dist_cm = getDistanceMM(sensore) / 10
     return dist_cm
 
+
+
 print("OPERAZIONE DI CONNESSIONE AL SERVER AVVIATA, COMMENTARE SE NON SERVE")
 
 client = BluetoothMailboxClient()
