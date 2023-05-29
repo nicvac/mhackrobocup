@@ -1,7 +1,19 @@
 #! /usr/bin/python3
 
-#from load_S4p240g import *
+
+# 1 campione per angolo
+#from load_p090g import *  # 155
+#from load_p090g_b import * # 85g
+#from load_p120g import * # 114g
+#from load_p125g import * # 0g
+#from load_p128g import * # 120g
+#from load_p129g import * # 113g
+#from load_p050g import * # 57g
+
+# 4 campioni per angolo
 from load_S4p090g import *
+#from load_S4p240g import *
+
 from collections import defaultdict
 
 from load_refcm import cm_list_ref, deg_list_ref
@@ -32,7 +44,8 @@ class Sample:
         # idx sample, quando la differenza è piccola a destra
         self.idx_right = idx_right
         # idx del sample scelto (media fra idx_left e idx_right)
-        self.idx_sampled = round((idx_left+idx_right)/2)
+        #self.idx_sampled = round((idx_left+idx_right)/2)
+        self.idx_sampled = idx_max 
         # Larghezza della campana 
         self.width = idx_right - idx_left
         # Distanza misurata sul campione
@@ -80,16 +93,55 @@ def evac_smooth(cm_list):
 
     return cm_list_smooth
 
+    
+
 #Restituisce la pallina da raggiungere
 def evac_get_ball(cm_list, deg_list):
 
     #Output
     sample_to_return = None
 
-    samples=list()
-
     #Analizzo il segnale se la distanza con il pattern di riferimento > soglia
     soglia_sample_cm = sizePallinaCm
+
+    #Stabilità fra campioni successivi nell'analisi discendente e ascendente
+    soglia_campana_cm = 1
+
+    #Funzioni di supporto
+    def evac_get_campana():
+        
+        idx_left = max_idx
+        stop = False
+        while not stop:
+            idx_left -= 1
+            descending = False
+            interesting = False
+            inlist = (idx_left >= 0)
+            if inlist:
+                descending = cm_diff[idx_left] <= cm_diff[idx_left+1] + soglia_campana_cm
+                interesting = (cm_diff[idx_left] >= soglia_sample_cm)
+
+            stop = not inlist or not descending or not interesting
+        idx_left += 1
+
+        idx_right = max_idx
+        stop = False
+        while not stop:
+            idx_right += 1
+            descending = False
+            interesting = False
+            inlist = (idx_right <= len(cm_diff)-1)
+            if inlist:
+                descending = cm_diff[idx_right] <= cm_diff[idx_right-1] + soglia_campana_cm
+                interesting = (cm_diff[idx_right] >= soglia_sample_cm)
+
+            stop = not inlist or not descending or not interesting
+        idx_right -= 1
+        
+        return idx_left, idx_right
+
+    samples=list()
+
 
     num_elem = min(len(cm_list),len(cm_list_ref))
     cm_diff = list(range(num_elem))
@@ -107,13 +159,7 @@ def evac_get_ball(cm_list, deg_list):
         found = (max_value >= soglia_sample_cm)
         if found: 
             #Catturo tutta la campana, a destra e sinistra
-            idx_left = max_idx - 1
-            while idx_left >= 0 and cm_diff[idx_left] > soglia_sample_cm :
-                idx_left -= 1
-
-            idx_right = max_idx + 1
-            while idx_right < len(cm_diff) and cm_diff[idx_right] > soglia_sample_cm :
-                idx_right += 1
+            idx_left, idx_right = evac_get_campana()
 
             sample = Sample(max_idx, idx_left, idx_right, cm_list, deg_list)
             
