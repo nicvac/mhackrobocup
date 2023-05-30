@@ -40,6 +40,7 @@ def getDistanceMM(sensore):
 #Ritorna la distanza in cm
 def getDistanceCm(sensore):
     dist_cm = getDistanceMM(sensore) / 10
+    print(dist_cm)
     return dist_cm
 
 #Spegne i sensori che non servono, per ridurre l'interferenza con il sensore che effettua la lettura
@@ -60,8 +61,26 @@ def sensorOff(sensore_off):
     print("Sensor off ", sensore_off)
     return dist_mm
 
-#RIAVVIA IL SERVER ED ESCE!
+
+#Intosta il pisello
+def intosta_il_pisello():
+    c=1
+    start = time.time()
+    extDist.send(ALZA_SENSORE_FRONTALE)
+    risp = None
+    while risp == None:
+        stop = time.time()
+        if (stop - start) > 10.0:
+            c += 1
+            extDist.send(ALZA_SENSORE_FRONTALE)
+        risp = extDist.read()
+    if c > 1:
+        print("############### intosta_il_pisello: Richiesta mandata ", c, "volte")
+    return risp
+
+
 #SE PREMO QUALUNQUE PULSANTE (TRANNE PULSANTE STOP!!!)
+#RIAVVIA IL SERVER ED ESCE!
 server_restart_request = False
 def check_quit_and_restart_server():
     global server_restart_request
@@ -70,6 +89,16 @@ def check_quit_and_restart_server():
         server_restart_request = True
         extDist.send(CONNECTION_RESTART)
         sys.exit()
+
+#RIAVVIA IL SERVER ED ESCE!
+def quit_and_restart_server():
+    global server_restart_request
+    if server_restart_request == False:
+        print("RIAVVIO IL SERVER ED ESCO")
+        server_restart_request = True
+        extDist.send(CONNECTION_RESTART)
+        sys.exit()
+
 
 
 print("OPERAZIONE DI CONNESSIONE AL SERVER AVVIATA, COMMENTARE SE NON SERVE")

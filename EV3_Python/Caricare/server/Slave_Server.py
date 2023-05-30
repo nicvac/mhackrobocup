@@ -46,6 +46,8 @@ switchoff = True
 
 while True:
 
+    motore.run_until_stalled(50)
+    
     server = BluetoothMailboxServer()
     extDist = NumericMailbox('extDist', server)
 
@@ -77,11 +79,12 @@ while True:
         elif req == DIST_RIGHT_OFF:
             extDist.send(ultrasonic_sensor_right.distance(switchoff))
         
-        elif req == MOTOR_UP:
+        elif req == ALZA_SENSORE_FRONTALE:
             motore.run_angle(50,-90)
+            extDist.send(ALZA_SENSORE_FRONTALE_OK)
 
         elif req == CONNECTION_RESTART:
             server.server_close()
             restart = True
             time.sleep(5.0) #FONDAMENTALE!
-            motore.run_until_stalled(50)
+            
