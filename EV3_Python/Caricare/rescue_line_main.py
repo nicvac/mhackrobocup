@@ -3,6 +3,14 @@ from rescue_line_functions import *
 from rescue_line_setup import *
 from guadagna_centro import *
 
+
+sensorOff(DIST_BACK_OFF)
+time.sleep(0.2)
+sensorOff(DIST_LEFT_OFF)
+time.sleep(0.2)
+sensorOff(DIST_RIGHT_OFF)
+time.sleep(0.2)
+
 #Line counter: Quante volte vedo CONSECUTIVAMENTE una linea, su tutti i sensori
 lc_l = 0; lc_r = 0; lc_f = 0
 #Blank counter: Quante volte vedo CONSECUTIVAMENTE bianco, su tutti i sensori
@@ -43,8 +51,8 @@ while True:
     ### OSTACOLO
     # Funzione aggira ostacolo. Da sistemare con tutti gli aggiornamenti fatti al client-server durante il percorso.
     # Potrebbe dare problemi con le troppe letture durante il percorso, bisogna impostargli uno sleep.
-    #isObstacle = checkIfObstacle()
-    #if isObstacle: aggiraOstacolo()
+    isObstacle = checkIfObstacle()
+    if isObstacle: aggiraOstacolo()
     
 
     ### STAGNOLA
@@ -121,14 +129,14 @@ while True:
         skip()
         correzionePerIncrocio = 0
         print("Skip incrocio nero nero nero")
-    elif isLine_l and not isLine_r and isLine_f and correzionePerIncrocio >= 50:
-        skip()
-        correzionePerIncrocio = 0
-        print("Skip incrocio nero sinistra nero avanti bianco destra")
-    if isLine_r and not isLine_l and isLine_f and correzionePerIncrocio >= 50:
-        skip()
-        correzionePerIncrocio = 0
-        print("Skip incrocio nero destra nero avanti bianco sinistra")
+    # elif isLine_l and not isLine_r and isLine_f and correzionePerIncrocio >= 50:
+    #     skip()
+    #     correzionePerIncrocio = 0
+    #     print("Skip incrocio nero sinistra nero avanti bianco destra")
+    # if isLine_r and not isLine_l and isLine_f and correzionePerIncrocio >= 50:
+    #     skip()
+    #     correzionePerIncrocio = 0
+    #     print("Skip incrocio nero destra nero avanti bianco sinistra")
     
 
 

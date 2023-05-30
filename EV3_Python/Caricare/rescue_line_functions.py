@@ -217,6 +217,10 @@ def aggiraOstacolo():
     robot.stop()
 
     gyro_sensor.reset_angle(0)
+
+    getDistanceCm(DIST_LEFT)
+    getDistanceCm(DIST_RIGHT)
+
     # salva la distanza del sensore di sinistra ( porta 2 - sensore sinistra )
     distanceLeft = getDistanceCm(DIST_LEFT)
 
@@ -261,6 +265,12 @@ def aggiraOstacolo():
         if isLineLeft or isLineRight or isLineFront:
             left_motor.hold()
             right_motor.hold()
+            sensorOff(DIST_BACK_OFF)
+            time.sleep(0.2)
+            sensorOff(DIST_LEFT_OFF)
+            time.sleep(0.2)
+            sensorOff(DIST_RIGHT_OFF)
+            time.sleep(0.2)
             return
 
 
