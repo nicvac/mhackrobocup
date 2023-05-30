@@ -34,6 +34,7 @@ def brick_speaker_beep( num ):
         if num > 0: 
             time.sleep(0.1)
 
+motore = Motor(Port.A)
 
 ultrasonic_sensor_front = UltrasonicSensor(Port.S1)
 ultrasonic_sensor_left = UltrasonicSensor(Port.S2)
@@ -75,9 +76,12 @@ while True:
             extDist.send(ultrasonic_sensor_left.distance(switchoff))
         elif req == DIST_RIGHT_OFF:
             extDist.send(ultrasonic_sensor_right.distance(switchoff))
+        
+        elif req == MOTOR_UP:
+            motore.run_angle(50,-90)
 
         elif req == CONNECTION_RESTART:
             server.server_close()
             restart = True
             time.sleep(5.0) #FONDAMENTALE!
-        
+            motore.run_until_stalled(50)
