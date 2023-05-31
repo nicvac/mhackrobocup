@@ -1,7 +1,5 @@
 #! /usr/bin/python3
 
-from collections import defaultdict
-
 # 4 campioni per angolo
 #from load_test01_S4_45g import cm_list, deg_list # OK
 #from load_test02_S4_90g import cm_list, deg_list  # NO: v. foto & excel. confusa fra i due triangoli
@@ -12,14 +10,19 @@ from collections import defaultdict
 
 
 #Scansioni di riferimento (da processare)
-from load_refcm_roomNoTria import cm_list_roomNoTria_ref_scan, deg_list_roomNoTria_ref_scan
-from load_refcm_roomTria   import cm_list_roomTria_ref_scan,   deg_list_roomTria_ref_scan
+from stanza_wip.load_refcm_roomNoTria import cm_list_roomNoTria_ref_scan, deg_list_roomNoTria_ref_scan
+from stanza_wip.load_refcm_roomTria   import cm_list_roomTria_ref_scan,   deg_list_roomTria_ref_scan
 
 #Scansioni di riferimento processate
 cm_list_roomNoTria_ref = list()
 deg_list_roomNoTria_ref = list()
 cm_list_roomTria_ref = list()
 deg_list_roomTria_ref = list()
+
+#Ipotetica stanza con tutti i triangoli agli angoli. Da gradi a distanza
+deg2cm_tria = dict()
+#Ipotetica stanza senza nessun triangolo agli angoli. Da gradi a distanza
+deg2cm_notria = dict()
 
 #Utilizzo delle misure di riferimento e trovo gli oggetti quando ci sono differenze nel pattern
 #NOTA! SPEGNI GLI ALTRI SENSORI AD ULTRASUONI (V. API) FANNO INTERFERENZA!!!
@@ -75,13 +78,16 @@ def evac_subsamble(cm_list, deg_list):
     cm_list_sampled = [NOVAL] * sizelist
     deg_list_sampled = range(sizelist)
 
-    cm_list_avg = defaultdict(list)
+    cm_list_avg = dict()
     for i in range(len(cm_list)):
-        cm_list_avg[deg_list[i]].append(cm_list[i])
+        key = deg_list[i]
+        cm_list_avg.setdefault(key, list())
+        cm_list_avg[key].append(cm_list[i])
 
-    for deg, dist_list in cm_list_avg.items():
+    for deg in cm_list_avg:
+        dist_list = cm_list_avg[deg]
         cm_list_sampled[deg] = sum(dist_list)/len(dist_list)
-
+        
     #Fill empty angles
     for i in range(0, len(cm_list_sampled)):
         if cm_list_sampled[i] == NOVAL:
@@ -222,6 +228,13 @@ def evac_build_ref_data():
     cm_list_roomTria_ref_scan.clear()
     deg_list_roomTria_ref_scan.clear()
 
+    for i in range(len(deg_list_roomNoTria_ref)):
+        deg2cm_notria[ deg_list_roomNoTria_ref[i] ] = cm_list_roomNoTria_ref[i]
+
+    for i in range(len(deg_list_roomTria_ref)):
+        deg2cm_tria[ deg_list_roomTria_ref[i] ] = cm_list_roomTria_ref[i]
+
+
     # print("### cm_list_roomNoTria_ref")
     # for i in range(len(cm_list_roomNoTria_ref)):
     #      print("distCm Angle: ", cm_list_roomNoTria_ref[i], " ", deg_list_roomNoTria_ref[i])
@@ -250,6 +263,5 @@ def evac_get_ball_main(cm_list, deg_list):
 
 
 #BUILD REFERENCE DATA
-evac_build_ref_data()
-
+#evac_build_ref_data()
 #evac_get_ball_main(cm_list, deg_list)

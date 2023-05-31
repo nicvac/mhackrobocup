@@ -24,8 +24,6 @@ motore = Motor(Port.A)
 rescueKit = Motor(Port.B)
 
 
-
-
 # Before running this program, make sure the client and server EV3 bricks are
 # paired using Bluetooth, but do NOT connect them. The program will take care
 # of establishing the connection.
@@ -34,11 +32,8 @@ rescueKit = Motor(Port.B)
 
 def rilascioRescueKit():
     rescueKit.run_angle(-140, 135)
-
     rescueKit.run_until_stalled(140)
-
     rescueKit.run_angle(-140, 135)
-
     rescueKit.run_until_stalled(140)
 
 
@@ -98,8 +93,14 @@ while True:
             extDist.send(ultrasonic_sensor_right.distance(switchoff))
         
         elif req == ALZA_SENSORE_FRONTALE:
-            motore.run_angle(50,-90)
+            motore.run_angle(50,-80)
             extDist.send(ALZA_SENSORE_FRONTALE_OK)
+
+        elif req == RILASCIA_RESCUE_KIT:
+            rilascioRescueKit()
+            time.sleep(1)
+            extDist.send(RILASCIA_RESCUE_KIT_OK)
+
 
         elif req == CONNECTION_RESTART:
             motore.run_until_stalled(50)

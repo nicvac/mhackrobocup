@@ -29,9 +29,10 @@ def isLineF( light ):
 #Rotazioni con giroscopio
 def robot_gyro_turn( degree ):
     if degree == 0: return
+    speed_degs = motor_scan_degs * 0.5
     save = gyro_sensor.angle()
     gyro_sensor.reset_angle(0)
-    robot.drive(0, motor_scan_degs * (1 if degree > 0 else -1))
+    robot.drive(0, speed_degs * (1 if degree > 0 else -1))
     while abs(gyro_sensor.angle()) < abs(degree): pass
     robot.drive(0, 0)
     robot.stop()

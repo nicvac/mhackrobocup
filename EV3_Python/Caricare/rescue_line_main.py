@@ -1,7 +1,7 @@
 #!/usr/bin/env pybricks-micropython
 from rescue_line_functions import *
 from rescue_line_setup import *
-from guadagna_centro import *
+from stanza_guadagna_centro import *
 
 sensorOff(DIST_BACK_OFF)
 time.sleep(0.2)

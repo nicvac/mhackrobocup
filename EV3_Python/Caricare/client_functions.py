@@ -78,6 +78,22 @@ def intosta_il_pisello():
         print("############### intosta_il_pisello: Richiesta mandata ", c, "volte")
     return risp
 
+#Rilascia il rescue kit
+def srv_rilascia_rescue_kit():
+    c=1
+    start = time.time()
+    extDist.send(RILASCIA_RESCUE_KIT)
+    risp = None
+    while risp == None:
+        stop = time.time()
+        if (stop - start) > 20.0:
+            c += 1
+            extDist.send(RILASCIA_RESCUE_KIT)
+        risp = extDist.read()
+    if c > 1:
+        print("############### rilascia_rescue_kit: Richiesta mandata ", c, "volte")
+    return risp
+
 
 #SE PREMO QUALUNQUE PULSANTE (TRANNE PULSANTE STOP!!!)
 #RIAVVIA IL SERVER ED ESCE!
