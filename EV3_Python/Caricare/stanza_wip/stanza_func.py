@@ -11,7 +11,6 @@ from collections import defaultdict
 #from load_test06_S4_345 import cm_list, deg_list  # OK, da controllare meglio il grafico differenze-angoli
 
 
-
 #Scansioni di riferimento (da processare)
 from load_refcm_roomNoTria import cm_list_roomNoTria_ref_scan, deg_list_roomNoTria_ref_scan
 from load_refcm_roomTria   import cm_list_roomTria_ref_scan,   deg_list_roomTria_ref_scan
@@ -111,7 +110,7 @@ def evac_smooth(cm_list):
 
 
 #Restituisce la pallina da raggiungere
-def evac_get_ball(cm_list_ref, cm_list, deg_list):
+def evac_get_ball_wref(cm_list_ref, cm_list, deg_list):
 
     #Output
     sample_to_return = None
@@ -233,15 +232,24 @@ def evac_build_ref_data():
 
 
 # Trova pallina
-def evac_get_ball_main():
+def evac_get_ball_main(cm_list, deg_list):
     cm_list_sub, deg_list_sub = evac_subsamble(cm_list, deg_list)
     cm_list_smooth = evac_smooth(cm_list_sub)
 
-    print("### cm_list_smooth")
-    for i in range(len(cm_list_smooth)):
-        print("distCm Angle: ", cm_list_smooth[i], " ", deg_list_sub[i])
+    # print("### cm_list_smooth")
+    # for i in range(len(cm_list_smooth)):
+    #     print("distCm Angle: ", cm_list_smooth[i], " ", deg_list_sub[i])
 
-    evac_get_ball(cm_list_roomTria_ref, cm_list_smooth, deg_list_sub)
+    print("TRIA")
+    balls_tria = evac_get_ball_wref(cm_list_roomTria_ref, cm_list_smooth, deg_list_sub)
+    
+    # print("")
+    # print("NO TRIA")
+    # balls_notria = evac_get_ball_wref(cm_list_roomNoTria_ref, cm_list_smooth, deg_list_sub)
+    return balls_tria
 
+
+#BUILD REFERENCE DATA
 evac_build_ref_data()
-evac_get_ball_main()
+
+#evac_get_ball_main(cm_list, deg_list)

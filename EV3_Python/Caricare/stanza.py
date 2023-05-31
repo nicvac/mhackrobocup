@@ -306,7 +306,7 @@ sensorOff(DIST_RIGHT_OFF)
 time.sleep(0.5)
 
 #FARE alcune letture a vuoto! E' importante per stabilizzare il sensore
-for i in range(10) 
+for i in range(10):
     currCm = getDistanceCm(DIST_BACK)
     time.sleep(0.5)
 
