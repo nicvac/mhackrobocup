@@ -20,12 +20,27 @@ import time
 
 brick = EV3Brick()
 
+motore = Motor(Port.A)
+rescueKit = Motor(Port.B)
+
+
+
 
 # Before running this program, make sure the client and server EV3 bricks are
 # paired using Bluetooth, but do NOT connect them. The program will take care
 # of establishing the connection.
 
 # The server must be started before the client!
+
+def rilascioRescueKit():
+    rescueKit.run_angle(-140, 135)
+
+    rescueKit.run_until_stalled(140)
+
+    rescueKit.run_angle(-140, 135)
+
+    rescueKit.run_until_stalled(140)
+
 
 #Suona N beep
 def brick_speaker_beep( num ):
@@ -34,7 +49,9 @@ def brick_speaker_beep( num ):
         if num > 0: 
             time.sleep(0.1)
 
-motore = Motor(Port.A)
+
+
+
 
 ultrasonic_sensor_front = UltrasonicSensor(Port.S1)
 ultrasonic_sensor_left = UltrasonicSensor(Port.S2)
@@ -47,7 +64,8 @@ switchoff = True
 while True:
 
     motore.run_until_stalled(50)
-    
+    rescueKit.run_until_stalled(140)
+
     server = BluetoothMailboxServer()
     extDist = NumericMailbox('extDist', server)
 
@@ -84,6 +102,8 @@ while True:
             extDist.send(ALZA_SENSORE_FRONTALE_OK)
 
         elif req == CONNECTION_RESTART:
+            motore.run_until_stalled(50)
+            rescueKit.run_until_stalled(140)
             server.server_close()
             restart = True
             time.sleep(5.0) #FONDAMENTALE!
