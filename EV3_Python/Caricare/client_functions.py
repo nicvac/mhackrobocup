@@ -37,12 +37,6 @@ def getDistanceMM(sensore):
     return dist_mm
 
 
-#Ritorna la distanza in cm
-def getDistanceCm(sensore):
-    dist_cm = getDistanceMM(sensore) / 10
-    print(dist_cm)
-    return dist_cm
-
 #Spegne i sensori che non servono, per ridurre l'interferenza con il sensore che effettua la lettura
 # NON CHIAMARLO A LOOP STRETTO!!! PUO' IMPALLARE I SENSORI!!!
 def sensorOff(sensore_off):
@@ -60,6 +54,16 @@ def sensorOff(sensore_off):
         print("############### offSensor: Richiesta mandata ", c, "volte")
     print("Sensor off ", sensore_off)
     return dist_mm
+
+#Ritorna la distanza in cm
+def getDistanceCm(sensore):
+    dist_cm = getDistanceMM(sensore) / 10
+    return dist_cm
+
+#Ritorna la distanza in cm e spegne il sensore
+def getDistanceCm_off(sensore):
+    dist_cm = sensorOff(sensore) / 10
+    return dist_cm
 
 
 #Intosta il pisello
