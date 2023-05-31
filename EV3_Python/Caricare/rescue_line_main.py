@@ -3,13 +3,18 @@ from rescue_line_functions import *
 from rescue_line_setup import *
 from guadagna_centro import *
 
-
 sensorOff(DIST_BACK_OFF)
 time.sleep(0.2)
 sensorOff(DIST_LEFT_OFF)
 time.sleep(0.2)
 sensorOff(DIST_RIGHT_OFF)
 time.sleep(0.2)
+
+# misure del sensore di fronte per essere sicuri di non fare male la prima misurazione. Stava dando problemi all'inizio del codice vedendo subito l'ostacolo
+getDistanceCm(DIST_FRONT)
+getDistanceCm(DIST_FRONT)
+
+
 
 #Line counter: Quante volte vedo CONSECUTIVAMENTE una linea, su tutti i sensori
 lc_l = 0; lc_r = 0; lc_f = 0
