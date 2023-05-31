@@ -5,7 +5,7 @@ from rescue_line_functions import *
 from client_functions import *
 
 #@@@ TEMP
-from stanza_wip import stanza_func
+from stanza_wip import stanza_func01
 
 #Dimensione della pallina
 sizePallinaCm = 4.5
@@ -305,6 +305,12 @@ time.sleep(0.5)
 sensorOff(DIST_RIGHT_OFF)
 time.sleep(0.5)
 
+#FARE alcune letture a vuoto! E' importante per stabilizzare il sensore
+for i in range(10) 
+    currCm = getDistanceCm(DIST_BACK)
+    time.sleep(0.5)
+
+#Scan
 robot.drive(0, evac_motor_scan_degs)
 gyro_sensor.reset_angle(0)
 cTurnAngle = 0
