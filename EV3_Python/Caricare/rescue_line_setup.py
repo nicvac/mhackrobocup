@@ -117,7 +117,7 @@ loop_detected_soglia = 50
 print("loop_detected_soglia: ", loop_detected_soglia)
 
 # Quante volte consecutive vedo bianco su tutti e tre i sensori per ritenermi perso
-lost_soglia = 140
+lost_soglia = 160
 print("lost_soglia: ", lost_soglia)
 
 # Soglia per detection curva a gomito Sx o Dx

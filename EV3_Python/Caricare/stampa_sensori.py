@@ -1,8 +1,17 @@
 #!/usr/bin/env pybricks-micropython
 
-from rescue_line_setup import *
-from rescue_line_functions import *
+# from rescue_line_setup import *
+# from rescue_line_functions import *
 
+from pybricks.hubs import EV3Brick
+from pybricks.ev3devices import (Motor, TouchSensor, ColorSensor, InfraredSensor, UltrasonicSensor, GyroSensor)
+from pybricks.parameters import Port, Stop, Direction, Button, Color
+from pybricks.tools import wait, StopWatch, DataLog
+from pybricks.robotics import DriveBase
+from pybricks.media.ev3dev import SoundFile, ImageFile
+
+
+light_sensor_front = ColorSensor(Port.S4)
 import time
 
 #Stampa sensori
@@ -21,4 +30,4 @@ import time
 #     lineLocked = scan_double(scanDegree, 0)
 
 while True:
-    print(gyro_sensor.speed())
+    print(light_sensor_front.color())

@@ -87,7 +87,7 @@ def vai_a_triangolo_e_torna_indietro(tria_deg):
     global ho_lasciato_kit
 
     #Ouput
-    triangle_color = Color.NONE
+    triangle_color = None
 
     #Ricavo i cm da percorrere a partire dai gradi
     tria_cm = deg2cm_tria[tria_deg]
@@ -100,23 +100,32 @@ def vai_a_triangolo_e_torna_indietro(tria_deg):
     angle_save = gyro_sensor.angle()
     robot_gyro_turn(165)
 
+    robot.straight(30)
+
     #Leggo il colore del triangolo
     triangle_color = light_sensor_front.color()
     print("Ho letto ", triangle_color)
 
-    if not ho_lasciato_kit and triangle_color == Color.RED:
+    robot.straight(-30)
+
+    if not ho_lasciato_kit and triangle_color == Color.GREEN:
         rilascia_recue_kit()
         ho_lasciato_kit = True
     
     #Ripristino la direzione verso il centro
+    angolo_ripristino = angle_save - gyro_sensor.angle()
+    print("Ruoto di ", angolo_ripristino, " per tornare al centro")
     robot_gyro_turn( angle_save - gyro_sensor.angle() )
 
     print("Torno al centro: mi sposto di ", tria_cm, " cm")
+    quit()
+    
     robot.straight(tria_cm * 10)
 
     #Ripristino l'angolo zero al centro stanza
     robot_gyro_turn( 0 - gyro_sensor.angle() )
 
+    quit()
     #Mi riposiziono al centro
     ricentra_fine()
 
@@ -191,19 +200,20 @@ def stanza_main():
     triaC_deg = 235
     triaD_deg = 305
 
-    triaA_color = triaB_color = triaC_color = triaD_color = Color.NONE
+    triaA_color = triaB_color = triaC_color = triaD_color = None
     
     c=0
     triaA_color = vai_a_triangolo_e_torna_indietro(triaA_deg)
-    if triaA_color != Color.NONE: c+=1
+    quit()
+    if triaA_color != None: c+=1
     triaB_color = vai_a_triangolo_e_torna_indietro(triaB_deg)
-    if triaB_color != Color.NONE: c+=1
+    if triaB_color != None: c+=1
     if c < 2:
         triaC_color = vai_a_triangolo_e_torna_indietro(triaC_deg)
-        if triaC_color != Color.NONE: c+=1
+        if triaC_color != None: c+=1
     if c < 2:
         triaD_color = vai_a_triangolo_e_torna_indietro(triaD_deg)
-        if triaD_color != Color.NONE: c+=1    
+        if triaD_color != None: c+=1    
 
     #Parte lo scan e la detection delle palline
     found = True

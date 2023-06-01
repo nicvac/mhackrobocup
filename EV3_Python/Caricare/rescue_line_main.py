@@ -1,20 +1,18 @@
 #!/usr/bin/env pybricks-micropython
 from rescue_line_functions import *
 from rescue_line_setup import *
-from stanza_guadagna_centro import *
-
-sensorOff(DIST_BACK_OFF)
-time.sleep(0.2)
-sensorOff(DIST_LEFT_OFF)
-time.sleep(0.2)
-sensorOff(DIST_RIGHT_OFF)
-time.sleep(0.2)
-
-# misure del sensore di fronte per essere sicuri di non fare male la prima misurazione. Stava dando problemi all'inizio del codice vedendo subito l'ostacolo
-getDistanceCm(DIST_FRONT)
-getDistanceCm(DIST_FRONT)
+#from guadagna_centro import *
 
 
+# sensorOff(DIST_BACK_OFF)
+# time.sleep(0.2)
+# sensorOff(DIST_LEFT_OFF)
+# time.sleep(0.2)
+# sensorOff(DIST_RIGHT_OFF)
+# time.sleep(0.2)
+
+# getDistanceCm(DIST_FRONT)
+# getDistanceCm(DIST_FRONT)
 
 #Line counter: Quante volte vedo CONSECUTIVAMENTE una linea, su tutti i sensori
 lc_l = 0; lc_r = 0; lc_f = 0
@@ -47,34 +45,33 @@ gyro_sensor.reset_angle(0)
 isLine_l = False; isLine_r = False
 
 
-
 while True:  
     
     #SE PREMO UN PULSANTE (TRANNE STOP!!!) RIAVVIA IL SERVER ED ESCE DAL PROGRAMMA
     check_quit_and_restart_server()
 
-    ### OSTACOLO
-    # Funzione aggira ostacolo. Da sistemare con tutti gli aggiornamenti fatti al client-server durante il percorso.
-    # Potrebbe dare problemi con le troppe letture durante il percorso, bisogna impostargli uno sleep.
-    isObstacle = checkIfObstacle()
-    if isObstacle: aggiraOstacolo()
+    # ### OSTACOLO
+    # # Funzione aggira ostacolo. Da sistemare con tutti gli aggiornamenti fatti al client-server durante il percorso.
+    # # Potrebbe dare problemi con le troppe letture durante il percorso, bisogna impostargli uno sleep.
+    # isObstacle = checkIfObstacle()
+    # if isObstacle: aggiraOstacolo()
     
 
-    ### STAGNOLA
-    lightFront = light_sensor_front.reflection()
-    stagnola = isStagnola(lightFront)
-    if stagnola:
-        print("Ho visto la luminosità maggiore del 90%")
-        robot.drive(0,0) 
-        robot.stop()
-        stanzaTrovata = stagnolaTrovata()
-        if stanzaTrovata:
-            guadagnaCentro()
-        else:
-            print("Non ho trovato la stanza, continuo il seguilinea")
-            # far andare un attimo in avanti ed eseguire lo scan se tutti e tre vedono bianco
-    else:
-        pass
+    # ### STAGNOLA
+    # lightFront = light_sensor_front.reflection()
+    # stagnola = isStagnola(lightFront)
+    # if stagnola:
+    #     print("Ho visto la luminosità maggiore del 90%")
+    #     robot.drive(0,0) 
+    #     robot.stop()
+    #     stanzaTrovata = stagnolaTrovata()
+    #     if stanzaTrovata:
+    #         guadagnaCentro()
+    #     else:
+    #         print("Non ho trovato la stanza, continuo il seguilinea")
+    #         # far andare un attimo in avanti ed eseguire lo scan se tutti e tre vedono bianco
+    # else:
+    #     pass
 
     
 
@@ -182,19 +179,36 @@ while True:
         while True:
             lineLeft = isLine(color_sensor_left.color())
             lineRight = isLine(color_sensor_right.color())
-            #lineFront = isLineF(light_sensor_front.reflection())
+            lineFront = isLineF(light_sensor_front.reflection())
 
-            if lineLeft or lineRight:
+            if lineLeft or lineRight or lineFront:
                 if lineLeft: print("Ho trovato la linea a sinistra")
                 if lineRight: print("Ho trovato la linea a destra")
-                #if lineFront: print("Ho trovato la linea davanti")
+                if lineFront: print("Ho trovato la linea davanti")
                 break
         robot.stop()
 
+        front = True if lineFront else False
         side = 1 if lineLeft and not lineRight else -1
 
-        if side == 1:
+
+        if front:
+            print("Ho ritrovato la linea con il sensore al centro")
             gyro_sensor.reset_angle(0)
+            ruotaSuAsse(1)
+            while abs(gyro_sensor.angle() < 20):
+                pass
+            stop()
+            robot.straight(-50)
+            stop()
+            fullGapCounter = -100
+            continue
+
+        # side = 1 vuol dire che il sensore di sinistra ha visto per primo la linea
+        if side == 1:
+            print("Sono entrato in side 1")
+            gyro_sensor.reset_angle(0)
+            # gira sull'asse finchè il sensore non vede più nero oppure fino a quando l'angolo è minore di 45, sennò gira troppo (modificare a seconda dei casi, fare delle prove)
             ruotaSuAsse(side)
             while isLine(color_sensor_left.color()) and abs(gyro_sensor.angle()) < 45:
                 pass
@@ -203,7 +217,9 @@ while True:
             robot.stop()
             fullGapCounter = -100
             continue
+        # side = -1 il destroo ha visto per primo la linea
         elif side == -1:
+            print("Sono entrato in side -1")
             gyro_sensor.reset_angle(0)
             ruotaSuAsse(side)
             while isLine(color_sensor_right.color()) and abs(gyro_sensor.angle()) < 45:
