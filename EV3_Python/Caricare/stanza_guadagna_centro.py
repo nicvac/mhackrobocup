@@ -34,12 +34,13 @@ def guadagnaCentro():
     distanzaDxmaggiore = 0
     dimTriangolo1 = 0
     dimTriangolo2 = 0
-
+    
+    print("Prima del while")
     while(robot.distance() < 530):
         print(str(robot.distance()) + "  " + str(getRoomSize(storicoDimensioneSx, storicoDimensioneDx)))
     robot.stop()
 
-    dimTriangolo1 = 530
+    dimTriangolo1 = 53
 
     for i in range(len(storicoDimensioneSx)):
         if(abs(storicoDimensioneSx[i] + storicoDimensioneDx[i] + distTraSensori - dimMinore) < 3):
@@ -77,9 +78,9 @@ def guadagnaCentro():
 
     gyro_sensor.reset_angle(0)
 
-    print("Sx: " + str(distanzaDx) + " Dx: " + str(distanzaDx))
+    print("Sx: " + str(distanzaSx) + " Dx: " + str(distanzaDx))
 
-    if(contDimMaggiore < contDimMinore):
+    if(distanzaSx > distanzaDx):
         robot.drive(0, 30)
     else:
         robot.drive(0, -30)
@@ -102,3 +103,5 @@ def guadagnaCentro():
         pass
 
     robot.stop()
+
+guadagnaCentro()
