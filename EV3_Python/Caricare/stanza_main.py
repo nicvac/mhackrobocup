@@ -95,21 +95,22 @@ def rilascia_recue_kit():
 #tria_deg: angolo a cui si trova il triangolo
 def vai_a_triangolo_e_torna_indietro(tria_deg):
     global ho_lasciato_kit
-    tria_cm = 45
+    tria_cm = 38
 
     #Ouput
     triangle_color = None
 
-    delta = -8 #Rispetto alla misura del sensore back, il front avrebbe misurato delta cm in meno
+    #delta = -8 #Rispetto alla misura del sensore back, il front avrebbe misurato delta cm in meno
 
     #Ricavo i cm da percorrere a partire dai gradi
     #tria_cm = deg2cm_tria[tria_deg] - delta
     robot_gyro_turn(tria_deg-180)
+    
     print("Vado a Triangolo ",tria_deg,": mi sposto di ", -tria_cm, " cm")
     robot.straight(tria_cm * 10)
 
     #Leggo il colore del triangolo
-    triangle_color = light_sensor_front.color()
+    triangle_color = leggi_colore_triangolo()
     print("Ho letto ", triangle_color)
 
     if not ho_lasciato_kit and triangle_color == Color.GREEN:
@@ -118,10 +119,11 @@ def vai_a_triangolo_e_torna_indietro(tria_deg):
     
     print("Torno al centro: mi sposto di ", tria_cm, " cm")
     
-    robot.straight(-tria_cm * 10)
+    #+2 perchè leggi colore triangolo avanza di 2 centrimetri
+    robot.straight(-(tria_cm+2) * 10)
 
     #Mi riposiziono al centro
-    ricentra_fine()
+    #ricentra_fine()
 
     return triangle_color
 
@@ -176,7 +178,29 @@ def scan_e_punta_palla():
 
     return pallina
 
+def leggi_colore_triangolo():
+    count_color=dict()
+    robot.drive(10, 0)
+    start_mm = robot.distance()
+    while robot.distance() - start_mm < 20:
+        color = light_sensor_front.color()
+        if color != None:
+            count_color.setdefault(color, list())
+            count_color[color].append(1)
+    robot.stop()
 
+    count_color.setdefault(Color.RED, list())
+    count_color.setdefault(Color.GREEN, list())
+
+    count_red=len(count_color[Color.RED])
+    count_green=len(count_color[Color.GREEN])
+    if count_red > count_green and count_red > 1:
+        return Color.RED
+    elif count_green > count_red and count_green > 1:
+        return Color.GREEN
+    else:
+        return None
+        
 
 def stanza_main():
     #Costruisco il Reference data 
@@ -191,10 +215,10 @@ def stanza_main():
 
     imposta_centro_ref()
 
-    triaA_deg = 55
-    triaB_deg = 125
-    triaC_deg = 235
-    triaD_deg = 305
+    triaA_deg = 125
+    triaB_deg = 55
+    triaC_deg = 305
+    triaD_deg = 235
 
     triaA_color = triaB_color = triaC_color = triaD_color = None
     
@@ -202,15 +226,15 @@ def stanza_main():
     triaA_color = vai_a_triangolo_e_torna_indietro(triaA_deg)
     if triaA_color in [Color.RED, Color.GREEN]: c+=1
 
-    triaB_color = vai_a_triangolo_e_torna_indietro(triaB_deg)
+    triaB_color = vai_a_triangolo_e_torna_indietro(110)
     if triaB_color in [Color.RED, Color.GREEN]: c+=1
 
     if c < 2:
-        triaC_color = vai_a_triangolo_e_torna_indietro(triaC_deg)
+        triaC_color = vai_a_triangolo_e_torna_indietro(70)
         if triaC_color in [Color.RED, Color.GREEN]: c+=1
 
     if c < 2:
-        triaD_color = vai_a_triangolo_e_torna_indietro(triaD_deg)
+        triaD_color = vai_a_triangolo_e_torna_indietro(110)
         if triaD_color in [Color.RED, Color.GREEN]: c+=1
 
     sys.exit()
