@@ -21,7 +21,7 @@ def guadagnaCentro():
     storicoDimensioneSx = []
     storicoDimensioneDx = []
     dimMaggiore = 120
-    dimMinore = 80
+    dimMinore = 90
     asseMaggiore = True
     distTraSensori = 14
     distanzaSx = 0
@@ -32,10 +32,15 @@ def guadagnaCentro():
     distanzaDxminore = 0
     distanzaSxmaggiore = 0
     distanzaDxmaggiore = 0
-
+    dimTriangolo1 = 0
+    dimTriangolo2 = 0
+    
+    print("Prima del while")
     while(robot.distance() < 530):
         print(str(robot.distance()) + "  " + str(getRoomSize(storicoDimensioneSx, storicoDimensioneDx)))
     robot.stop()
+
+    dimTriangolo1 = 53
 
     for i in range(len(storicoDimensioneSx)):
         if(abs(storicoDimensioneSx[i] + storicoDimensioneDx[i] + distTraSensori - dimMinore) < 3):
@@ -60,6 +65,7 @@ def guadagnaCentro():
     else:
         distanzaSx = distanzaSxminore
         distanzaDx = distanzaDxminore
+        dimTriangolo1 += 15
 
     if (asseMaggiore):
         print("Avanzando di 15cm")
@@ -72,9 +78,9 @@ def guadagnaCentro():
 
     gyro_sensor.reset_angle(0)
 
-    print("Sx: " + str(distanzaDx) + " Dx: " + str(distanzaDx))
+    print("Sx: " + str(distanzaSx) + " Dx: " + str(distanzaDx))
 
-    if(contDimMaggiore < contDimMinore):
+    if(distanzaSx > distanzaDx):
         robot.drive(0, 30)
     else:
         robot.drive(0, -30)
@@ -89,9 +95,13 @@ def guadagnaCentro():
     robot.drive(70, 0)
 
     print("Ultimo avanzameto")
-    print(abs(distanzaSx - distanzaDx) / 2)
-    while(robot.distance() < (abs(distanzaSx - distanzaDx) / 2) * 10):
+    dimTriangolo2 = abs(distanzaSx - distanzaDx) / 2
+    angolo = degrees(acos(dimTriangolo2 / sqrt(dimTriangolo1 ** 2 + dimTriangolo2 ** 2)))
+    print("dimTriangolo1: ", dimTriangolo1, " - dimTriangolo2: ", dimTriangolo2, " - angolo: ", angolo)
+
+    while(robot.distance() < dimTriangolo2 * 10):
         pass
 
     robot.stop()
 
+guadagnaCentro()
