@@ -27,16 +27,21 @@ def isLineF( light ):
     return (light <= 10)
 
 #Rotazioni con giroscopio
-def robot_gyro_turn( degree ):
+#preserva_angolo: vero => dopo la rotazione viene fatto il reset dell'angolo di start.
+def robot_gyro_turn( degree, preserva_angolo = False ):
     if degree == 0: return
     speed_degs = motor_scan_degs * 0.5
-    save = gyro_sensor.angle()
-    gyro_sensor.reset_angle(0)
+    startdeg = gyro_sensor.angle()
+    stopdeg = startdeg + degree
     robot.drive(0, speed_degs * (1 if degree > 0 else -1))
-    while abs(gyro_sensor.angle()) < abs(degree): pass
+    if degree > 0:
+        while gyro_sensor.angle() < stopdeg : pass
+    else:    
+        while gyro_sensor.angle() > stopdeg : pass
     robot.drive(0, 0)
     robot.stop()
-    gyro_sensor.reset_angle(save)
+    if preserva_angolo:
+        gyro_sensor.reset_angle(startdeg)
 
 def dritto():
     robot.drive(100, 0)

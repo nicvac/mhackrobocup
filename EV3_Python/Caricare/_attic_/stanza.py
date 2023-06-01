@@ -61,7 +61,8 @@ def evacDetectScanDirection( scanMinCm ):
 
     # Rimettiti in posizione, prima di questa scansione
     # Ruota In senso orario di N gradi per compensare la rotazione antioraria usata durante la scansione per riagganciare l'oggetto
-    robot_gyro_turn(abs(cTurnAngle))
+    # Preserva l'angolo attuale.
+    robot_gyro_turn(abs(cTurnAngle), True)
 
     dirScan = SGANTIORARIO if trovato else SGORARIO
 

@@ -21,7 +21,7 @@ def imposta_centro_ref():
     global centro_ref_left_cm
     global centro_ref_right_cm
 
-    gyro_sensor.reset_angle()
+    gyro_sensor.reset_angle(0)
 
     #Spengo i sensori per eliminare il rumore
     sensorOff(DIST_BACK_OFF); time.sleep(0.1)
@@ -30,7 +30,7 @@ def imposta_centro_ref():
     sensorOff(DIST_RIGHT_OFF); time.sleep(0.1)
 
     centro_ref_back_cm = getDistanceCm_off(DIST_BACK_OFF); time.sleep(0.1)
-    centro_ref_front_cm = getDistanceCm_off(DIST_FRONT_OFF); time.sleep(0.1)
+    centro_ref_front_cm = getDistanceCm_off(DIST_FRONT_OFF); time.sleep(0.1) #ATTENZIONE! NELLA STANZA IL FRONT E' INAFFIDABILE!
     centro_ref_left_cm = getDistanceCm_off(DIST_LEFT_OFF); time.sleep(0.1)
     centro_ref_right_cm = getDistanceCm_off(DIST_RIGHT_OFF); time.sleep(0.1)
 
@@ -40,36 +40,46 @@ def imposta_centro_ref():
 
 #Sono più o meno al centro. Raffino la posizione al centro
 def ricentra_fine():
-    curr_left_cm = getDistanceCm_off(DIST_LEFT_OFF); time.sleep(0.1)
-    left_cm = curr_left_cm - centro_ref_left_cm
-    #compenso andando a sinistra o a destra
-    if left_cm > 1:
-        robot_gyro_turn(-90)
-    elif left_cm < -1:
-        robot_gyro_turn(90)
-    if abs(left_cm) > 1:
-        robot.drive(left_cm)
-        robot_gyro_turn( 0 - gyro_sensor.angle() )
 
-    curr_right_cm = getDistanceCm_off(DIST_RIGHT_OFF); time.sleep(0.1)
-    right_cm = curr_right_cm - centro_ref_right_cm
-    #compenso andando a sinistra o a destra
-    if right_cm > 1:
-        robot_gyro_turn(90)
-    elif right_cm < -1:
-        robot_gyro_turn(-90)
-    if abs(right_cm) > 1:
-        robot.drive(right_cm)
-        robot_gyro_turn( 0 - gyro_sensor.angle() )
+    #Ripristino l'angolo zero al centro stanza
+    print("Ripristino l'angolo zero al centro stanza", )
+    currangle = gyro_sensor.angle()
+    if abs(currangle) < 180:
+        angolo_centro = (0 - currangle) % 360
+    else :
+        angolo_centro = (360 - currangle) % 360
+    robot_gyro_turn( angolo_centro )
+    print("Ricentro: compesazione angolo: ",angolo_centro,". Angolo attuale: ", gyro_sensor.angle())
+    
+    # curr_left_cm = getDistanceCm_off(DIST_LEFT_OFF); time.sleep(0.1)
+    # left_cm = curr_left_cm - centro_ref_left_cm
+    # print("Ricentro: compesazione Left: ", left_cm)
 
-    curr_back_cm = getDistanceCm_off(DIST_BACK_OFF); time.sleep(0.1)
-    back_cm = curr_back_cm - centro_ref_back_cm
-    robot.straight(-back_cm)
+    # curr_right_cm = getDistanceCm_off(DIST_RIGHT_OFF); time.sleep(0.1)
+    # right_cm = curr_right_cm - centro_ref_right_cm
+    # print("Ricentro: compesazione Right: ", right_cm)
 
-    curr_front_cm = getDistanceCm_off(DIST_FRONT_OFF); time.sleep(0.1)
-    front_cm = curr_front_cm - centro_ref_back_cm
-    robot.straight(front_cm)
+    # curr_cm = curr_left_cm if abs(curr_left_cm) < abs(curr_right_cm) else -curr_right_cm
 
+    # #compenso andando a sinistra o a destra
+    # if curr_cm > 1:
+    #     robot_gyro_turn(-90)
+    # elif curr_cm < -1:
+    #     robot_gyro_turn(90)
+    # if abs(curr_cm) > 1:
+    #     robot.straight(curr_cm * 10)
+    #     robot_gyro_turn( 0 - gyro_sensor.angle() )
+
+    # curr_back_cm = getDistanceCm_off(DIST_BACK_OFF); time.sleep(0.1)
+    # back_cm = curr_back_cm - centro_ref_back_cm
+    # print("Ricentro: compesazione Back: ", back_cm)
+    # robot.straight(-back_cm * 10)
+
+    #NON USARE LA COMPENSAZIONE FRONT: NELLA STANZA IL FRONT E' INAFFIDABILE (TROPPO ALTO)
+    # curr_front_cm = getDistanceCm_off(DIST_FRONT_OFF); time.sleep(0.1)
+    # front_cm = curr_front_cm - centro_ref_back_cm
+    # print("Ricentro: compesazione Front: ", front_cm)
+    # robot.straight(front_cm)
 
 #Mi giro di lato e Chiede al server il rilascio del rescue kit
 #Alla fine ripristino l'angolazione prima del rilascio
@@ -85,47 +95,31 @@ def rilascia_recue_kit():
 #tria_deg: angolo a cui si trova il triangolo
 def vai_a_triangolo_e_torna_indietro(tria_deg):
     global ho_lasciato_kit
+    tria_cm = 45
 
     #Ouput
     triangle_color = None
 
+    delta = -8 #Rispetto alla misura del sensore back, il front avrebbe misurato delta cm in meno
+
     #Ricavo i cm da percorrere a partire dai gradi
-    tria_cm = deg2cm_tria[tria_deg]
-    robot_gyro_turn(tria_deg)
-    
+    #tria_cm = deg2cm_tria[tria_deg] - delta
+    robot_gyro_turn(tria_deg-180)
     print("Vado a Triangolo ",tria_deg,": mi sposto di ", -tria_cm, " cm")
-    robot.straight(-tria_cm * 10)
-
-    #Mi posiziono di fronte al triangolo per leggere il colore
-    angle_save = gyro_sensor.angle()
-    robot_gyro_turn(165)
-
-    robot.straight(30)
+    robot.straight(tria_cm * 10)
 
     #Leggo il colore del triangolo
     triangle_color = light_sensor_front.color()
     print("Ho letto ", triangle_color)
 
-    robot.straight(-30)
-
     if not ho_lasciato_kit and triangle_color == Color.GREEN:
         rilascia_recue_kit()
         ho_lasciato_kit = True
     
-    #Ripristino la direzione verso il centro
-    angolo_ripristino = angle_save - gyro_sensor.angle()
-    print("Ruoto di ", angolo_ripristino, " per tornare al centro")
-    robot_gyro_turn( angle_save - gyro_sensor.angle() )
-
     print("Torno al centro: mi sposto di ", tria_cm, " cm")
-    quit()
     
-    robot.straight(tria_cm * 10)
+    robot.straight(-tria_cm * 10)
 
-    #Ripristino l'angolo zero al centro stanza
-    robot_gyro_turn( 0 - gyro_sensor.angle() )
-
-    quit()
     #Mi riposiziono al centro
     ricentra_fine()
 
@@ -195,6 +189,8 @@ def stanza_main():
     #@@@ NON FUNZIONA
     #@@@guadagnaCentro()
 
+    imposta_centro_ref()
+
     triaA_deg = 55
     triaB_deg = 125
     triaC_deg = 235
@@ -204,16 +200,20 @@ def stanza_main():
     
     c=0
     triaA_color = vai_a_triangolo_e_torna_indietro(triaA_deg)
-    quit()
-    if triaA_color != None: c+=1
+    if triaA_color in [Color.RED, Color.GREEN]: c+=1
+
     triaB_color = vai_a_triangolo_e_torna_indietro(triaB_deg)
-    if triaB_color != None: c+=1
+    if triaB_color in [Color.RED, Color.GREEN]: c+=1
+
     if c < 2:
         triaC_color = vai_a_triangolo_e_torna_indietro(triaC_deg)
-        if triaC_color != None: c+=1
+        if triaC_color in [Color.RED, Color.GREEN]: c+=1
+
     if c < 2:
         triaD_color = vai_a_triangolo_e_torna_indietro(triaD_deg)
-        if triaD_color != None: c+=1    
+        if triaD_color in [Color.RED, Color.GREEN]: c+=1
+
+    sys.exit()
 
     #Parte lo scan e la detection delle palline
     found = True

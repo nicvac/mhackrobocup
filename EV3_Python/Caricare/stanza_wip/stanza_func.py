@@ -68,6 +68,40 @@ class Sample:
         print("Sample: idx_max: ",self.idx_max,"; idx_left: ",self.idx_left,"; idx_right: ", self.idx_right,
               "; idx_sampled: ", self.idx_sampled, "; width", self.width, "; distance: ",self.distance,"; angle: ",self.angle)
 
+#Costruisce i reference data a partire dai campionamenti di riferimento
+def evac_build_ref_data():
+    global cm_list_roomNoTria_ref
+    global deg_list_roomNoTria_ref
+    global cm_list_roomTria_ref
+    global deg_list_roomTria_ref
+
+    cm_list_roomNoTria_ref, deg_list_roomNoTria_ref = evac_subsamble(cm_list_roomNoTria_ref_scan, deg_list_roomNoTria_ref_scan)
+    cm_list_roomNoTria_ref = evac_smooth(cm_list_roomNoTria_ref)
+
+    cm_list_roomTria_ref, deg_list_roomTria_ref = evac_subsamble(cm_list_roomTria_ref_scan, deg_list_roomTria_ref_scan)
+    cm_list_roomTria_ref = evac_smooth(cm_list_roomTria_ref)
+
+    cm_list_roomNoTria_ref_scan.clear()
+    deg_list_roomNoTria_ref_scan.clear()
+    cm_list_roomTria_ref_scan.clear()
+    deg_list_roomTria_ref_scan.clear()
+
+    for i in range(len(deg_list_roomNoTria_ref)):
+        deg2cm_notria[ deg_list_roomNoTria_ref[i] ] = cm_list_roomNoTria_ref[i]
+
+    for i in range(len(deg_list_roomTria_ref)):
+        deg2cm_tria[ deg_list_roomTria_ref[i] ] = cm_list_roomTria_ref[i]
+
+
+    # print("### cm_list_roomNoTria_ref")
+    # for i in range(len(cm_list_roomNoTria_ref)):
+    #      print("distCm Angle: ", cm_list_roomNoTria_ref[i], " ", deg_list_roomNoTria_ref[i])
+
+    # print("### cm_list_roomTria_ref")
+    # for i in range(len(cm_list_roomTria_ref)):
+    #      print("distCm Angle: ", cm_list_roomTria_ref[i], " ", deg_list_roomTria_ref[i])
+
+
 #Restituisce cm_list e deg_list come liste di 451 elementi (da 0 gradi a 450 gradi)
 #Un sample per grado. Media fra i campioni dello stesso grado
 #Sottocampiona le distanze. Es. 4 campioni per grado x ==> media dei 4 per il grado x
@@ -115,7 +149,9 @@ def evac_smooth(cm_list):
     return cm_list_smooth    
 
 
-#Restituisce la pallina da raggiungere
+#Restituisce la pallina / uscita da raggiungere
+GET_BALL = 0
+GET_EXIT = 1
 def evac_get_ball_wref(cm_list_ref, cm_list, deg_list):
 
     #Output
@@ -200,48 +236,7 @@ def evac_get_ball_wref(cm_list_ref, cm_list, deg_list):
     for i in range(0, len(samples_sorted), 1):
         samples_sorted[i].dump()
 
-    sample_to_return = samples_sorted[0] if len(samples_sorted) > 0 else None
-    if sample_to_return != None:
-        print("To return: ")
-        sample_to_return.dump()
-    else:
-        print("No sample found")
-
-    return sample_to_return
-
-
-#Costruisce i reference data a partire dai campionamenti di riferimento
-def evac_build_ref_data():
-    global cm_list_roomNoTria_ref
-    global deg_list_roomNoTria_ref
-    global cm_list_roomTria_ref
-    global deg_list_roomTria_ref
-
-    cm_list_roomNoTria_ref, deg_list_roomNoTria_ref = evac_subsamble(cm_list_roomNoTria_ref_scan, deg_list_roomNoTria_ref_scan)
-    cm_list_roomNoTria_ref = evac_smooth(cm_list_roomNoTria_ref)
-
-    cm_list_roomTria_ref, deg_list_roomTria_ref = evac_subsamble(cm_list_roomTria_ref_scan, deg_list_roomTria_ref_scan)
-    cm_list_roomTria_ref = evac_smooth(cm_list_roomTria_ref)
-
-    cm_list_roomNoTria_ref_scan.clear()
-    deg_list_roomNoTria_ref_scan.clear()
-    cm_list_roomTria_ref_scan.clear()
-    deg_list_roomTria_ref_scan.clear()
-
-    for i in range(len(deg_list_roomNoTria_ref)):
-        deg2cm_notria[ deg_list_roomNoTria_ref[i] ] = cm_list_roomNoTria_ref[i]
-
-    for i in range(len(deg_list_roomTria_ref)):
-        deg2cm_tria[ deg_list_roomTria_ref[i] ] = cm_list_roomTria_ref[i]
-
-
-    # print("### cm_list_roomNoTria_ref")
-    # for i in range(len(cm_list_roomNoTria_ref)):
-    #      print("distCm Angle: ", cm_list_roomNoTria_ref[i], " ", deg_list_roomNoTria_ref[i])
-
-    # print("### cm_list_roomTria_ref")
-    # for i in range(len(cm_list_roomTria_ref)):
-    #      print("distCm Angle: ", cm_list_roomTria_ref[i], " ", deg_list_roomTria_ref[i])
+    return samples_sorted
 
 
 # Trova pallina
@@ -254,12 +249,20 @@ def evac_get_ball_main(cm_list, deg_list):
     #     print("distCm Angle: ", cm_list_smooth[i], " ", deg_list_sub[i])
 
     print("TRIA")
-    balls_tria = evac_get_ball_wref(cm_list_roomTria_ref, cm_list_smooth, deg_list_sub)
+    samples_sorted = evac_get_ball_wref(cm_list_roomTria_ref, cm_list_smooth, deg_list_sub)
     
     # print("")
     # print("NO TRIA")
     # balls_notria = evac_get_ball_wref(cm_list_roomNoTria_ref, cm_list_smooth, deg_list_sub)
-    return balls_tria
+
+    sample_to_return = samples_sorted[0] if len(samples_sorted) > 0 else None
+    if sample_to_return != None:
+        print("To return: ")
+        sample_to_return.dump()
+    else:
+        print("No sample found")
+
+    return sample_to_return
 
 
 #BUILD REFERENCE DATA
