@@ -123,7 +123,7 @@ def vai_a_triangolo_e_torna_indietro(tria_deg):
     return triangle_color
 
 #Scan stanza e detection palline
-def scan_e_raggiungipalla():
+def scan_e_punta_palla():
 
     print("scan_e_raggiungipalla")
 
@@ -171,6 +171,8 @@ def scan_e_raggiungipalla():
     robot.drive(0,0)
     robot.stop()
 
+    return pallina
+
 
 
 def stanza_main():
@@ -204,6 +206,21 @@ def stanza_main():
         if triaD_color != Color.NONE: c+=1    
 
     #Parte lo scan e la detection delle palline
-    scan_e_raggiungipalla()
+    found = True
+    while found:
+        pallina = scan_e_punta_palla()
+        #@@@ Raggiungi la pallina e catturala
+        #@@@ vai al triangolo del colore giusto
+        #@@@ Scarica la pallina
+        #@@@ Torna al centro
+
+        #Riposizionamento fine e reimposta centro
+        ricentra_fine()
+        imposta_centro_ref()
+
+        found = (pallina != None)
+
+    #@@@ Uscire dalla stanza (algo scan_e_punta_palla modificato)
+
 
 stanza_main()
