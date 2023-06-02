@@ -15,6 +15,33 @@ def brick_speaker_beep( num ):
             time.sleep(0.1)
 
 
+#Legge il colore avanzando di dist_cm. Ritorna il colore più frequente
+def color_scan(sensor_color, dist_cm, speed_cms=1):
+    #Output
+    max_color = None
+    max_samples = -1
+
+    #Scan 
+    count_color=dict()
+    robot.drive(speed_cms*10, 0)
+    start_mm = robot.distance()
+    while robot.distance() - start_mm < dist_cm*10:
+        color = sensor_color.color()
+        if color != None:
+            count_color.setdefault(color, list())
+            count_color[color].append(1)
+    robot.stop()
+    
+    #Colore più frequente
+    for color in count_color:
+        samples = count_color[color]
+        if len(samples) > max_samples:
+            max_color = color
+            max_samples = len(samples)
+
+    return max_color, max_samples
+
+
 #Ritorna vero se linea
 #@@@ CALIBRARE I COLORI!!! A SECONDA DELL'AMBIENTE
 def isLine( color ):

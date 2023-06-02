@@ -38,18 +38,23 @@ def imposta_centro_ref():
     print("B: ", centro_ref_back_cm,"F: ",centro_ref_front_cm,"L: ",centro_ref_left_cm,"R: ",centro_ref_right_cm)
     print("Angle: ", gyro_sensor.angle())
 
-#Sono più o meno al centro. Raffino la posizione al centro
-def ricentra_fine():
-
+#Ripristino angolo al centro stanza
+def riallinea_angolo():
     #Ripristino l'angolo zero al centro stanza
-    print("Ripristino l'angolo zero al centro stanza", )
+    print("riallinea_angolo: Ripristino l'angolo zero al centro stanza", )
     currangle = gyro_sensor.angle()
     if abs(currangle) < 180:
         angolo_centro = (0 - currangle) % 360
     else :
         angolo_centro = (360 - currangle) % 360
     robot_gyro_turn( angolo_centro )
-    print("Ricentro: compesazione angolo: ",angolo_centro,". Angolo attuale: ", gyro_sensor.angle())
+    print("riallinea_angolo: compesazione angolo: ",angolo_centro,". Angolo attuale: ", gyro_sensor.angle())
+
+
+#Sono più o meno al centro. Raffino la posizione al centro
+def ricentra_fine():
+
+    riallinea_angolo()
     
     # curr_left_cm = getDistanceCm_off(DIST_LEFT_OFF); time.sleep(0.1)
     # left_cm = curr_left_cm - centro_ref_left_cm
@@ -91,36 +96,37 @@ def rilascia_recue_kit():
     time.sleep(5)
     robot_gyro_turn(angle_save - gyro_sensor.angle())
 
+#IN QUESTA FUNZIONE SI AVANZA FRONTALMENTE!
 #Raggiungo i triangoli, memorizzo il tipo e rilascio il rescue kit
-#tria_deg: angolo a cui si trova il triangolo
+#tria_deg: quanto devo ruotare dalla posizione corrente per puntare il triangolo. 
 def vai_a_triangolo_e_torna_indietro(tria_deg):
     global ho_lasciato_kit
-    tria_cm = 38
 
     #Ouput
     triangle_color = None
 
-    #delta = -8 #Rispetto alla misura del sensore back, il front avrebbe misurato delta cm in meno
+    #Distanza dal centro al triangolo (dall'angolazione di tria_deg)    
+    tria_cm = 40
+    #Distanza per lo scan del colore
+    scan_color_cm = 2
 
-    #Ricavo i cm da percorrere a partire dai gradi
-    #tria_cm = deg2cm_tria[tria_deg] - delta
-    robot_gyro_turn(tria_deg-180)
+    #L'angolo 0 è in corrispondenza di back. Ma il rilascio del rescue kit lo faccio avanzando frontalmente.
+    robot_gyro_turn(tria_deg)
     
-    print("Vado a Triangolo ",tria_deg,": mi sposto di ", -tria_cm, " cm")
-    robot.straight(tria_cm * 10)
+    print("vai_a_triangolo_e_torna_indietro: Vado a Triangolo ",tria_deg,": mi sposto di ", -tria_cm, " cm")
+    robot.straight((tria_cm-scan_color_cm) * 10)
 
     #Leggo il colore del triangolo
-    triangle_color = leggi_colore_triangolo()
-    print("Ho letto ", triangle_color)
+    triangle_color = leggi_colore_triangolo(scan_color_cm)
+    print("vai_a_triangolo_e_torna_indietro: Scan color: ", triangle_color)
 
     if not ho_lasciato_kit and triangle_color == Color.GREEN:
         rilascia_recue_kit()
         ho_lasciato_kit = True
     
-    print("Torno al centro: mi sposto di ", tria_cm, " cm")
+    print("vai_a_triangolo_e_torna_indietro: Torno al centro: mi sposto di ", tria_cm, " cm")
     
-    #+2 perchè leggi colore triangolo avanza di 2 centrimetri
-    robot.straight(-(tria_cm+2) * 10)
+    robot.straight(-tria_cm * 10)
 
     #Mi riposiziono al centro
     #ricentra_fine()
@@ -178,26 +184,13 @@ def scan_e_punta_palla():
 
     return pallina
 
-def leggi_colore_triangolo():
-    count_color=dict()
-    robot.drive(10, 0)
-    start_mm = robot.distance()
-    while robot.distance() - start_mm < 20:
-        color = light_sensor_front.color()
-        if color != None:
-            count_color.setdefault(color, list())
-            count_color[color].append(1)
-    robot.stop()
+#Legge il colore scansionando mentre avanza di dist_cm
+def leggi_colore_triangolo(dist_cm):
 
-    count_color.setdefault(Color.RED, list())
-    count_color.setdefault(Color.GREEN, list())
+    color, count = color_scan(light_sensor_front, dist_cm, 1)
 
-    count_red=len(count_color[Color.RED])
-    count_green=len(count_color[Color.GREEN])
-    if count_red > count_green and count_red > 1:
-        return Color.RED
-    elif count_green > count_red and count_green > 1:
-        return Color.GREEN
+    if color != None and color in [Color.RED, Color.GREEN] and count > 1:
+        return color
     else:
         return None
         
@@ -215,6 +208,9 @@ def stanza_main():
 
     imposta_centro_ref()
 
+    #Angoli rispetto allo 0 (0 è sul back)
+    #Rispetto allo 0, faccio prima 125°, poi 55°, ecc...
+    # vai_a_triangolo_e_torna_indietro fa la trasformazione da 0_back a 180_front
     triaA_deg = 125
     triaB_deg = 55
     triaC_deg = 305
@@ -223,19 +219,27 @@ def stanza_main():
     triaA_color = triaB_color = triaC_color = triaD_color = None
     
     c=0
-    triaA_color = vai_a_triangolo_e_torna_indietro(triaA_deg)
+    #Ruoterà di -55 = 125-180. -180 perchè voglio puntare il triangolo con front e non con back
+    triaA_color = vai_a_triangolo_e_torna_indietro(-55)
     if triaA_color in [Color.RED, Color.GREEN]: c+=1
 
-    triaB_color = vai_a_triangolo_e_torna_indietro(110)
+    #Secondo triangolo
+    #routo di altri -70 = -1 * (125 - 55) (senso antiorario)
+    triaB_color = vai_a_triangolo_e_torna_indietro( -70 )
     if triaB_color in [Color.RED, Color.GREEN]: c+=1
 
     if c < 2:
-        triaC_color = vai_a_triangolo_e_torna_indietro(70)
+        #Terzo: ruoto di altri -110 = -1 * ((360-305)+55)
+        triaC_color = vai_a_triangolo_e_torna_indietro(-110)
         if triaC_color in [Color.RED, Color.GREEN]: c+=1
 
     if c < 2:
-        triaD_color = vai_a_triangolo_e_torna_indietro(110)
+        #Quarto: ruoto di altri -70 = -1 * (360 - 235) - (360-305)
+        triaD_color = vai_a_triangolo_e_torna_indietro(-70)
         if triaD_color in [Color.RED, Color.GREEN]: c+=1
+
+    #Ripristino l'angolo per allinearmi allo 0_back
+    riallinea_angolo()
 
     sys.exit()
 
