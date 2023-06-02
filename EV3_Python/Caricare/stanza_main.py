@@ -39,22 +39,30 @@ def imposta_centro_ref():
     print("Angle: ", gyro_sensor.angle())
 
 #Ripristino angolo al centro stanza
-def riallinea_angolo():
+#Dall'angolo attuale percorre la distanza minore per raggiungere l'angolo 0
+def vai_ad_angolo_zero():
     #Ripristino l'angolo zero al centro stanza
-    print("riallinea_angolo: Ripristino l'angolo zero al centro stanza", )
+    # x = 90; y= x%360 =  90
+    # x =-90; y= x%360 = 270
     currangle = gyro_sensor.angle()
-    if abs(currangle) < 180:
-        angolo_centro = (0 - currangle) % 360
-    else :
-        angolo_centro = (360 - currangle) % 360
-    robot_gyro_turn( angolo_centro )
-    print("riallinea_angolo: compesazione angolo: ",angolo_centro,". Angolo attuale: ", gyro_sensor.angle())
+    currangle360 = currangle % 360
+    print("vai_ad_angolo_zero: Ripristino l'angolo zero al centro stanza", currangle, "-->", currangle360 )
+    #currangle360 in 0..360
+    if 0 <= currangle360 <= 180:
+        #Compenso in senso antiorario
+        angle = -currangle360
+    else:
+        #Compenso in senso orario
+        angle = 360-currangle360
+
+    print("vai_ad_angolo_zero: compenso angolo: ", angle )
+    robot_gyro_turn( angle )
 
 
 #Sono più o meno al centro. Raffino la posizione al centro
 def ricentra_fine():
 
-    riallinea_angolo()
+    vai_ad_angolo_zero()
     
     # curr_left_cm = getDistanceCm_off(DIST_LEFT_OFF); time.sleep(0.1)
     # left_cm = curr_left_cm - centro_ref_left_cm
@@ -239,7 +247,7 @@ def stanza_main():
         if triaD_color in [Color.RED, Color.GREEN]: c+=1
 
     #Ripristino l'angolo per allinearmi allo 0_back
-    riallinea_angolo()
+    vai_ad_angolo_zero()
 
     sys.exit()
 
