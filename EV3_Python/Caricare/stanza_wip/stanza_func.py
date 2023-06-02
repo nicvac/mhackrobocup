@@ -150,12 +150,27 @@ def evac_smooth(cm_list):
 
 
 #Restituisce la pallina / uscita da raggiungere
-GET_BALL = 0
-GET_EXIT = 1
-def evac_get_ball_wref(cm_list_ref, cm_list, deg_list):
+SPIKE_POS = 0
+SPIKE_NEG = 1
+def evac_get_spikes(cm_list_ref, cm_list, deg_list, spike_type):
 
     #Output
-    sample_to_return = None
+    samples_sorted = None
+
+    #In caso di detection delle uscite (SPIKE_NEG), inverto cm_list_ref e cm_list, in modo da 
+    # lavorare sempre nel caso SPIKE_POS
+    cm_list_ref_local = cm_list_ref
+    cm_list_local = cm_list
+    if spike_type == SPIKE_NEG:
+        cm_list_ref_local = cm_list_local = list()
+        dist_ref = cm_list_ref[0]
+        for i in range(len(cm_list_ref)):
+            cm_list_ref_local[i] = dist_ref + ( dist_ref - cm_list_ref[i])
+        
+        dist_ref = cm_list[0]
+        for i in range(len(cm_list)):
+            cm_list_local[i] = dist_ref + ( dist_ref - cm_list[i])
+        
 
     #Analizzo il segnale se la distanza con il pattern di riferimento > soglia
     soglia_sample_cm = sizePallinaCm
@@ -165,7 +180,6 @@ def evac_get_ball_wref(cm_list_ref, cm_list, deg_list):
 
     #Funzioni di supporto
     def evac_get_campana():
-        
         idx_left = max_idx
         stop = False
         while not stop:
@@ -199,10 +213,10 @@ def evac_get_ball_wref(cm_list_ref, cm_list, deg_list):
     samples=list()
 
 
-    num_elem = min(len(cm_list),len(cm_list_ref))
+    num_elem = min(len(cm_list_local),len(cm_list_ref_local))
     cm_diff = list(range(num_elem))
     for i in range(0, num_elem, 1):
-        cm_diff[i] = cm_list_ref[i] - cm_list[i]
+        cm_diff[i] = cm_list_ref_local[i] - cm_list_local[i]
 
     found = True
     while found:
@@ -217,7 +231,7 @@ def evac_get_ball_wref(cm_list_ref, cm_list, deg_list):
             #Catturo tutta la campana, a destra e sinistra
             idx_left, idx_right = evac_get_campana()
 
-            sample = Sample(max_idx, idx_left, idx_right, cm_list, deg_list)
+            sample = Sample(max_idx, idx_left, idx_right, cm_list_local, deg_list)
             
             samples.append(sample)
 
@@ -240,7 +254,7 @@ def evac_get_ball_wref(cm_list_ref, cm_list, deg_list):
 
 
 # Trova pallina
-def evac_get_ball_main(cm_list, deg_list):
+def evac_get_ball(cm_list, deg_list):
     cm_list_sub, deg_list_sub = evac_subsamble(cm_list, deg_list)
     cm_list_smooth = evac_smooth(cm_list_sub)
 
@@ -248,13 +262,35 @@ def evac_get_ball_main(cm_list, deg_list):
     # for i in range(len(cm_list_smooth)):
     #     print("distCm Angle: ", cm_list_smooth[i], " ", deg_list_sub[i])
 
-    print("TRIA")
-    samples_sorted = evac_get_ball_wref(cm_list_roomTria_ref, cm_list_smooth, deg_list_sub)
+    #Uso come dato di riferimento la stanza con i triangoli su tutti i corner
+    samples_sorted = evac_get_spikes(cm_list_roomTria_ref, cm_list_smooth, deg_list_sub, SPIKE_POS)
     
-    # print("")
-    # print("NO TRIA")
-    # balls_notria = evac_get_ball_wref(cm_list_roomNoTria_ref, cm_list_smooth, deg_list_sub)
+    sample_to_return = samples_sorted[0] if len(samples_sorted) > 0 else None
+    if sample_to_return != None:
+        print("To return: ")
+        sample_to_return.dump()
+    else:
+        print("No sample found")
 
+    #@@@
+    #Se non ho trovato nulla, confronta con il riferimento di stanza senza triangoli,
+    # Ma escludi i risultati dove ci sono i triangoli
+    # Gli angoli dei triangoli li conosci dalla parte di rilascio del rescue kit!
+
+    return sample_to_return
+
+
+# Trova uscite
+def evac_get_exits(cm_list, deg_list):
+    cm_list_sub, deg_list_sub = evac_subsamble(cm_list, deg_list)
+    cm_list_smooth = evac_smooth(cm_list_sub)
+
+    #Uso come dato di riferimento la stanza senza triangoli ai corner
+    samples_sorted = evac_get_spikes(cm_list_roomNoTria_ref, cm_list_smooth, deg_list_sub, SPIKE_NEG)
+
+    #Escludere le detection trovate sui triangoli (i gradi dei triangoli li conosci dalla parte di rescue kit)
+    #Escludere anche l'entrata (trovata dalla funzione di raggiungi_centro_stanza)
+    
     sample_to_return = samples_sorted[0] if len(samples_sorted) > 0 else None
     if sample_to_return != None:
         print("To return: ")
@@ -263,6 +299,7 @@ def evac_get_ball_main(cm_list, deg_list):
         print("No sample found")
 
     return sample_to_return
+
 
 
 #BUILD REFERENCE DATA

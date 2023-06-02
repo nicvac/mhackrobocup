@@ -142,7 +142,11 @@ def vai_a_triangolo_e_torna_indietro(tria_deg):
     return triangle_color
 
 #Scan stanza e detection palline
+cm_list = list()
+deg_list = list()
 def scan_e_punta_palla():
+    global cm_list
+    global deg_list
 
     print("scan_e_raggiungipalla")
 
@@ -151,8 +155,8 @@ def scan_e_punta_palla():
 
     evac_motor_go_degs = 40
 
-    cm_list = list()
-    deg_list = list()
+    cm_list.clear()
+    deg_list.clear()
 
     # Ruota come un radar
     sensorOff(DIST_FRONT_OFF)
@@ -182,7 +186,7 @@ def scan_e_punta_palla():
     robot.stop()
 
     #Punto la pallina
-    pallina = evac_get_ball_main(cm_list, deg_list)
+    pallina = evac_get_ball(cm_list, deg_list)
     
     angle_dest = pallina.angle if pallina != None else 0
     robot.drive(0, -evac_motor_go_degs)
@@ -267,6 +271,16 @@ def stanza_main():
         found = (pallina != None)
 
     #@@@ Uscire dalla stanza (algo scan_e_punta_palla modificato)
+    evac_exit = evac_get_exits(cm_list, deg_list)
+    #Punto l'uscita
+    angle_dest = evac_exit.angle if evac_exit != None else 0
+    robot.drive(0, -evac_motor_go_degs)
+    while gyro_sensor.angle() > angle_dest: pass
+    robot.drive(0,0)
+    robot.stop()
+
+
+     
 
 
 stanza_main()
