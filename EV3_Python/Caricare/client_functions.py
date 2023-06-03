@@ -20,8 +20,8 @@ clientEv3 = EV3Brick()
 #Abbiamo gestito la wait con un while e se passa un tot tempo rimandiamo la richiesta perchè il
 #server potrebbe averla persa.
 def getDistanceMM(sensore):
-    global extDist
-    extDist = NumericMailbox('extDist', client)
+    # global extDist
+    # extDist = NumericMailbox('extDist', client)
 
     c=1
     start = time.time()
@@ -43,8 +43,8 @@ def getDistanceMM(sensore):
 #Spegne i sensori che non servono, per ridurre l'interferenza con il sensore che effettua la lettura
 # NON CHIAMARLO A LOOP STRETTO!!! PUO' IMPALLARE I SENSORI!!!
 def sensorOff(sensore_off):
-    global extDist
-    extDist = NumericMailbox('extDist', client)
+    # global extDist
+    # extDist = NumericMailbox('extDist', client)
 
     c=1
     start = time.time()
@@ -74,8 +74,8 @@ def getDistanceCm_off(sensore):
 
 #Intosta il pisello
 def intosta_il_pisello():
-    global extDist
-    extDist = NumericMailbox('extDist', client)
+    # global extDist
+    # extDist = NumericMailbox('extDist', client)
     c=1
     start = time.time()
     extDist.send(ALZA_SENSORE_FRONTALE)
@@ -92,8 +92,8 @@ def intosta_il_pisello():
 
 #Rilascia il rescue kit
 def srv_rilascia_rescue_kit():
-    global extDist
-    extDist = NumericMailbox('extDist', client)
+    # global extDist
+    # extDist = NumericMailbox('extDist', client)
     c=1
     start = time.time()
     extDist.send(RILASCIA_RESCUE_KIT)
@@ -113,8 +113,8 @@ def srv_rilascia_rescue_kit():
 #RIAVVIA IL SERVER ED ESCE!
 server_restart_request = False
 def check_quit_and_restart_server():
-    global extDist
-    extDist = NumericMailbox('extDist', client)
+    # global extDist
+    # extDist = NumericMailbox('extDist', client)
     global server_restart_request
     if server_restart_request == False and clientEv3.buttons.pressed():
         print("RIAVVIO IL SERVER ED ESCO")
@@ -124,8 +124,8 @@ def check_quit_and_restart_server():
 
 #RIAVVIA IL SERVER ED ESCE!
 def quit_and_restart_server():
-    global extDist
-    extDist = NumericMailbox('extDist', client)
+    # global extDist
+    # extDist = NumericMailbox('extDist', client)
     global server_restart_request
     if server_restart_request == False:
         print("RIAVVIO IL SERVER ED ESCO")

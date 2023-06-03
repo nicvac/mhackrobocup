@@ -47,7 +47,7 @@ sizePallinaCm = 4.5
 
 #Sample da restituire
 class Sample:
-    def __init__(self, idx_max, idx_left, idx_right, cm_list, deg_list):
+    def __init__(self, idx_max, idx_left, idx_right, cm_list, deg_list, cm_ref):
         # idx sample, distanza massima
         self.idx_max = idx_max
         # idx sample, quando la differenza è piccola a sinistra
@@ -63,10 +63,12 @@ class Sample:
         self.distance = cm_list[self.idx_sampled]
         # Angolo calcolato per questo campione
         self.angle = deg_list[self.idx_sampled] % 360
+        # Distanza fra il sample e il riferimento
+        self.dist_ref = abs(self.distance - cm_ref[self.idx_sampled])
 
     def dump(self):
         print("Sample: idx_max: ",self.idx_max,"; idx_left: ",self.idx_left,"; idx_right: ", self.idx_right,
-              "; idx_sampled: ", self.idx_sampled, "; width", self.width, "; distance: ",self.distance,"; angle: ",self.angle)
+              "; idx_sampled: ", self.idx_sampled, "; width: ", self.width, "; dist_ref: ", self.dist_ref, "; distance: ",self.distance,"; angle: ",self.angle)
 
 #Costruisce i reference data a partire dai campionamenti di riferimento
 def evac_build_ref_data():
@@ -173,7 +175,8 @@ def evac_get_spikes(cm_list_ref, cm_list, deg_list, spike_type):
         
 
     #Analizzo il segnale se la distanza con il pattern di riferimento > soglia
-    soglia_sample_cm = sizePallinaCm
+    #soglia_sample_cm = sizePallinaCm
+    soglia_sample_cm = 6
 
     #Stabilità fra campioni successivi nell'analisi discendente e ascendente
     soglia_campana_cm = 1
@@ -231,7 +234,7 @@ def evac_get_spikes(cm_list_ref, cm_list, deg_list, spike_type):
             #Catturo tutta la campana, a destra e sinistra
             idx_left, idx_right = evac_get_campana()
 
-            sample = Sample(max_idx, idx_left, idx_right, cm_list_local, deg_list)
+            sample = Sample(max_idx, idx_left, idx_right, cm_list_local, deg_list,cm_list_ref_local)
             
             samples.append(sample)
 
@@ -244,7 +247,8 @@ def evac_get_spikes(cm_list_ref, cm_list, deg_list, spike_type):
         samples[i].dump()
 
     #Choose best sample
-    samples_sorted = sorted(samples, key=lambda x: x.width, reverse=True )
+    #samples_sorted = sorted(samples, key=lambda x: x.width, reverse=True )
+    samples_sorted = sorted(samples, key=lambda x: x.dist_ref, reverse=True )
 
     print("Samples sorted: ")
     for i in range(0, len(samples_sorted), 1):
