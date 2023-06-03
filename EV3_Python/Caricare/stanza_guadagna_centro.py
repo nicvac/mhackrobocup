@@ -5,8 +5,9 @@ from rescue_line_functions import *
 from client_functions import *
 
 def getRoomSize(storicoDimensioneSx, storicoDimensioneDx):
-    distTraSensori = 14
+    distTraSensori = 15
     sx = getDistanceCm(DIST_LEFT)
+    time.sleep(0.3)
     dx = getDistanceCm(DIST_RIGHT)
     storicoDimensioneSx.append(sx)
     storicoDimensioneDx.append(dx)
@@ -23,7 +24,7 @@ def guadagnaCentro():
     dimMaggiore = 120
     dimMinore = 90
     asseMaggiore = True
-    distTraSensori = 14
+    distTraSensori = 15
     distanzaSx = 0
     distanzaDx = 0
     contDimMinore = 0
@@ -35,7 +36,7 @@ def guadagnaCentro():
     dimTriangolo1 = 0
     dimTriangolo2 = 0
     
-    print("Prima del while")
+    print("sto cazzo")
     while(robot.distance() < 530):
         print(str(robot.distance()) + "  " + str(getRoomSize(storicoDimensioneSx, storicoDimensioneDx)))
     robot.stop()
@@ -91,17 +92,15 @@ def guadagnaCentro():
     robot.stop()
 
 
-    robot.reset()
-    robot.drive(70, 0)
-
     print("Ultimo avanzameto")
-    dimTriangolo2 = abs(distanzaSx - distanzaDx) / 2
+    dimTriangolo2 = (abs(distanzaSx - distanzaDx) + distTraSensori - 6) / 2
     angolo = degrees(acos(dimTriangolo2 / sqrt(dimTriangolo1 ** 2 + dimTriangolo2 ** 2)))
     print("dimTriangolo1: ", dimTriangolo1, " - dimTriangolo2: ", dimTriangolo2, " - angolo: ", angolo)
+
+    robot.reset()
+    robot.drive(70, 0)
 
     while(robot.distance() < dimTriangolo2 * 10):
         pass
 
     robot.stop()
-
-guadagnaCentro()

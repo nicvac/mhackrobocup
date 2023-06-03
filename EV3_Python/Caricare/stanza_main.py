@@ -119,8 +119,11 @@ def vai_a_triangolo_e_torna_indietro(tria_deg):
     scan_color_cm = 2
 
     #L'angolo 0 è in corrispondenza di back. Ma il rilascio del rescue kit lo faccio avanzando frontalmente.
+    print("Sto ruotando: ", tria_deg)
     robot_gyro_turn(tria_deg)
+    print("Ho finito di ruotare")
     
+
     print("vai_a_triangolo_e_torna_indietro: Vado a Triangolo ",tria_deg,": mi sposto di ", -tria_cm, " cm")
     robot.straight((tria_cm-scan_color_cm) * 10)
 
@@ -209,6 +212,7 @@ def leggi_colore_triangolo(dist_cm):
 
 def stanza_main():
     #Costruisco il Reference data 
+    print("Entrato in stanza_main")
     evac_build_ref_data()
 
     #Alzo il sensore frontale
@@ -281,6 +285,9 @@ def stanza_main():
 
 
      
-
-
+# robot.straight(100)
+# time.sleep(3)
+# robot.straight(100)
+# sys.exit()
+print("stanza_main")
 stanza_main()
