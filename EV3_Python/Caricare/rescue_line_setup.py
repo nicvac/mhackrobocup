@@ -10,7 +10,7 @@ import time
 brick = EV3Brick()
 
 # Diametro ruota in mm
-wheel = 35
+wheel = 33.25 #35
 
 # Distanza dal centro delle ruote da sinistra a destra
 axle = 205
