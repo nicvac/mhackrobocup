@@ -17,7 +17,7 @@ def prendi_palla(distanza_pallina):
     for i in range(4):
         dist_cm = getDistanceCm(DIST_BACK)
         print("Distanza iniziale: ", dist_cm)
-        time.sleep(0.2)
+        time.sleep(0.5)
     
     print("Prendi palla: begin")
     #La distanza finale fra robot e oggetto da raggiungere
