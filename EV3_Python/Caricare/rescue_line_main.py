@@ -44,7 +44,7 @@ gyro_sensor.reset_angle(0)
 
 isLine_l = False; isLine_r = False
 
-
+countVerdi = 0
 while True:  
     
     #SE PREMO UN PULSANTE (TRANNE STOP!!!) RIAVVIA IL SERVER ED ESCE DAL PROGRAMMA
@@ -85,7 +85,12 @@ while True:
     isGreen_l = isGreen( color_l )
     isGreen_r = isGreen( color_r )
 
-    if isGreen_l or isGreen_r:
+    countVerdi = countVerdi + 1 if isGreen_l or isGreen_r else 0
+
+    if False and (isGreen_l or isGreen_r and countVerdi >= 3):
+        robot.stop()
+        brick_speaker_beep(3)
+
         # risolvere errore verde a caso nel percorso oppure non vede il doppio verde
         # quando vede un verde con uno dei due sensori resetta l'ultimo angolo stabile e fa un passetto in avanti per essere
         # sicuri di essere al centro del quadratino verde
@@ -95,16 +100,20 @@ while True:
         # qui fa il controllo normalmente. Se non vede nessun verde nella posizione stabile non esegue nessuna correzione
         if isGreen_l and not isGreen_r:
             print("Ho visto verde a sinistra")
+            countVerdi = 0
             scan_deg = scan_forward_2_scan_degree(lungCingoli / 2)
             robot.straight(lungCingoli / 2)
             scan(-scan_deg, 40, False)
+
         elif isGreen_r and not isGreen_l:
             print("Ho visto verde a destra")
+            countVerdi = 0
             scan_deg = scan_forward_2_scan_degree(lungCingoli / 2)
             robot.straight(lungCingoli / 2)
             scan(scan_deg, 40, False)
         elif isGreen_r and isGreen_l:
             print("Ho visto verde da tutti e due i lati")
+            countVerdi = 0
             verde360()
         else:
             # forse è il caso di fargli riprendere l'angolo prima che ha visto il verde. Se lo vede durante una curva
@@ -163,7 +172,7 @@ while True:
         dl = 1 if isLine_l else 0
         dr = 1 if isLine_r else 0
         df = 1 if isLine_f else 0
-        print( ". ",dl,"-",dr,"\t",lc_l,"-",lc_r,"\t\t F: ",df," ",lc_f, "\t\t Corr:(", corrc_fwd,") ", corrc_left, " ", corrc_right, "\t Incrocio: ", correzionePerIncrocio, "\t Contatori Bianco Completo: ", fullGapCounter)
+        print( ". ",dl,"-",dr,"\t",lc_l,"-",lc_r,"\t\t F: ",df," ",lc_f, "\t\t Corr:(", corrc_fwd,") ", corrc_left, " ", corrc_right, "\t Incrocio: ", correzionePerIncrocio, "\t Contatori Bianco Completo: ", fullGapCounter, "   counterVerdi", countVerdi)
 
 
     ### GAP
@@ -351,14 +360,24 @@ while True:
     # Fa partire lo scan con il sensore avanti per vedere se si trova all'incrocio 
     lineFoundBack = scanBeforeIntersection()
 
-    if lineFoundBack:
+    if lineFoundBack == 3:
+        print("Ho visto verde a sinistra con il controllo incrocio")
+        scan_deg = scan_forward_2_scan_degree(lungCingoli / 2)
+        robot.straight(lungCingoli / 2)
+        scan(-scan_deg, 40, False)
+    elif lineFoundBack == 4:
+        print("Ho visto verde a destra con il controllo incrocio")
+        scan_deg = scan_forward_2_scan_degree(lungCingoli / 2)
+        robot.straight(lungCingoli / 2)
+        scan(scan_deg, 40, False)
+    elif lineFoundBack == 1:
         # Se ha trovato la linea fa uno skip in avanti e supera l'incrocio, resettando tutti i counter
         print("Ho trovato l'incrocio a T, salto lo scan.")
         robot.straight(30)
         stop()
         resetCountersCorrection_corrc()
         continue
-    else:
+    elif lineFoundBack == 0:
         # Se non ha trovato la linea va avanti con la scansione
         pass
 

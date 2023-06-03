@@ -12,6 +12,9 @@ from pybricks.media.ev3dev import SoundFile, ImageFile
 
 
 light_sensor_front = ColorSensor(Port.S4)
+color_sensor_left = ColorSensor(Port.S3)
+color_sensor_right = ColorSensor(Port.S2)
+
 import time
 
 #Stampa sensori
@@ -29,5 +32,32 @@ import time
 #     robot.stop()
 #     lineLocked = scan_double(scanDegree, 0)
 
+
 while True:
-    print(light_sensor_front.color())
+    rgbleft = color_sensor_left.rgb()
+    rgbright = color_sensor_right.rgb()
+
+    colorl = color_sensor_left.color()
+    colorr = color_sensor_right.color()
+
+    lr = rgbleft[0]
+    lg  = rgbleft[1]
+    lb = rgbleft[2]
+
+    rr = rgbright[0]
+    rg = rgbright[1]
+    rb = rgbright[2]
+
+    lp1 = lg / (lg + lr)
+    slp1 = "{:.2f}".format(lp1)
+    lp2 = lg / (lg + lb)
+    slp2 = "{:.2f}".format(lp2)
+
+    rp1 = rg / (rg + rr)
+    srp1 = "{:.2f}".format(rp1)
+    rp2 = rg / (rg + rb)
+    srp2 = "{:.2f}".format(rp2)
+
+    print("Sinistra - r: ", lr, " g: ", lg, " b: ", lb, " Color: ", colorl, "  Destra - r: ", rr, " g: ", rg, " b: ", rb, " Color: ", colorr,  "\t lp1: ", slp1, " lp2: ", slp2, " rp1: ", srp1, " rp2: ", srp2)
+
+    

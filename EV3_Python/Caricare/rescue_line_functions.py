@@ -373,6 +373,87 @@ def resetBackAngleAfterNoGreen(angle):
 
 
 def scanBeforeIntersection():
+
+    # print("Torno indietro di 2 cm per controllare se c'è un verde")
+    # robot.straight(-20)
+    # stop()
+
+    # #Ruota a destra di 10 gradi
+    # gyro_sensor.reset_angle(0)
+    # ruotaSuAsse(1)
+    # # finchè l'angolo è minore di 10
+    # while abs(gyro_sensor.angle()) < 20:
+    #     colorL = color_sensor_left.color()
+    #     colorR = color_sensor_right.color()
+
+    #     lineL = isLine(colorL)
+    #     lineR = isLine(colorR)
+
+    #     if lineL:
+    #         break
+
+    #     greenL = isGreen(colorL)
+    #     greenR = isGreen(colorR)
+
+    #     if greenL:
+    #         return 3
+    #     elif greenR:
+    #         return 4
+    #     else:
+    #         pass
+    
+    # print("Controllato a destra, niente verde. Resetto l'angolo iniziale.")
+    # stop()
+    # ruotaSuAsse(-1)
+
+    # curr_angle = gyro_sensor.angle()
+    # if curr_angle > 0:
+    #     while gyro_sensor.angle() > 0: pass
+    # elif curr_angle < 0:
+    #     while gyro_sensor.angle() < 0: pass
+
+    # stop()
+    # print("Resettato l'angolo iniziale, controllo a sinistra")
+
+    # gyro_sensor.reset_angle(0)
+    # ruotaSuAsse(-1)
+    # while abs(gyro_sensor.angle()) < 20:
+    #     colorL = color_sensor_left.color()
+    #     colorR = color_sensor_right.color()
+
+    #     lineL = isLine(colorL)
+    #     lineR = isLine(colorR)
+
+    #     if lineR:
+    #         break
+
+    #     greenL = isGreen(colorL)
+    #     greenR = isGreen(colorR)
+
+    #     if greenL:
+    #         return 3
+    #     elif greenR:
+    #         return 4
+    #     else:
+    #         pass
+
+    # print("Controllato a sinistra, niente verde. Ripristino l'angolo iniziale")
+    # stop()
+    # ruotaSuAsse(1)
+
+    # curr_angle = gyro_sensor.angle()
+    # if curr_angle > 0:
+    #     while gyro_sensor.angle() > 0: pass
+    # elif curr_angle < 0:
+    #     while gyro_sensor.angle() < 0: pass
+
+    # stop()
+    # print("Ripristnato l'angolo iniziale")
+
+    # print("Non ho trovato nessun verde nello scan iniziale")
+    # robot.straight(20)
+
+
     print("Scan di 10 gradi con il sensore davanti, vedo se tovo la linea per l'incrocio")
     # Resetta l'angolo alla partenza
     gyro_sensor.reset_angle(0)
@@ -386,7 +467,7 @@ def scanBeforeIntersection():
         if lineScanIntersection:
             # Se, mentre ruota, trova la linea esce dalla funzione
             stop()
-            return True
+            return 1
         else:
             pass
     
@@ -408,7 +489,7 @@ def scanBeforeIntersection():
         if lineScanIntersection:
             # se trova la linea nello scan di 10 gradi verso sinistra interrompe la funzione.
             stop()
-            return True
+            return 1
         else:
             pass
 
@@ -420,7 +501,7 @@ def scanBeforeIntersection():
         pass
     stop()
 
-    return False
+    return 0
 
 
 
