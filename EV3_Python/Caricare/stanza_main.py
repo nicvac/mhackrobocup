@@ -17,15 +17,7 @@ centro_ref_right_cm=0
 
 ho_lasciato_kit = False
 
-
 #Spengo i sensori per eliminare il rumore
-def spegni_sensori_distanza():
-    sensorOff(DIST_BACK_OFF); time.sleep(0.1)
-    sensorOff(DIST_FRONT_OFF); time.sleep(0.1)
-    sensorOff(DIST_LEFT_OFF); time.sleep(0.1)
-    sensorOff(DIST_RIGHT_OFF); time.sleep(0.1)
-
-
 def imposta_centro_ref():
     global centro_ref_back_cm
     global centro_ref_front_cm
@@ -34,7 +26,10 @@ def imposta_centro_ref():
 
     gyro_sensor.reset_angle(0)
 
-    spegni_sensori_distanza()
+    sensorOff(DIST_BACK_OFF); time.sleep(0.1)
+    sensorOff(DIST_FRONT_OFF); time.sleep(0.1)
+    sensorOff(DIST_LEFT_OFF); time.sleep(0.1)
+    sensorOff(DIST_RIGHT_OFF); time.sleep(0.1)
 
     centro_ref_back_cm = getDistanceCm_off(DIST_BACK_OFF); time.sleep(0.1)
     centro_ref_front_cm = getDistanceCm_off(DIST_FRONT_OFF); time.sleep(0.1) #ATTENZIONE! NELLA STANZA IL FRONT E' INAFFIDABILE!
@@ -152,25 +147,26 @@ def vai_a_triangolo_e_torna_indietro(tria_deg):
     return triangle_color
 
 #Scan stanza e detection palline
+evac_motor_go_degs = 40
 cm_list = list()
 deg_list = list()
 def scan_e_punta_palla():
     global cm_list
     global deg_list
 
-    print("scan_e_raggiungipalla")
+    print("scan_e_punta_palla")
 
     evac_motor_scan_degs = 30
     #evac_motor_scan_degs /= 3 #sei campioni a grado
     #evac_motor_scan_degs /= 1 #due sample a grado
     evac_motor_scan_degs /= 2
 
-    evac_motor_go_degs = 40
-
     cm_list.clear()
     deg_list.clear()
 
     # Ruota come un radar
+
+    #Spengo i sensori che non mi servono
     sensorOff(DIST_FRONT_OFF)
     time.sleep(0.5)
     sensorOff(DIST_LEFT_OFF)
@@ -230,51 +226,48 @@ def stanza_main():
     print("Sensore alzato")
     
     #Guadagno il centro della stanza
-    #@@@ guadagnaCentro()
+    guadagnaCentro()
 
     #Angoli rispetto allo 0 (0 è sul back)
     #Rispetto allo 0, faccio prima 125°, poi 55°, ecc...
-    # vai_a_triangolo_e_torna_indietro fa la trasformazione da 0_back a 180_front
-    # triaA_deg = 125
-    # triaB_deg = 55
-    # triaC_deg = 305
-    # triaD_deg = 235
+    triaA_deg = 125
+    triaB_deg = 55
+    triaC_deg = 305
+    triaD_deg = 235
 
-    # triaA_color = triaB_color = triaC_color = triaD_color = None
+    triaA_color = triaB_color = triaC_color = triaD_color = None
     
-    # c=0
-    # #Ruoterà di -55 = 125-180. -180 perchè voglio puntare il triangolo con front e non con back
-    # triaA_color = vai_a_triangolo_e_torna_indietro(-55)
-    # if triaA_color in [Color.RED, Color.GREEN]: c+=1
+    c=0
+    #Ruoterà di -55 = 125-180. -180 perchè voglio puntare il triangolo con front e non con back
+    triaA_color = vai_a_triangolo_e_torna_indietro(-55)
+    if triaA_color in [Color.RED, Color.GREEN]: c+=1
 
-    # #Secondo triangolo
-    # #routo di altri -70 = -1 * (125 - 55) (senso antiorario)
-    # triaB_color = vai_a_triangolo_e_torna_indietro( -70 )
-    # if triaB_color in [Color.RED, Color.GREEN]: c+=1
+    #Secondo triangolo
+    #routo di altri -70 = -1 * (125 - 55) (senso antiorario)
+    triaB_color = vai_a_triangolo_e_torna_indietro( -70 )
+    if triaB_color in [Color.RED, Color.GREEN]: c+=1
 
-    # if c < 2:
-    #     #Terzo: ruoto di altri -110 = -1 * ((360-305)+55)
-    #     triaC_color = vai_a_triangolo_e_torna_indietro(-110)
-    #     if triaC_color in [Color.RED, Color.GREEN]: c+=1
+    if c < 2:
+        #Terzo: ruoto di altri -110 = -1 * ((360-305)+55)
+        triaC_color = vai_a_triangolo_e_torna_indietro(-110)
+        if triaC_color in [Color.RED, Color.GREEN]: c+=1
 
-    # if c < 2:
-    #     #Quarto: ruoto di altri -70 = -1 * (360 - 235) - (360-305)
-    #     triaD_color = vai_a_triangolo_e_torna_indietro(-70)
-    #     if triaD_color in [Color.RED, Color.GREEN]: c+=1
+    if c < 2:
+        #Quarto: ruoto di altri -70 = -1 * (360 - 235) - (360-305)
+        triaD_color = vai_a_triangolo_e_torna_indietro(-70)
+        if triaD_color in [Color.RED, Color.GREEN]: c+=1
 
-    # #Ripristino l'angolo per allinearmi allo 0_back
-    # vai_ad_angolo_zero()
+    #Ripristino l'angolo per allinearmi allo 0_back
+    vai_ad_angolo_zero()
 
     #Parte lo scan e la detection delle palline
     found = True
     while found:
-        #@@@ pallina = scan_e_punta_palla()
+        pallina = scan_e_punta_palla()
 
-        #@@@ Raggiungi la pallina e catturala
-
-        spegni_sensori_distanza()
+        #Raggiungi la pallina e catturala
         prendi_palla(17.2) #@@@ pallina.dist_cm
-        sys.exit()
+        
         #@@@ vai al triangolo del colore giusto
         #@@@ Scarica la pallina
         #@@@ Torna al centro
@@ -294,12 +287,9 @@ def stanza_main():
     robot.drive(0,0)
     robot.stop()
 
+    #@@@ Avanzare fino all'uscita
+
 
      
-# robot.straight(100)
-# time.sleep(3)
-# robot.straight(100)
-# sys.exit()
-#guadagnaCentro()
 print("stanza_main")
 stanza_main()

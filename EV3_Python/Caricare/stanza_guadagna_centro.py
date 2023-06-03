@@ -36,6 +36,20 @@ def guadagnaCentro():
     dimTriangolo1 = 0
     dimTriangolo2 = 0
     
+    #Spengo i sensori che non mi servono
+    sensorOff(DIST_FRONT_OFF)
+    time.sleep(0.5)
+    sensorOff(DIST_BACK_OFF)
+    time.sleep(0.5)
+
+    #FARE alcune letture a vuoto! E' importante per stabilizzare il sensore
+    for i in range(4):
+        currCm = getDistanceCm(DIST_LEFT)
+        time.sleep(0.5)
+        currCm = getDistanceCm(DIST_RIGHT)
+        time.sleep(0.5)
+
+
     print("sto cazzo")
     while(robot.distance() < 530):
         print(str(robot.distance()) + "  " + str(getRoomSize(storicoDimensioneSx, storicoDimensioneDx)))
