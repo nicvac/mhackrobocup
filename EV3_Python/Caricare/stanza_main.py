@@ -6,6 +6,8 @@ from client_functions import *
 from stanza_wip.stanza_func import *
 from stanza_guadagna_centro import *
 
+from stanza_prendi_palle import *
+
 #Parametri centro
 centro_ref_back_cm=0
 centro_ref_front_cm=0
@@ -15,6 +17,15 @@ centro_ref_right_cm=0
 
 ho_lasciato_kit = False
 
+
+#Spengo i sensori per eliminare il rumore
+def spegni_sensori_distanza():
+    sensorOff(DIST_BACK_OFF); time.sleep(0.1)
+    sensorOff(DIST_FRONT_OFF); time.sleep(0.1)
+    sensorOff(DIST_LEFT_OFF); time.sleep(0.1)
+    sensorOff(DIST_RIGHT_OFF); time.sleep(0.1)
+
+
 def imposta_centro_ref():
     global centro_ref_back_cm
     global centro_ref_front_cm
@@ -23,11 +34,7 @@ def imposta_centro_ref():
 
     gyro_sensor.reset_angle(0)
 
-    #Spengo i sensori per eliminare il rumore
-    sensorOff(DIST_BACK_OFF); time.sleep(0.1)
-    sensorOff(DIST_FRONT_OFF); time.sleep(0.1)
-    sensorOff(DIST_LEFT_OFF); time.sleep(0.1)
-    sensorOff(DIST_RIGHT_OFF); time.sleep(0.1)
+    spegni_sensori_distanza()
 
     centro_ref_back_cm = getDistanceCm_off(DIST_BACK_OFF); time.sleep(0.1)
     centro_ref_front_cm = getDistanceCm_off(DIST_FRONT_OFF); time.sleep(0.1) #ATTENZIONE! NELLA STANZA IL FRONT E' INAFFIDABILE!
@@ -114,7 +121,7 @@ def vai_a_triangolo_e_torna_indietro(tria_deg):
     triangle_color = None
 
     #Distanza dal centro al triangolo (dall'angolazione di tria_deg)    
-    tria_cm = 40
+    tria_cm = 41
     #Distanza per lo scan del colore
     scan_color_cm = 2
 
@@ -154,7 +161,9 @@ def scan_e_punta_palla():
     print("scan_e_raggiungipalla")
 
     evac_motor_scan_degs = 30
-    evac_motor_scan_degs /= 3
+    #evac_motor_scan_degs /= 3 #sei campioni a grado
+    #evac_motor_scan_degs /= 1 #due sample a grado
+    evac_motor_scan_degs /= 2
 
     evac_motor_go_degs = 40
 
@@ -216,54 +225,56 @@ def stanza_main():
     evac_build_ref_data()
 
     #Alzo il sensore frontale
+    print("Alzo sensore")
     intosta_il_pisello()
-
-    #Guadagnp il centro della stanza
-    #@@@ NON FUNZIONA
-    #@@@guadagnaCentro()
-
-    imposta_centro_ref()
+    print("Sensore alzato")
+    
+    #Guadagno il centro della stanza
+    #@@@ guadagnaCentro()
 
     #Angoli rispetto allo 0 (0 è sul back)
     #Rispetto allo 0, faccio prima 125°, poi 55°, ecc...
     # vai_a_triangolo_e_torna_indietro fa la trasformazione da 0_back a 180_front
-    triaA_deg = 125
-    triaB_deg = 55
-    triaC_deg = 305
-    triaD_deg = 235
+    # triaA_deg = 125
+    # triaB_deg = 55
+    # triaC_deg = 305
+    # triaD_deg = 235
 
-    triaA_color = triaB_color = triaC_color = triaD_color = None
+    # triaA_color = triaB_color = triaC_color = triaD_color = None
     
-    c=0
-    #Ruoterà di -55 = 125-180. -180 perchè voglio puntare il triangolo con front e non con back
-    triaA_color = vai_a_triangolo_e_torna_indietro(-55)
-    if triaA_color in [Color.RED, Color.GREEN]: c+=1
+    # c=0
+    # #Ruoterà di -55 = 125-180. -180 perchè voglio puntare il triangolo con front e non con back
+    # triaA_color = vai_a_triangolo_e_torna_indietro(-55)
+    # if triaA_color in [Color.RED, Color.GREEN]: c+=1
 
-    #Secondo triangolo
-    #routo di altri -70 = -1 * (125 - 55) (senso antiorario)
-    triaB_color = vai_a_triangolo_e_torna_indietro( -70 )
-    if triaB_color in [Color.RED, Color.GREEN]: c+=1
+    # #Secondo triangolo
+    # #routo di altri -70 = -1 * (125 - 55) (senso antiorario)
+    # triaB_color = vai_a_triangolo_e_torna_indietro( -70 )
+    # if triaB_color in [Color.RED, Color.GREEN]: c+=1
 
-    if c < 2:
-        #Terzo: ruoto di altri -110 = -1 * ((360-305)+55)
-        triaC_color = vai_a_triangolo_e_torna_indietro(-110)
-        if triaC_color in [Color.RED, Color.GREEN]: c+=1
+    # if c < 2:
+    #     #Terzo: ruoto di altri -110 = -1 * ((360-305)+55)
+    #     triaC_color = vai_a_triangolo_e_torna_indietro(-110)
+    #     if triaC_color in [Color.RED, Color.GREEN]: c+=1
 
-    if c < 2:
-        #Quarto: ruoto di altri -70 = -1 * (360 - 235) - (360-305)
-        triaD_color = vai_a_triangolo_e_torna_indietro(-70)
-        if triaD_color in [Color.RED, Color.GREEN]: c+=1
+    # if c < 2:
+    #     #Quarto: ruoto di altri -70 = -1 * (360 - 235) - (360-305)
+    #     triaD_color = vai_a_triangolo_e_torna_indietro(-70)
+    #     if triaD_color in [Color.RED, Color.GREEN]: c+=1
 
-    #Ripristino l'angolo per allinearmi allo 0_back
-    vai_ad_angolo_zero()
-
-    sys.exit()
+    # #Ripristino l'angolo per allinearmi allo 0_back
+    # vai_ad_angolo_zero()
 
     #Parte lo scan e la detection delle palline
     found = True
     while found:
-        pallina = scan_e_punta_palla()
-        # Raggiungi la pallina e catturala
+        #@@@ pallina = scan_e_punta_palla()
+
+        #@@@ Raggiungi la pallina e catturala
+
+        spegni_sensori_distanza()
+        prendi_palla(17.2) #@@@ pallina.dist_cm
+        sys.exit()
         #@@@ vai al triangolo del colore giusto
         #@@@ Scarica la pallina
         #@@@ Torna al centro
@@ -289,5 +300,6 @@ def stanza_main():
 # time.sleep(3)
 # robot.straight(100)
 # sys.exit()
+#guadagnaCentro()
 print("stanza_main")
 stanza_main()
