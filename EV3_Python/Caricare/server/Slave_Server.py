@@ -58,7 +58,7 @@ switchoff = True
 
 while True:
 
-    motore.run_until_stalled(50)
+    motore.run_until_stalled(50, Stop.HOLD)
     #motore.hold()
     rescueKit.run_until_stalled(140)
 
@@ -105,7 +105,7 @@ while True:
 
 
         elif req == CONNECTION_RESTART:
-            motore.run_until_stalled(50)
+            motore.run_until_stalled(50, Stop.HOLD)
             #motore.hold()
             rescueKit.run_until_stalled(140)
             server.server_close()
