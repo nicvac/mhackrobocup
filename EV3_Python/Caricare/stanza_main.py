@@ -7,7 +7,7 @@ from stanza_wip.stanza_func import *
 from stanza_guadagna_centro import *
 
 from stanza_prendi_palle import *
-
+from stanza_lascia_pallina import *
 #Parametri centro
 centro_ref_back_cm=0
 centro_ref_front_cm=0
@@ -218,6 +218,7 @@ def leggi_colore_triangolo(dist_cm):
 def stanza_main():
     #Costruisco il Reference data 
     print("Entrato in stanza_main")
+    imposta_carrello_stanza()
     evac_build_ref_data()
 
     #Alzo il sensore frontale
@@ -235,6 +236,9 @@ def stanza_main():
     triaC_deg = 305
     triaD_deg = 235
 
+    triaRedDeg = 0
+    triaGreenDeg = 0
+
     triaA_color = triaB_color = triaC_color = triaD_color = None
     
     c=0
@@ -242,20 +246,33 @@ def stanza_main():
     triaA_color = vai_a_triangolo_e_torna_indietro(-55)
     if triaA_color in [Color.RED, Color.GREEN]: c+=1
 
+    if triaA_color == Color.RED: triaRedDeg = gyro_sensor.angle() 
+    if triaA_color == Color.RED: triaGreenDeg = gyro_sensor.angle()
+
+
     #Secondo triangolo
     #routo di altri -70 = -1 * (125 - 55) (senso antiorario)
     triaB_color = vai_a_triangolo_e_torna_indietro( -70 )
     if triaB_color in [Color.RED, Color.GREEN]: c+=1
+
+    if triaB_color == Color.RED: triaRedDeg = gyro_sensor.angle() 
+    if triaB_color == Color.RED: triaGreenDeg = gyro_sensor.angle()
 
     if c < 2:
         #Terzo: ruoto di altri -110 = -1 * ((360-305)+55)
         triaC_color = vai_a_triangolo_e_torna_indietro(-110)
         if triaC_color in [Color.RED, Color.GREEN]: c+=1
 
+        if triaC_color == Color.RED: triaRedDeg = gyro_sensor.angle() 
+        if triaC_color == Color.RED: triaGreenDeg = gyro_sensor.angle()
+            
+
     if c < 2:
         #Quarto: ruoto di altri -70 = -1 * (360 - 235) - (360-305)
         triaD_color = vai_a_triangolo_e_torna_indietro(-70)
         if triaD_color in [Color.RED, Color.GREEN]: c+=1
+        if triaD_color == Color.RED: triaRedDeg = gyro_sensor.angle() 
+        if triaD_color == Color.RED: triaGreenDeg = gyro_sensor.angle()  
 
     #Ripristino l'angolo per allinearmi allo 0_back
     vai_ad_angolo_zero()
@@ -266,19 +283,29 @@ def stanza_main():
         pallina = scan_e_punta_palla()
 
         #Raggiungi la pallina e catturala
-        prendi_palla(17.2) #@@@ pallina.dist_cm
-        
-        #@@@ vai al triangolo del colore giusto
-        #@@@ Scarica la pallina
-        #@@@ Torna al centro
+        prendi_palla(pallina.dist_cm)
+        ricentra_fine()
 
+        # vai al triangolo del colore giusto
+        tria_cm = 41
+        print("Rilascio in triangolo. Ruoto: ", triaGreenDeg)
+        robot_gyro_turn(triaGreenDeg)
+
+        print("Rilascio in triangolo. Vado a Triangolo ",triaGreenDeg,": mi sposto di ", tria_cm, " cm")
+        robot.straight((tria_cm) * 10)
+        
+        # Scarica la pallina
+        lascia_pallina()
+
+        # Torna al centro
+        robot.straight(-(tria_cm)*10)
         #Riposizionamento fine e reimposta centro
         ricentra_fine()
         imposta_centro_ref()
 
         found = (pallina != None)
 
-    #@@@ Uscire dalla stanza (algo scan_e_punta_palla modificato)
+    # Uscire dalla stanza (algo scan_e_punta_palla modificato)
     evac_exit = evac_get_exits(cm_list, deg_list)
     #Punto l'uscita
     angle_dest = evac_exit.angle if evac_exit != None else 0
@@ -287,9 +314,6 @@ def stanza_main():
     robot.drive(0,0)
     robot.stop()
 
-    #@@@ Avanzare fino all'uscita
-
-
-     
-print("stanza_main")
-stanza_main()
+    #Avanzare fino all'uscita
+    robot.straight((evac_exit.distance + 2) * 10)
+    imposta_carrello_rescueline()

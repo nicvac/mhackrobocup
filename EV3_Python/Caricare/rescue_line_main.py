@@ -1,6 +1,7 @@
 #!/usr/bin/env pybricks-micropython
 from rescue_line_functions import *
 from rescue_line_setup import *
+from stanza_main import *
 #from guadagna_centro import *
 
 
@@ -40,6 +41,7 @@ def resetCountersCorrection_corrc():
     corrc_list_r.clear() 
     #print("Correction counters corrc clear", "\t\t Corr: ", corrc_fwd," ", corrc_left, " ", corrc_right)
 
+imposta_carrello_rescueline()
 gyro_sensor.reset_angle(0)
 
 isLine_l = False; isLine_r = False
@@ -50,28 +52,28 @@ while True:
     #SE PREMO UN PULSANTE (TRANNE STOP!!!) RIAVVIA IL SERVER ED ESCE DAL PROGRAMMA
     check_quit_and_restart_server()
 
-    # ### OSTACOLO
-    # # Funzione aggira ostacolo. Da sistemare con tutti gli aggiornamenti fatti al client-server durante il percorso.
-    # # Potrebbe dare problemi con le troppe letture durante il percorso, bisogna impostargli uno sleep.
-    # isObstacle = checkIfObstacle()
-    # if isObstacle: aggiraOstacolo()
+    ## OSTACOLO
+    # Funzione aggira ostacolo. Da sistemare con tutti gli aggiornamenti fatti al client-server durante il percorso.
+    # Potrebbe dare problemi con le troppe letture durante il percorso, bisogna impostargli uno sleep.
+    isObstacle = checkIfObstacle()
+    if isObstacle: aggiraOstacolo()
     
 
-    # ### STAGNOLA
-    # lightFront = light_sensor_front.reflection()
-    # stagnola = isStagnola(lightFront)
-    # if stagnola:
-    #     print("Ho visto la luminosità maggiore del 90%")
-    #     robot.drive(0,0) 
-    #     robot.stop()
-    #     stanzaTrovata = stagnolaTrovata()
-    #     if stanzaTrovata:
-    #         guadagnaCentro()
-    #     else:
-    #         print("Non ho trovato la stanza, continuo il seguilinea")
-    #         # far andare un attimo in avanti ed eseguire lo scan se tutti e tre vedono bianco
-    # else:
-    #     pass
+    ### STAGNOLA
+    lightFront = light_sensor_front.reflection()
+    stagnola = isStagnola(lightFront)
+    if stagnola:
+        print("Ho visto la luminosità maggiore del 90%")
+        robot.drive(0,0) 
+        robot.stop()
+        stanzaTrovata = stagnolaTrovata()
+        if stanzaTrovata:
+            stanza_main()
+        else:
+            print("Non ho trovato la stanza, continuo il seguilinea")
+            # far andare un attimo in avanti ed eseguire lo scan se tutti e tre vedono bianco
+    else:
+        pass
 
     
 

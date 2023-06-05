@@ -1,6 +1,8 @@
 from rescue_line_setup import *
 from client_functions import *
 
+
+
 #Confronto a meno di un errore
 def simile( a, b, errore = 1.0 ):
   return ( abs(a - b) <= errore )
@@ -14,6 +16,25 @@ def brick_speaker_beep( num ):
         if num > 0: 
             time.sleep(0.1)
 
+# ABBASSA IL CARRELLO E LO ALZA ALLA POSIZIONE DI START
+def imposta_carrello_stanza():
+    upper_right_motor.stop()
+    upper_left_motor.run_until_stalled(-50)
+    time.sleep(1)
+
+    upper_left_motor.reset_angle(0)
+    while upper_left_motor.angle() < 70: #80 120
+        upper_left_motor.dc(50)
+        upper_right_motor.dc(50)
+
+    upper_left_motor.hold()
+    upper_right_motor.hold()
+
+def imposta_carrello_rescueline():
+    upper_right_motor.stop()
+    upper_left_motor.run_until_stalled(50)
+    upper_left_motor.hold()
+    upper_right_motor.hold()
 
 #Legge il colore avanzando di dist_cm. Ritorna il colore più frequente
 def color_scan(sensor_color, dist_cm, speed_cms=1):
