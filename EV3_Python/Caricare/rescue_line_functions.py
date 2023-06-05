@@ -564,6 +564,7 @@ def stagnolaTrovata():
     angleStagnola = gyro_sensor.angle()
     resetAngle()    
     # far andare dritto il robot finchè anche i sensori di dietro vedono la stagnola, prendere bene le misure
+    # sistemare con la nuova calibrazione dei cingoli. La stagnola deve essere perfettamente piatta sotto il sensore, sennò esplode male
     robot.straight(43)
     stop()
     time.sleep(1)

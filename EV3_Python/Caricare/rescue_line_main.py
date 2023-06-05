@@ -49,10 +49,13 @@ isLine_l = False; isLine_r = False
 countVerdi = 0
 while True:  
     
-    #SE PREMO UN PULSANTE (TRANNE STOP!!!) RIAVVIA IL SERVER ED ESCE DAL PROGRAMMA
+    #SE PREMO UN PULSANTE (TRANNE STOP!!!) RIAVVIA IL SERVER ED ESCE DAL PROGRAMMA (Questo alla fine ignorato malamente?)
     check_quit_and_restart_server()
 
     ## OSTACOLO
+    ############################
+    ### URGENTISSIMO TESTARE ###
+    ############################
     # Funzione aggira ostacolo. Da sistemare con tutti gli aggiornamenti fatti al client-server durante il percorso.
     # Potrebbe dare problemi con le troppe letture durante il percorso, bisogna impostargli uno sleep.
     isObstacle = checkIfObstacle()
@@ -72,6 +75,26 @@ while True:
         else:
             print("Non ho trovato la stanza, continuo il seguilinea")
             # far andare un attimo in avanti ed eseguire lo scan se tutti e tre vedono bianco
+            ####################
+            ### URGENTISSIMO ###
+            ####################
+            robot.drive(0,0)
+            robot.stop()
+
+            # Se quando non vede la stagnola non ritrova la linea legge un attimo tutti i sensori
+            lineLee = isLine(color_sensor_left.color())
+            lineRii = isLine(color_sensor_right.color())
+            lineFrr = isLineF(light_sensor_front.reflection())
+            # Se uno dei tre sensori vede la linea riprende normalmente il seguilinea
+            if lineLee or lineRii or lineFrr:
+                continue
+            # Se non ritrova la linea va un attimo avanti e avvia la scansione. Se la linea sta avanti la ritroverà mai? Non lo scopriremo mai :)
+            else:
+                # Non so se funziona
+                scan_deg = scan_forward_2_scan_degree(lungCingoli / 2)
+                robot.straight(lungCingoli / 2)
+                scan(scan_deg, 0, False)
+
     else:
         pass
 
