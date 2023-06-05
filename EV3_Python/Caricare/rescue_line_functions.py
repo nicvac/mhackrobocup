@@ -564,7 +564,7 @@ def stagnolaTrovata():
     angleStagnola = gyro_sensor.angle()
     resetAngle()    
     # far andare dritto il robot finchè anche i sensori di dietro vedono la stagnola, prendere bene le misure
-    robot.straight(43)
+    robot.straight(40)
     stop()
     time.sleep(1)
     lightL = color_sensor_left.reflection()

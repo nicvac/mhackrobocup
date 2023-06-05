@@ -135,7 +135,8 @@ def scan_forward_2_scan_degree( scan_forward_mm ):
     print("scan_forward: ", scan_forward_mm, "; scan_degree: ",scan_degree)
     return scan_degree
 
-scan_forward_def = lungCingoli/4
+#scan_forward_def = lungCingoli/4 # = 35
+scan_forward_def = 38
 print("scan_forward_def: ", scan_forward_def)
 
 

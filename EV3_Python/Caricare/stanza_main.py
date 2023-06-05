@@ -247,7 +247,7 @@ def stanza_main():
     if triaA_color in [Color.RED, Color.GREEN]: c+=1
 
     if triaA_color == Color.RED: triaRedDeg = gyro_sensor.angle() 
-    if triaA_color == Color.RED: triaGreenDeg = gyro_sensor.angle()
+    if triaA_color == Color.GREEN: triaGreenDeg = gyro_sensor.angle()
 
 
     #Secondo triangolo
@@ -256,7 +256,7 @@ def stanza_main():
     if triaB_color in [Color.RED, Color.GREEN]: c+=1
 
     if triaB_color == Color.RED: triaRedDeg = gyro_sensor.angle() 
-    if triaB_color == Color.RED: triaGreenDeg = gyro_sensor.angle()
+    if triaB_color == Color.GREEN: triaGreenDeg = gyro_sensor.angle()
 
     if c < 2:
         #Terzo: ruoto di altri -110 = -1 * ((360-305)+55)
@@ -264,7 +264,7 @@ def stanza_main():
         if triaC_color in [Color.RED, Color.GREEN]: c+=1
 
         if triaC_color == Color.RED: triaRedDeg = gyro_sensor.angle() 
-        if triaC_color == Color.RED: triaGreenDeg = gyro_sensor.angle()
+        if triaC_color == Color.GREEN: triaGreenDeg = gyro_sensor.angle()
             
 
     if c < 2:
@@ -272,7 +272,7 @@ def stanza_main():
         triaD_color = vai_a_triangolo_e_torna_indietro(-70)
         if triaD_color in [Color.RED, Color.GREEN]: c+=1
         if triaD_color == Color.RED: triaRedDeg = gyro_sensor.angle() 
-        if triaD_color == Color.RED: triaGreenDeg = gyro_sensor.angle()  
+        if triaD_color == Color.GREEN: triaGreenDeg = gyro_sensor.angle()  
 
     #Ripristino l'angolo per allinearmi allo 0_back
     vai_ad_angolo_zero()

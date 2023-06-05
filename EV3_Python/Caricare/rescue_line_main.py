@@ -5,15 +5,15 @@ from stanza_main import *
 #from guadagna_centro import *
 
 
-# sensorOff(DIST_BACK_OFF)
-# time.sleep(0.2)
-# sensorOff(DIST_LEFT_OFF)
-# time.sleep(0.2)
-# sensorOff(DIST_RIGHT_OFF)
-# time.sleep(0.2)
+sensorOff(DIST_BACK_OFF)
+time.sleep(0.2)
+sensorOff(DIST_LEFT_OFF)
+time.sleep(0.2)
+sensorOff(DIST_RIGHT_OFF)
+time.sleep(0.2)
 
-# getDistanceCm(DIST_FRONT)
-# getDistanceCm(DIST_FRONT)
+getDistanceCm(DIST_FRONT)
+getDistanceCm(DIST_FRONT)
 
 #Line counter: Quante volte vedo CONSECUTIVAMENTE una linea, su tutti i sensori
 lc_l = 0; lc_r = 0; lc_f = 0
@@ -72,6 +72,17 @@ while True:
         else:
             print("Non ho trovato la stanza, continuo il seguilinea")
             # far andare un attimo in avanti ed eseguire lo scan se tutti e tre vedono bianco
+            robot.drive(0,0)
+            robot.stop()
+            lineLee = isLine(color_sensor_left.color())
+            lineRii = isLine(color_sensor_right.color())
+            lineFrr = isLineF(light_sensor_front.reflection())
+            if lineLee or lineRii or lineFrr:
+                continue
+            else:
+                scan_deg = scan_forward_2_scan_degree(lungCingoli /2)
+                robot.straight(lungCingoli/2)
+                scan(scan_deg, 0, False)
     else:
         pass
 
