@@ -87,7 +87,9 @@ while True:
 
     countVerdi = countVerdi + 1 if isGreen_l or isGreen_r else 0
 
-    if False and (isGreen_l or isGreen_r and countVerdi >= 3):
+    attivaVerde = True
+
+    if attivaVerde and (isGreen_l or isGreen_r and countVerdi >= 3):
         robot.stop()
         brick_speaker_beep(3)
 
