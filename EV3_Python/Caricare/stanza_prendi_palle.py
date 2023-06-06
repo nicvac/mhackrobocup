@@ -43,6 +43,10 @@ def prendi_palla(distanza_pallina):
     print("prendi_palla: Avanzo senza correzioni di: ", noCorrCm)
     robot.straight(-10*noCorrCm)
     while getDistanceCm(DIST_BACK) > targetCm :
+
+        #SE PREMO UN PULSANTE (TRANNE STOP!!!) RIAVVIA IL SERVER ED ESCE DAL PROGRAMMA
+        check_quit_and_restart_server()
+
         print ("prendi_palla: dist pre: ", distanza_precedente," dist att:", distanza_attuale, " angolo:", gyro_sensor.angle())
         if distanza_attuale < distanza_precedente+2.5:
             distanza_precedente=distanza_attuale
@@ -54,6 +58,10 @@ def prendi_palla(distanza_pallina):
             print("prendi_palla: Ho perso la pallina")
             gyro_sensor.reset_angle(0)
             while True:
+
+                #SE PREMO UN PULSANTE (TRANNE STOP!!!) RIAVVIA IL SERVER ED ESCE DAL PROGRAMMA
+                check_quit_and_restart_server()
+
                 if gyro_sensor.angle() < 30 and cazzo==True:
                     robot.drive(0, 30)
                     print ("prendi_palla: giro orario: " + str(gyro_sensor.angle()))

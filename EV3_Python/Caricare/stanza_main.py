@@ -184,6 +184,10 @@ def scan_e_punta_palla():
     gyro_sensor.reset_angle(0)
     cTurnAngle = 0
     while abs(cTurnAngle) < 360+90:
+
+        #SE PREMO UN PULSANTE (TRANNE STOP!!!) RIAVVIA IL SERVER ED ESCE DAL PROGRAMMA
+        check_quit_and_restart_server()
+
         #time.sleep(0.5)
         currCm = getDistanceCm(DIST_BACK)
         cTurnAngle = gyro_sensor.angle()

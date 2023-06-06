@@ -215,6 +215,10 @@ while True:
         robot.drive(-100, 0)
 
         while True:
+
+            #SE PREMO UN PULSANTE (TRANNE STOP!!!) RIAVVIA IL SERVER ED ESCE DAL PROGRAMMA
+            check_quit_and_restart_server()
+
             lineLeft = isLine(color_sensor_left.color())
             lineRight = isLine(color_sensor_right.color())
             lineFront = isLineF(light_sensor_front.reflection())

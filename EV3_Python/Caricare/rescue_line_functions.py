@@ -136,6 +136,9 @@ def scan( degree , abs_ignora_degrees, lock_front_also):
 
     current_angle = abs(gyro_sensor.angle())
     while current_angle < deg_abs and not lineLocked:
+        #SE PREMO UN PULSANTE (TRANNE STOP!!!) RIAVVIA IL SERVER ED ESCE DAL PROGRAMMA
+        check_quit_and_restart_server()
+
         if current_angle <= abs_ignora_degrees:
             pass
         else:
