@@ -5,15 +5,15 @@ from stanza_main import *
 #from guadagna_centro import *
 
 
-sensorOff(DIST_BACK_OFF)
-time.sleep(0.2)
-sensorOff(DIST_LEFT_OFF)
-time.sleep(0.2)
-sensorOff(DIST_RIGHT_OFF)
-time.sleep(0.2)
+# sensorOff(DIST_BACK_OFF)
+# time.sleep(0.2)
+# sensorOff(DIST_LEFT_OFF)
+# time.sleep(0.2)
+# sensorOff(DIST_RIGHT_OFF)
+# time.sleep(0.2)
 
-getDistanceCm(DIST_FRONT)
-getDistanceCm(DIST_FRONT)
+# getDistanceCm(DIST_FRONT)
+# getDistanceCm(DIST_FRONT)
 
 #Line counter: Quante volte vedo CONSECUTIVAMENTE una linea, su tutti i sensori
 lc_l = 0; lc_r = 0; lc_f = 0
@@ -21,7 +21,7 @@ lc_l = 0; lc_r = 0; lc_f = 0
 bc_l = 0; bc_r = 0; bc_f = 0
 #Blank counter gap: Vedo bianco però si resetta quando uno dei sensori vede nero
 fullGapCounter = 0
-
+start=time.time()
 
 def resetCountersLine_lc_bc():
     global lc_l, lc_r, lc_f
@@ -58,8 +58,10 @@ while True:
     ############################
     # Funzione aggira ostacolo. Da sistemare con tutti gli aggiornamenti fatti al client-server durante il percorso.
     # Potrebbe dare problemi con le troppe letture durante il percorso, bisogna impostargli uno sleep.
-    isObstacle = checkIfObstacle()
-    if isObstacle: aggiraOstacolo()
+    if time.time()-start>=1:
+        isObstacle = checkIfObstacle()
+        if isObstacle: aggiraOstacolo()
+        start=time.time()
     
 
     ### STAGNOLA

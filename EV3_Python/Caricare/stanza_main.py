@@ -227,8 +227,9 @@ def stanza_main():
     print("Sensore alzato")
     
     #Guadagno il centro della stanza
-    guadagnaCentro()
+    #@@@guadagnaCentro()
 
+    gyro_sensor.reset_angle(0)
     #Angoli rispetto allo 0 (0 è sul back)
     #Rispetto allo 0, faccio prima 125°, poi 55°, ecc...
     triaA_deg = 125
@@ -283,7 +284,7 @@ def stanza_main():
         pallina = scan_e_punta_palla()
 
         #Raggiungi la pallina e catturala
-        prendi_palla(pallina.dist_cm)
+        prendi_palla(pallina.distance)
         ricentra_fine()
 
         # vai al triangolo del colore giusto
@@ -317,3 +318,5 @@ def stanza_main():
     #Avanzare fino all'uscita
     robot.straight((evac_exit.distance + 2) * 10)
     imposta_carrello_rescueline()
+
+stanza_main()

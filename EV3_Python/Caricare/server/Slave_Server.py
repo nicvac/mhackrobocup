@@ -58,8 +58,9 @@ switchoff = True
 
 while True:
 
-    motore.run_until_stalled(50, Stop.HOLD)
-    #motore.hold()
+    motore.run_until_stalled(50)
+    motore.run_angle(100, -10)
+    motore.hold()
     rescueKit.run_until_stalled(140)
 
     server = BluetoothMailboxServer()
@@ -94,7 +95,7 @@ while True:
             extDist.send(ultrasonic_sensor_right.distance(switchoff))
         
         elif req == ALZA_SENSORE_FRONTALE:
-            motore.run_angle(50,-80)
+            motore.run_angle(100,-90)
             #motore.hold()
             extDist.send(ALZA_SENSORE_FRONTALE_OK)
 
@@ -111,4 +112,3 @@ while True:
             server.server_close()
             restart = True
             time.sleep(5.0) #FONDAMENTALE!
-            

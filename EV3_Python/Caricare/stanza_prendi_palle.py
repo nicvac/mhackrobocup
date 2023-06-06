@@ -5,10 +5,9 @@ from rescue_line_functions import *
 from client_functions import *
 
 def prendi_palla(distanza_pallina):
+    start_dist=robot.distance()
 
     print("Prendi palla: begin")
-
-    print("prendi_palla: Spegno sensori: ", dist_cm)
 
     #Spengo sensori per ridurre il rumore
     sensorOff(DIST_FRONT_OFF)
@@ -99,3 +98,5 @@ def prendi_palla(distanza_pallina):
     upper_left_motor.run_angle(300, 100)
     upper_left_motor.hold()
 
+    # torno indietro
+    robot.straight(-(robot.distance()-start_dist))
