@@ -27,13 +27,13 @@ def request( req_code, timeout ):
     response = None
     while response == None:
         try:
-            #@@@ TBC: serve ricreare l'oggetto?
-            if req_code == DIST_LEFT:
-                extDistResponceLeft = NumericMailbox('extDistResponceLeft', client)
-            elif req_code == DIST_RIGHT:
-                extDistResponceRight = NumericMailbox('extDistResponceRight', client)
-            else:
-                extDist = NumericMailbox('extDist', client)
+            #Test ricreazione oggetto ==> Non cambia nulla ne su server ne su client
+            # if req_code == DIST_LEFT:
+            #     extDistResponceLeft = NumericMailbox('extDistResponceLeft', client)
+            # elif req_code == DIST_RIGHT:
+            #     extDistResponceRight = NumericMailbox('extDistResponceRight', client)
+            # else:
+            #     extDist = NumericMailbox('extDist', client)
 
             c=1
             start = time.time()

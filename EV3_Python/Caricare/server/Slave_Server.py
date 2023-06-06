@@ -76,6 +76,10 @@ while True:
 
     restart = False
     while not restart:
+        #Test ricreazione oggetto ==> Non cambia nulla ne su server ne su client 
+        # extDist = NumericMailbox('extDist', server)
+        # extDistResponceLeft = NumericMailbox('extDistResponceLeft', server)
+        # extDistResponceRight = NumericMailbox('extDistResponceRight', server)
         extDist.wait()
         req = extDist.read()
         if   req == DIST_FRONT:

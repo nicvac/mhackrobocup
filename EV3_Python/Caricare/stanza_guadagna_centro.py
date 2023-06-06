@@ -7,8 +7,12 @@ from client_functions import *
 def getRoomSize(storicoDimensioneSx, storicoDimensioneDx):
     distTraSensori = 15
     sx = getDistanceCm(DIST_LEFT)
-    time.sleep(0.3)
     dx = getDistanceCm(DIST_RIGHT)
+    time.sleep(0.3)
+    if sx == 255.0:
+        sx = 2
+    if dx == 255.0:
+        dx = 2
     storicoDimensioneSx.append(sx)
     storicoDimensioneDx.append(dx)
     somma = sx + dx + distTraSensori
