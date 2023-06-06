@@ -14,107 +14,77 @@ import sys
 
 clientEv3 = EV3Brick() 
 
-#Ritorna la distanza del sensore server in mm.
+#Funzione generica di richiesta
 #Gestisce la sincronizzazione dei messaggi con il server.
 #Come da guida, avrei dovuto usare una wait, ma ci sono casi di deadlock.
 #Abbiamo gestito la wait con un while e se passa un tot tempo rimandiamo la richiesta perchè il
 #server potrebbe averla persa.
-def getDistanceMM(sensore):
-    # global extDist
-    # extDist = NumericMailbox('extDist', client)
+def request( req_code, timeout ):
+    global extDist
+    #Output
+    response = None
+    while response == None:
+        try:
+            #@@@ TBC: serve ricreare l'oggetto?
+            extDist = NumericMailbox('extDist', client)
 
-    c=1
-    start = time.time()
-    extDist.send(sensore)
-    dist_mm = None
-    while dist_mm == None:
-        stop = time.time()
-        if (stop - start) > 0.15:
-            c += 1
-            extDist.send(sensore)
-        dist_mm = extDist.read()
-    #count += 1
-    #print(count)
-    if c > 1:
-        print("############### getDistanceMM: Richiesta mandata ", c, "volte")
-    return dist_mm
+            c=1
+            start = time.time()
+            extDist.send(req_code)
+            response = None
+            while response == None:
+                stop = time.time()
+                if (stop - start) > timeout:
+                    c += 1
+                    extDist.send(req_code)
+                response = extDist.read()
+            if c > 1:
+                print("############### request: Richiesta", req_code, " mandata ", c, "volte")
+
+        except Exception as e:
+            # Catch the exception and print the error message
+            print("############### request: Richiesta", req_code,". An exception occurred:", str(e))
+            time.sleep(0.05)
+            clientEv3.speaker.beep()
+            response = None
+
+    return response
+
+
+#Ritorna la distanza del sensore server in mm.
+def getDistanceMM(req_code):
+    return request(req_code, 0.15)
 
 
 #Spegne i sensori che non servono, per ridurre l'interferenza con il sensore che effettua la lettura
 # NON CHIAMARLO A LOOP STRETTO!!! PUO' IMPALLARE I SENSORI!!!
-def sensorOff(sensore_off):
-    # global extDist
-    # extDist = NumericMailbox('extDist', client)
-
-    c=1
-    start = time.time()
-    extDist.send(sensore_off)
-    dist_mm = None
-    while dist_mm == None:
-        stop = time.time()
-        if (stop - start) > 0.15:
-            c += 1
-            extDist.send(sensore_off)
-        dist_mm = extDist.read()
-    if c > 1:
-        print("############### offSensor: Richiesta mandata ", c, "volte")
-    print("Sensor off ", sensore_off)
-    return dist_mm
+def sensorOff(req_code):
+    return request(req_code, 0.15)
 
 #Ritorna la distanza in cm
-def getDistanceCm(sensore):
-    dist_cm = getDistanceMM(sensore) / 10
+def getDistanceCm(req_code):
+    dist_cm = getDistanceMM(req_code) / 10
     return dist_cm
 
 #Ritorna la distanza in cm e spegne il sensore
-def getDistanceCm_off(sensore):
-    dist_cm = sensorOff(sensore) / 10
+def getDistanceCm_off(req_code):
+    dist_cm = sensorOff(req_code) / 10
     return dist_cm
 
 
 #Intosta il pisello
 def intosta_il_pisello():
-    # global extDist
-    # extDist = NumericMailbox('extDist', client)
-    c=1
-    start = time.time()
-    extDist.send(ALZA_SENSORE_FRONTALE)
-    risp = None
-    while risp == None:
-        stop = time.time()
-        if (stop - start) > 10.0:
-            c += 1
-            extDist.send(ALZA_SENSORE_FRONTALE)
-        risp = extDist.read()
-    if c > 1:
-        print("############### intosta_il_pisello: Richiesta mandata ", c, "volte")
-    return risp
+    return request(ALZA_SENSORE_FRONTALE, 10.0)
 
 #Rilascia il rescue kit
 def srv_rilascia_rescue_kit():
-    # global extDist
-    # extDist = NumericMailbox('extDist', client)
-    c=1
-    start = time.time()
-    extDist.send(RILASCIA_RESCUE_KIT)
-    risp = None
-    while risp == None:
-        stop = time.time()
-        if (stop - start) > 20.0:
-            c += 1
-            extDist.send(RILASCIA_RESCUE_KIT)
-        risp = extDist.read()
-    if c > 1:
-        print("############### rilascia_rescue_kit: Richiesta mandata ", c, "volte")
-    return risp
+    return request(RILASCIA_RESCUE_KIT, 20.0)
 
 
 #SE PREMO QUALUNQUE PULSANTE (TRANNE PULSANTE STOP!!!)
 #RIAVVIA IL SERVER ED ESCE!
 server_restart_request = False
 def check_quit_and_restart_server():
-    # global extDist
-    # extDist = NumericMailbox('extDist', client)
     global server_restart_request
     if server_restart_request == False and clientEv3.buttons.pressed():
         print("RIAVVIO IL SERVER ED ESCO")
@@ -124,8 +94,6 @@ def check_quit_and_restart_server():
 
 #RIAVVIA IL SERVER ED ESCE!
 def quit_and_restart_server():
-    # global extDist
-    # extDist = NumericMailbox('extDist', client)
     global server_restart_request
     if server_restart_request == False:
         print("RIAVVIO IL SERVER ED ESCO")
