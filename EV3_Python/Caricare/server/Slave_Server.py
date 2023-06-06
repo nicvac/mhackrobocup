@@ -65,6 +65,8 @@ while True:
 
     server = BluetoothMailboxServer()
     extDist = NumericMailbox('extDist', server)
+    extDistResponceLeft = NumericMailbox('extDistResponceLeft', server)
+    extDistResponceRight = NumericMailbox('extDistResponceRight', server)
 
     # The server must be started before the client!
     brick_speaker_beep(1)
@@ -81,10 +83,11 @@ while True:
         elif req == DIST_BACK:
             extDist.send(ultrasonic_sensor_back.distance())
         elif req == DIST_LEFT:
-            extDist.send(ultrasonic_sensor_left.distance())
+            #extDist.send(ultrasonic_sensor_left.distance())
+            extDistResponceLeft.send(ultrasonic_sensor_left.distance())
         elif req == DIST_RIGHT:
-            extDist.send(ultrasonic_sensor_right.distance())
-
+            #extDist.send(ultrasonic_sensor_right.distance())
+            extDistResponceRight.send(ultrasonic_sensor_right.distance())
         elif req == DIST_FRONT_OFF:
             extDist.send(ultrasonic_sensor_front.distance(switchoff))
         elif req == DIST_BACK_OFF:

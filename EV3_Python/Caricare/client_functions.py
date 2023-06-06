@@ -21,12 +21,19 @@ clientEv3 = EV3Brick()
 #server potrebbe averla persa.
 def request( req_code, timeout ):
     global extDist
+    global extDistResponceLeft
+    global extDistResponceRight
     #Output
     response = None
     while response == None:
         try:
             #@@@ TBC: serve ricreare l'oggetto?
-            extDist = NumericMailbox('extDist', client)
+            if req_code == DIST_LEFT:
+                extDistResponceLeft = NumericMailbox('extDistResponceLeft', client)
+            elif req_code == DIST_RIGHT:
+                extDistResponceRight = NumericMailbox('extDistResponceRight', client)
+            else:
+                extDist = NumericMailbox('extDist', client)
 
             c=1
             start = time.time()
@@ -37,14 +44,20 @@ def request( req_code, timeout ):
                 if (stop - start) > timeout:
                     c += 1
                     extDist.send(req_code)
-                response = extDist.read()
+
+                if req_code == DIST_LEFT:
+                    response =  extDistResponceLeft.read()
+                elif req_code == DIST_RIGHT:
+                    response =  extDistResponceRight.read()
+                else:
+                    response = extDist.read()
             if c > 1:
                 print("############### request: Richiesta", req_code, " mandata ", c, "volte")
 
         except Exception as e:
             # Catch the exception and print the error message
             print("############### request: Richiesta", req_code,". An exception occurred:", str(e))
-            time.sleep(0.05)
+            time.sleep(0.1)
             clientEv3.speaker.beep()
             response = None
 
@@ -113,4 +126,8 @@ print('connected!')
 
 #USARE LE STESSE ETICHETTE DEL SERVER
 extDist = NumericMailbox('extDist', client)
+
+extDistResponceLeft = NumericMailbox('extDistResponceLeft', client)
+extDistResponceRight = NumericMailbox('extDistResponceRight', client)
+
 
