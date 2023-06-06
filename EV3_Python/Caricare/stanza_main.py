@@ -227,7 +227,7 @@ def stanza_main():
     print("Sensore alzato")
     
     #Guadagno il centro della stanza
-    #@@@guadagnaCentro()
+    guadagnaCentro()
 
     gyro_sensor.reset_angle(0)
     #Angoli rispetto allo 0 (0 è sul back)
@@ -319,4 +319,3 @@ def stanza_main():
     robot.straight((evac_exit.distance + 2) * 10)
     imposta_carrello_rescueline()
 
-stanza_main()
