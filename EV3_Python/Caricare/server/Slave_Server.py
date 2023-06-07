@@ -76,46 +76,53 @@ while True:
 
     restart = False
     while not restart:
-        #Test ricreazione oggetto ==> Non cambia nulla ne su server ne su client 
-        # extDist = NumericMailbox('extDist', server)
-        # extDistResponceLeft = NumericMailbox('extDistResponceLeft', server)
-        # extDistResponceRight = NumericMailbox('extDistResponceRight', server)
-        extDist.wait()
-        req = extDist.read()
-        if   req == DIST_FRONT:
-            extDist.send(ultrasonic_sensor_front.distance())
-        elif req == DIST_BACK:
-            extDist.send(ultrasonic_sensor_back.distance())
-        elif req == DIST_LEFT:
-            #extDist.send(ultrasonic_sensor_left.distance())
-            extDistResponceLeft.send(ultrasonic_sensor_left.distance())
-        elif req == DIST_RIGHT:
-            #extDist.send(ultrasonic_sensor_right.distance())
-            extDistResponceRight.send(ultrasonic_sensor_right.distance())
-        elif req == DIST_FRONT_OFF:
-            extDist.send(ultrasonic_sensor_front.distance(switchoff))
-        elif req == DIST_BACK_OFF:
-            extDist.send(ultrasonic_sensor_back.distance(switchoff))
-        elif req == DIST_LEFT_OFF:
-            extDist.send(ultrasonic_sensor_left.distance(switchoff))
-        elif req == DIST_RIGHT_OFF:
-            extDist.send(ultrasonic_sensor_right.distance(switchoff))
+        try:
+            #Test ricreazione oggetto ==> Non cambia nulla ne su server ne su client 
+            # extDist = NumericMailbox('extDist', server)
+            # extDistResponceLeft = NumericMailbox('extDistResponceLeft', server)
+            # extDistResponceRight = NumericMailbox('extDistResponceRight', server)
+            extDist.wait()
+            req = extDist.read()
+            if   req == DIST_FRONT:
+                extDist.send(ultrasonic_sensor_front.distance())
+            elif req == DIST_BACK:
+                extDist.send(ultrasonic_sensor_back.distance())
+            elif req == DIST_LEFT:
+                #extDist.send(ultrasonic_sensor_left.distance())
+                extDistResponceLeft.send(ultrasonic_sensor_left.distance())
+            elif req == DIST_RIGHT:
+                #extDist.send(ultrasonic_sensor_right.distance())
+                extDistResponceRight.send(ultrasonic_sensor_right.distance())
+            elif req == DIST_FRONT_OFF:
+                extDist.send(ultrasonic_sensor_front.distance(switchoff))
+            elif req == DIST_BACK_OFF:
+                extDist.send(ultrasonic_sensor_back.distance(switchoff))
+            elif req == DIST_LEFT_OFF:
+                extDist.send(ultrasonic_sensor_left.distance(switchoff))
+            elif req == DIST_RIGHT_OFF:
+                extDist.send(ultrasonic_sensor_right.distance(switchoff))
+            
+            elif req == ALZA_SENSORE_FRONTALE:
+                motore.run_angle(100,-90)
+                #motore.hold()
+                extDist.send(ALZA_SENSORE_FRONTALE_OK)
+
+            elif req == RILASCIA_RESCUE_KIT:
+                rilascioRescueKit()
+                time.sleep(1)
+                extDist.send(RILASCIA_RESCUE_KIT_OK)
+
+            elif req == CONNECTION_RESTART:
+                motore.run_until_stalled(50, Stop.HOLD)
+                #motore.hold()
+                rescueKit.run_until_stalled(140)
+                server.server_close()
+                restart = True
+                time.sleep(5.0) #FONDAMENTALE!
         
-        elif req == ALZA_SENSORE_FRONTALE:
-            motore.run_angle(100,-90)
-            #motore.hold()
-            extDist.send(ALZA_SENSORE_FRONTALE_OK)
-
-        elif req == RILASCIA_RESCUE_KIT:
-            rilascioRescueKit()
-            time.sleep(1)
-            extDist.send(RILASCIA_RESCUE_KIT_OK)
-
-
-        elif req == CONNECTION_RESTART:
-            motore.run_until_stalled(50, Stop.HOLD)
-            #motore.hold()
-            rescueKit.run_until_stalled(140)
-            server.server_close()
+        except Exception as e:
+            # Catch the exception and print the error message
+            print("############### server: An exception occurred:", str(e))
             restart = True
-            time.sleep(5.0) #FONDAMENTALE!
+
+

@@ -20,20 +20,22 @@ clientEv3 = EV3Brick()
 #Abbiamo gestito la wait con un while e se passa un tot tempo rimandiamo la richiesta perchè il
 #server potrebbe averla persa.
 def request( req_code, timeout ):
+    global client
     global extDist
     global extDistResponceLeft
     global extDistResponceRight
     #Output
     response = None
+
     while response == None:
         try:
             #Test ricreazione oggetto ==> Non cambia nulla ne su server ne su client
-            # if req_code == DIST_LEFT:
-            #     extDistResponceLeft = NumericMailbox('extDistResponceLeft', client)
-            # elif req_code == DIST_RIGHT:
-            #     extDistResponceRight = NumericMailbox('extDistResponceRight', client)
-            # else:
-            #     extDist = NumericMailbox('extDist', client)
+            if req_code == DIST_LEFT:
+                extDistResponceLeft = NumericMailbox('extDistResponceLeft', client)
+            elif req_code == DIST_RIGHT:
+                extDistResponceRight = NumericMailbox('extDistResponceRight', client)
+            else:
+                extDist = NumericMailbox('extDist', client)
 
             c=1
             start = time.time()
@@ -60,6 +62,10 @@ def request( req_code, timeout ):
             time.sleep(0.1)
             clientEv3.speaker.beep()
             response = None
+            #Prova a ricreare la connessione con il server
+            print("RIPROVO LA CONNESSIONE CON IL SERVER")
+            time.sleep(1.0)
+            crea_client_e_connetti()
 
     return response
 
@@ -115,19 +121,29 @@ def quit_and_restart_server():
         sys.exit()
 
 
+def crea_client_e_connetti():
+    global client
+    global extDist
+    global extDistResponceLeft
+    global extDistResponceRight
+
+    client = BluetoothMailboxClient()
+
+    print('establishing connection...')
+    client.connect(SERVER)
+    print('connected!')
+
+    #USARE LE STESSE ETICHETTE DEL SERVER
+    extDist = NumericMailbox('extDist', client)
+
+    extDistResponceLeft = NumericMailbox('extDistResponceLeft', client)
+    extDistResponceRight = NumericMailbox('extDistResponceRight', client)
+
 
 print("OPERAZIONE DI CONNESSIONE AL SERVER AVVIATA, COMMENTARE SE NON SERVE")
+client = None
+extDist = None
+extDistResponceLeft = None
+extDistResponceRight = None
 
-client = BluetoothMailboxClient()
-
-print('establishing connection...')
-client.connect(SERVER)
-print('connected!')
-
-#USARE LE STESSE ETICHETTE DEL SERVER
-extDist = NumericMailbox('extDist', client)
-
-extDistResponceLeft = NumericMailbox('extDistResponceLeft', client)
-extDistResponceRight = NumericMailbox('extDistResponceRight', client)
-
-
+crea_client_e_connetti()
