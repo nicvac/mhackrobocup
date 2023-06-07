@@ -5,10 +5,12 @@ from rescue_line_functions import *
 from client_functions import *
 
 def getRoomSize(storicoDimensioneSx, storicoDimensioneDx):
+    global contMaggiore90
+    global contMinore90
     distTraSensori = 15
     sx = getDistanceCm(DIST_LEFT)
     dx = getDistanceCm(DIST_RIGHT)
-    time.sleep(0.3)
+    time.sleep(0.1) #0.3
     if sx == 255.0:
         sx = 2
     if dx == 255.0:
@@ -16,13 +18,23 @@ def getRoomSize(storicoDimensioneSx, storicoDimensioneDx):
     storicoDimensioneSx.append(sx)
     storicoDimensioneDx.append(dx)
     somma = sx + dx + distTraSensori
+    if somma > 92: contMaggiore90 += 1
+    else: contMinore90 += 1
+        
     return somma
 
 
 def guadagnaCentro():
-    #Avanza di 45 cm 
-    robot.reset()
+
     robot.drive(70, 0)
+    print("sto cazzo")
+    while(robot.distance() < 530):
+        pass
+    robot.stop()
+    
+    '''
+    #Avanza di 45 cm
+    robot.reset()
     storicoDimensioneSx = []
     storicoDimensioneDx = []
     dimMaggiore = 120
@@ -39,6 +51,8 @@ def guadagnaCentro():
     distanzaDxmaggiore = 0
     dimTriangolo1 = 0
     dimTriangolo2 = 0
+    contMaggiore90 = 0
+    contMinore90 = 0
     
     #Spengo i sensori che non mi servono
     sensorOff(DIST_FRONT_OFF)
@@ -47,13 +61,13 @@ def guadagnaCentro():
     time.sleep(0.5)
 
     #FARE alcune letture a vuoto! E' importante per stabilizzare il sensore
-    for i in range(4):
+    for i in range(206):
         currCm = getDistanceCm(DIST_LEFT)
         time.sleep(0.5)
         currCm = getDistanceCm(DIST_RIGHT)
         time.sleep(0.5)
 
-
+    robot.drive(70, 0)
     print("sto cazzo")
     while(robot.distance() < 530):
         print(str(robot.distance()) + "  " + str(getRoomSize(storicoDimensioneSx, storicoDimensioneDx)))
@@ -82,9 +96,17 @@ def guadagnaCentro():
         distanzaSx = distanzaSxmaggiore
         distanzaDx = distanzaDxmaggiore
     else:
-        distanzaSx = distanzaSxminore
-        distanzaDx = distanzaDxminore
-        dimTriangolo1 += 15
+        if contDimMaggiore == 0 and contDimMinore == 0:
+            if contMaggiore90 > contMinore90:
+                asseMaggiore = False
+            else:
+                dimTriangolo1 += 15
+            distanzaSx = getDistanceCm(DIST_LEFT)
+            distanzaDx = getDistanceCm(DIST_RIGHT)
+        else:
+            distanzaSx = distanzaSxminore
+            distanzaDx = distanzaDxminore
+            dimTriangolo1 += 15
 
     if (asseMaggiore):
         print("Avanzando di 15cm")
@@ -122,3 +144,5 @@ def guadagnaCentro():
         pass
 
     robot.stop()
+
+'''
