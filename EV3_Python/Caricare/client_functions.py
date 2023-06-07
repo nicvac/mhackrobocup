@@ -64,7 +64,7 @@ def request( req_code, timeout ):
             response = None
             #Prova a ricreare la connessione con il server
             print("RIPROVO LA CONNESSIONE CON IL SERVER")
-            time.sleep(2.0)
+            time.sleep(1.0)
             crea_client_e_connetti()
 
     return response

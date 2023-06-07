@@ -123,7 +123,7 @@ while True:
         except Exception as e:
             # Catch the exception and print the error message
             server.server_close()
-            time.sleep(1.0)
+            # time.sleep(1.0)
             print("############### server: An exception occurred:", str(e))
             restart = True
 
