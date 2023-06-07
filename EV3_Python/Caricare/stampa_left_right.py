@@ -8,7 +8,7 @@ from stanza_main import *
 while True:
     left = getDistanceCm(DIST_LEFT)
     right = getDistanceCm(DIST_RIGHT)
-    time.sleep(.3)
+    # time.sleep(.3)
     print("{} {}   {}".format(left, right, time.time()))
 
     
