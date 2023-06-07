@@ -6,15 +6,15 @@ from stanza_main import *
 
 
 
-# sensorOff(DIST_BACK_OFF)
-# time.sleep(0.2)
-# sensorOff(DIST_LEFT_OFF)
-# time.sleep(0.2)
-# sensorOff(DIST_RIGHT_OFF)
-# time.sleep(0.2)
+sensorOff(DIST_BACK_OFF)
+time.sleep(0.2)
+sensorOff(DIST_LEFT_OFF)
+time.sleep(0.2)
+sensorOff(DIST_RIGHT_OFF)
+time.sleep(0.2)
 
-# getDistanceCm(DIST_FRONT)
-# getDistanceCm(DIST_FRONT)
+getDistanceCm(DIST_FRONT)
+getDistanceCm(DIST_FRONT)
 
 #Line counter: Quante volte vedo CONSECUTIVAMENTE una linea, su tutti i sensori
 lc_l = 0; lc_r = 0; lc_f = 0
@@ -115,7 +115,7 @@ while True:
 
     countVerdi = countVerdi + 1 if isGreen_l or isGreen_r else 0
 
-    attivaVerde = True
+    attivaVerde = False
 
     if attivaVerde and (isGreen_l or isGreen_r and countVerdi >= 3):
         robot.stop()
@@ -167,9 +167,19 @@ while True:
     # Problemi possibili:
     # Nelle corna tutti e tre i sensori possono vedere nero, quindi può fare lo skip in una direzione sbagliata e perdersi
     if isLine_l and isLine_r and isLine_f:
-        skip()
+        #skip()
         correzionePerIncrocio = 0
         print("Skip incrocio nero nero nero")
+        robot.straight(lungCingoli / 2)
+        stop()
+        gyro_sensor.reset_angle(0)
+        ruotaSuAsse(1)
+        while abs(gyro_sensor.angle()) < 90:
+            pass
+        stop()
+        robot.straight(40)
+        stop()
+
     # elif isLine_l and not isLine_r and isLine_f and correzionePerIncrocio >= 50:
     #     skip()
     #     correzionePerIncrocio = 0
@@ -242,7 +252,7 @@ while True:
             while abs(gyro_sensor.angle() < 20):
                 pass
             stop()
-            robot.straight(-50)
+            robot.straight(-20)
             stop()
             fullGapCounter = -100
             continue

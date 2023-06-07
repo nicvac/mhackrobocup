@@ -579,6 +579,20 @@ def stagnolaTrovata():
     if stagnolaL and stagnolaR:
         print("Ho trovato la stanza mader fader ")
         return True
+    elif stagnolaL and not stagnolaR:
+        gyro_sensor.reset_angle(0)
+        ruotaSuAsse(-1)
+        while abs(gyro_sensor.angle()) < 45:
+            pass
+        stop()
+        return True
+    elif stagnolaR and not stagnolaL:
+        gyro_sensor.reset_angle(0)
+        ruotaSuAsse(1)
+        while abs(gyro_sensor.angle()) < 45:
+            pass
+        stop()
+        return True
     else:
         # non c'è la stanza. Riprendo l'angolo a prima che ho trovato la stagnola e vado avanti, sperando che non mi incastro nelle rampe mannaggia
         print("Non ho trovato la stanza azzo ")
