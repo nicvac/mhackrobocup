@@ -1,3 +1,9 @@
+#!/usr/bin/env pybricks-micropython
+from rescue_line_functions import *
+from rescue_line_setup import *
+from stanza_main import *
+#from guadagna_centro import *
+
 
 
 # sensorOff(DIST_BACK_OFF)
