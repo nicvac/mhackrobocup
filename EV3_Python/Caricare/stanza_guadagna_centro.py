@@ -26,123 +26,119 @@ def getRoomSize(storicoDimensioneSx, storicoDimensioneDx):
 
 def guadagnaCentro():
 
-    robot.drive(70, 0)
-    print("sto cazzo")
-    while(robot.distance() < 530):
-        pass
-    robot.stop()
+    robot.straight(530)
+    robot_gyro_turn(-90)
+    robot.straight(400)
+
+    # #Avanza di 45 cm
+    # robot.reset()
+    # storicoDimensioneSx = []
+    # storicoDimensioneDx = []
+    # dimMaggiore = 120
+    # dimMinore = 90
+    # asseMaggiore = True
+    # distTraSensori = 15
+    # distanzaSx = 0
+    # distanzaDx = 0
+    # contDimMinore = 0
+    # contDimMaggiore = 0
+    # distanzaSxminore = 0
+    # distanzaDxminore = 0
+    # distanzaSxmaggiore = 0
+    # distanzaDxmaggiore = 0
+    # dimTriangolo1 = 0
+    # dimTriangolo2 = 0
+    # contMaggiore90 = 0
+    # contMinore90 = 0
     
-    '''
-    #Avanza di 45 cm
-    robot.reset()
-    storicoDimensioneSx = []
-    storicoDimensioneDx = []
-    dimMaggiore = 120
-    dimMinore = 90
-    asseMaggiore = True
-    distTraSensori = 15
-    distanzaSx = 0
-    distanzaDx = 0
-    contDimMinore = 0
-    contDimMaggiore = 0
-    distanzaSxminore = 0
-    distanzaDxminore = 0
-    distanzaSxmaggiore = 0
-    distanzaDxmaggiore = 0
-    dimTriangolo1 = 0
-    dimTriangolo2 = 0
-    contMaggiore90 = 0
-    contMinore90 = 0
-    
-    #Spengo i sensori che non mi servono
-    sensorOff(DIST_FRONT_OFF)
-    time.sleep(0.5)
-    sensorOff(DIST_BACK_OFF)
-    time.sleep(0.5)
+    # #Spengo i sensori che non mi servono
+    # sensorOff(DIST_FRONT_OFF)
+    # time.sleep(0.5)
+    # sensorOff(DIST_BACK_OFF)
+    # time.sleep(0.5)
 
-    #FARE alcune letture a vuoto! E' importante per stabilizzare il sensore
-    for i in range(206):
-        currCm = getDistanceCm(DIST_LEFT)
-        time.sleep(0.5)
-        currCm = getDistanceCm(DIST_RIGHT)
-        time.sleep(0.5)
+    # #FARE alcune letture a vuoto! E' importante per stabilizzare il sensore
+    # for i in range(206):
+    #     currCm = getDistanceCm(DIST_LEFT)
+    #     time.sleep(0.5)
+    #     currCm = getDistanceCm(DIST_RIGHT)
+    #     time.sleep(0.5)
 
-    robot.drive(70, 0)
-    print("sto cazzo")
-    while(robot.distance() < 530):
-        print(str(robot.distance()) + "  " + str(getRoomSize(storicoDimensioneSx, storicoDimensioneDx)))
-    robot.stop()
+    # robot.drive(70, 0)
+    # print("sto cazzo")
+    # while(robot.distance() < 530):
+    #     print(str(robot.distance()) + "  " + str(getRoomSize(storicoDimensioneSx, storicoDimensioneDx)))
+    # robot.stop()
 
-    dimTriangolo1 = 53
+    # dimTriangolo1 = 53
 
-    for i in range(len(storicoDimensioneSx)):
-        if(abs(storicoDimensioneSx[i] + storicoDimensioneDx[i] + distTraSensori - dimMinore) < 3):
-            distanzaSxminore = storicoDimensioneSx[i]
-            distanzaDxminore = storicoDimensioneDx[i]
-            contDimMinore += 1
+    # for i in range(len(storicoDimensioneSx)):
+    #     if(abs(storicoDimensioneSx[i] + storicoDimensioneDx[i] + distTraSensori - dimMinore) < 3):
+    #         distanzaSxminore = storicoDimensioneSx[i]
+    #         distanzaDxminore = storicoDimensioneDx[i]
+    #         contDimMinore += 1
             
 
-        if(abs(storicoDimensioneSx[i] + storicoDimensioneDx[i] + distTraSensori - dimMaggiore) < 3):
-            asseMaggiore = False
-            distanzaSxmaggiore = storicoDimensioneSx[i]
-            distanzaDxmaggiore = storicoDimensioneDx[i]
-            contDimMaggiore += 1
+    #     if(abs(storicoDimensioneSx[i] + storicoDimensioneDx[i] + distTraSensori - dimMaggiore) < 3):
+    #         asseMaggiore = False
+    #         distanzaSxmaggiore = storicoDimensioneSx[i]
+    #         distanzaDxmaggiore = storicoDimensioneDx[i]
+    #         contDimMaggiore += 1
             
-        print(str(storicoDimensioneSx[i]) + " - " + str(storicoDimensioneDx[i]))
+    #     print(str(storicoDimensioneSx[i]) + " - " + str(storicoDimensioneDx[i]))
 
-    print("Contaori: ", contDimMinore, " ", contDimMaggiore)
-    if(contDimMaggiore > contDimMinore): 
-        asseMaggiore = False
-        distanzaSx = distanzaSxmaggiore
-        distanzaDx = distanzaDxmaggiore
-    else:
-        if contDimMaggiore == 0 and contDimMinore == 0:
-            if contMaggiore90 > contMinore90:
-                asseMaggiore = False
-            else:
-                dimTriangolo1 += 15
-            distanzaSx = getDistanceCm(DIST_LEFT)
-            distanzaDx = getDistanceCm(DIST_RIGHT)
-        else:
-            distanzaSx = distanzaSxminore
-            distanzaDx = distanzaDxminore
-            dimTriangolo1 += 15
+    # print("Contaori: ", contDimMinore, " ", contDimMaggiore)
+    # if(contDimMaggiore > contDimMinore): 
+    #     asseMaggiore = False
+    #     distanzaSx = distanzaSxmaggiore
+    #     distanzaDx = distanzaDxmaggiore
+    # else:
+    #     if contDimMaggiore == 0 and contDimMinore == 0:
+    #         if contMaggiore90 > contMinore90:
+    #             asseMaggiore = False
+    #         else:
+    #             dimTriangolo1 += 15
+    #         distanzaSx = getDistanceCm(DIST_LEFT)
+    #         distanzaDx = getDistanceCm(DIST_RIGHT)
+    #     else:
+    #         distanzaSx = distanzaSxminore
+    #         distanzaDx = distanzaDxminore
+    #         dimTriangolo1 += 15
+    
 
-    if (asseMaggiore):
-        print("Avanzando di 15cm")
-        robot.reset()
-        robot.drive(70, 0)
+    # if (asseMaggiore):
+    #     print("Avanzando di 15cm")
+    #     robot.reset()
+    #     robot.drive(70, 0)
 
-        while(robot.distance() < 150):
-            pass
-        robot.stop()    
+    #     while(robot.distance() < 150):
+    #         pass
+    #     robot.stop()    
 
-    gyro_sensor.reset_angle(0)
+    # gyro_sensor.reset_angle(0)
 
-    print("Sx: " + str(distanzaSx) + " Dx: " + str(distanzaDx))
+    # print("Sx: " + str(distanzaSx) + " Dx: " + str(distanzaDx))
 
-    if(distanzaSx > distanzaDx):
-        robot.drive(0, 30)
-    else:
-        robot.drive(0, -30)
+    # if(distanzaSx > distanzaDx):
+    #     robot.drive(0, 30)
+    # else:
+    #     robot.drive(0, -30)
 
-    while(abs(gyro_sensor.angle()) < 90):
-        pass
+    # while(abs(gyro_sensor.angle()) < 90):
+    #     pass
 
-    robot.stop()
+    # robot.stop()
 
 
-    print("Ultimo avanzameto")
-    dimTriangolo2 = (abs(distanzaSx - distanzaDx) + distTraSensori - 6) / 2
-    angolo = degrees(acos(dimTriangolo2 / sqrt(dimTriangolo1 ** 2 + dimTriangolo2 ** 2)))
-    print("dimTriangolo1: ", dimTriangolo1, " - dimTriangolo2: ", dimTriangolo2, " - angolo: ", angolo)
+    # print("Ultimo avanzameto")
+    # dimTriangolo2 = (abs(distanzaSx - distanzaDx) + distTraSensori - 6) / 2
+    # angolo = degrees(acos(dimTriangolo2 / sqrt(dimTriangolo1 ** 2 + dimTriangolo2 ** 2)))
+    # print("dimTriangolo1: ", dimTriangolo1, " - dimTriangolo2: ", dimTriangolo2, " - angolo: ", angolo)
 
-    robot.reset()
-    robot.drive(70, 0)
+    # robot.reset()
+    # robot.drive(70, 0)
 
-    while(robot.distance() < dimTriangolo2 * 10):
-        pass
+    # while(robot.distance() < dimTriangolo2 * 10):
+    #     pass
 
-    robot.stop()
-
-'''
+    # robot.stop()

@@ -582,14 +582,14 @@ def stagnolaTrovata():
     elif stagnolaL and not stagnolaR:
         gyro_sensor.reset_angle(0)
         ruotaSuAsse(-1)
-        while abs(gyro_sensor.angle()) < 45:
+        while abs(gyro_sensor.angle()) < 35:
             pass
         stop()
         return True
     elif stagnolaR and not stagnolaL:
         gyro_sensor.reset_angle(0)
         ruotaSuAsse(1)
-        while abs(gyro_sensor.angle()) < 45:
+        while abs(gyro_sensor.angle()) < 35:
             pass
         stop()
         return True

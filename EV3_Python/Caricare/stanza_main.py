@@ -116,7 +116,7 @@ def vai_a_triangolo_e_torna_indietro(tria_deg):
     triangle_color = None
 
     #Distanza dal centro al triangolo (dall'angolazione di tria_deg)    
-    tria_cm = 41
+    tria_cm = 46
     #Distanza per lo scan del colore
     scan_color_cm = 2
 

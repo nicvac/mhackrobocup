@@ -42,7 +42,7 @@ def resetCountersCorrection_corrc():
     corrc_list_r.clear() 
     #print("Correction counters corrc clear", "\t\t Corr: ", corrc_fwd," ", corrc_left, " ", corrc_right)
 
-imposta_carrello_rescueline()
+imposta_carrello_rescueline() 
 gyro_sensor.reset_angle(0)
 
 isLine_l = False; isLine_r = False
@@ -59,10 +59,16 @@ while True:
     ############################
     # Funzione aggira ostacolo. Da sistemare con tutti gli aggiornamenti fatti al client-server durante il percorso.
     # Potrebbe dare problemi con le troppe letture durante il percorso, bisogna impostargli uno sleep.
-    if time.time()-start>=1:
-        isObstacle = checkIfObstacle()
-        if isObstacle: aggiraOstacolo()
-        start=time.time()
+    # if time.time()-start>=0.5:
+    #     isObstacle = checkIfObstacle()
+    #     if isObstacle: 
+    #         getDistanceCm(DIST_FRONT)
+    #         getDistanceCm(DIST_FRONT)
+    #         getDistanceCm(DIST_FRONT)
+    #         getDistanceCm(DIST_FRONT)
+    #         if checkIfObstacle():
+    #             aggiraOstacolo()
+    #     start=time.time()
     
 
     ### STAGNOLA
@@ -167,18 +173,18 @@ while True:
     # Problemi possibili:
     # Nelle corna tutti e tre i sensori possono vedere nero, quindi può fare lo skip in una direzione sbagliata e perdersi
     if isLine_l and isLine_r and isLine_f:
-        #skip()
+        skip()
         correzionePerIncrocio = 0
-        print("Skip incrocio nero nero nero")
-        robot.straight(lungCingoli / 2)
-        stop()
-        gyro_sensor.reset_angle(0)
-        ruotaSuAsse(1)
-        while abs(gyro_sensor.angle()) < 90:
-            pass
-        stop()
-        robot.straight(40)
-        stop()
+        # print("Skip incrocio nero nero nero")
+        # robot.straight(lungCingoli / 2)
+        # stop()
+        # gyro_sensor.reset_angle(0)
+        # ruotaSuAsse(1)
+        # while abs(gyro_sensor.angle()) < 90:
+        #     pass
+        # stop()
+        # robot.straight(40)
+        # stop()
 
     # elif isLine_l and not isLine_r and isLine_f and correzionePerIncrocio >= 50:
     #     skip()
@@ -283,9 +289,18 @@ while True:
             fullGapCounter = -100
             continue
 
-
-
-            
+    #aggiunto per gara 1 2 giorno
+    #@@@ DA COMMENTARE @@@
+    if isLine_l and isLine_r and not(isLine_f):
+        robot.straight(lungCingoli / 2)
+        stop()
+        gyro_sensor.reset_angle(0)
+        ruotaSuAsse(1)
+        while abs(gyro_sensor.angle()) < -90:
+            pass
+        stop()
+        robot.straight(40)
+        stop()
     
     ### BIANCO BIANCO BIANCO
     ### GAP CHE NON FUNZIONA
