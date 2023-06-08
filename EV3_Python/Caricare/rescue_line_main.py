@@ -6,15 +6,15 @@ from stanza_main import *
 
 
 
-sensorOff(DIST_BACK_OFF)
-time.sleep(0.2)
-sensorOff(DIST_LEFT_OFF)
-time.sleep(0.2)
-sensorOff(DIST_RIGHT_OFF)
-time.sleep(0.2)
+# sensorOff(DIST_BACK_OFF)
+# time.sleep(0.2)
+# sensorOff(DIST_LEFT_OFF)
+# time.sleep(0.2)
+# sensorOff(DIST_RIGHT_OFF)
+# time.sleep(0.2)
 
-getDistanceCm(DIST_FRONT)
-getDistanceCm(DIST_FRONT)
+# getDistanceCm(DIST_FRONT)
+# getDistanceCm(DIST_FRONT)
 
 #Line counter: Quante volte vedo CONSECUTIVAMENTE una linea, su tutti i sensori
 lc_l = 0; lc_r = 0; lc_f = 0
@@ -121,7 +121,7 @@ while True:
 
     countVerdi = countVerdi + 1 if isGreen_l or isGreen_r else 0
 
-    attivaVerde = False
+    attivaVerde = True
 
     if attivaVerde and (isGreen_l or isGreen_r and countVerdi >= 3):
         robot.stop()
@@ -228,6 +228,15 @@ while True:
         left_motor.hold()
         right_motor.hold()
 
+
+
+        scanGap = checkSecondLine()
+        if scanGap:
+            fullGapCounter = 0
+            continue
+        else:
+            pass
+
         print("Inizio ad andare indietro finchè uno dei miei sensori vede la linea")
         robot.drive(-100, 0)
 
@@ -289,18 +298,18 @@ while True:
             fullGapCounter = -100
             continue
 
-    #aggiunto per gara 1 2 giorno
-    #@@@ DA COMMENTARE @@@
-    if isLine_l and isLine_r and not(isLine_f):
-        robot.straight(lungCingoli / 2)
-        stop()
-        gyro_sensor.reset_angle(0)
-        ruotaSuAsse(1)
-        while abs(gyro_sensor.angle()) < -90:
-            pass
-        stop()
-        robot.straight(40)
-        stop()
+    # #aggiunto per gara 1 2 giorno
+    # #@@@ DA COMMENTARE @@@
+    # if isLine_l and isLine_r and not(isLine_f):
+    #     robot.straight(lungCingoli / 2)
+    #     stop()
+    #     gyro_sensor.reset_angle(0)
+    #     ruotaSuAsse(1)
+    #     while abs(gyro_sensor.angle()) < -90:
+    #         pass
+    #     stop()
+    #     robot.straight(40)
+    #     stop()
     
     ### BIANCO BIANCO BIANCO
     ### GAP CHE NON FUNZIONA

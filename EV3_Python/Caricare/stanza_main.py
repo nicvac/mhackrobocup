@@ -222,7 +222,7 @@ def leggi_colore_triangolo(dist_cm):
 def stanza_main():
     #Costruisco il Reference data 
     print("Entrato in stanza_main")
-    imposta_carrello_stanza()
+    imposta_carrello_rescueline()
     evac_build_ref_data()
 
     #Alzo il sensore frontale

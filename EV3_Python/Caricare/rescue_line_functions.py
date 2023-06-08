@@ -603,3 +603,52 @@ def stagnolaTrovata():
         # Ignorare la lettura del sensore davanti per qualche secondo. sennò torna indietro e siamo punto e a capo
 
 
+
+def checkSecondLine():
+    #ruota a desta e contorlla se vede nero
+    ruotaSuAsse(1)
+    while abs(gyro_sensor.angle()) < 30:
+        leftSensor = isLine(color_sensor_right.color())
+        rightSensor = isLine(color_sensor_right.color())
+        frontSensor = isLineF(light_sensor_front.reflection())
+
+        if leftSensor or rightSensor or frontSensor:
+            fullGapCounter = 0
+            print("Ho tirtrovatto la linea nera a destrra")
+            stop()
+            return True
+        else:
+            pass
+
+    stop()
+    gyro_sensor.reset_angle(0)
+    #resetta angolo iniziale
+    ruotaSuAsse(-1)
+    while abs(gyro_sensor.angle()) < 30:
+        pass
+    stop()
+
+    gyro_sensor.reset_angle(0)
+    ruotaSuAsse(-1)
+    while abs(gyro_sensor.angle()) < 30:
+        leftSensor = isLine(color_sensor_right.color())
+        rightSensor = isLine(color_sensor_right.color())
+        frontSensor = isLineF(light_sensor_front.reflection())
+        if leftSensor or rightSensor or frontSensor:
+            fullGapCounter = 0
+            print("H rritrovato la linea nea a sinistra")
+            stop()
+            return True
+        else:
+            pass
+
+    stop()
+    gyro_sensor.reset_angle(0)
+    ruotaSuAsse(1)
+    while abs(gyro_sensor.angle()) < 30:
+        pass
+    stop()
+    return False
+
+
+
