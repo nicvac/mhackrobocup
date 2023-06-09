@@ -249,34 +249,35 @@ def stanza_main():
     c=0
     #Ruoterà di -55 = 125-180. -180 perchè voglio puntare il triangolo con front e non con back
     triaA_color = vai_a_triangolo_e_torna_indietro(-55)
-    if triaA_color in [Color.RED, Color.GREEN]: c+=1
+    if triaA_color in [Color.GREEN]: c+=1
 
-    if triaA_color == Color.RED: triaRedDeg = gyro_sensor.angle() 
+    #if triaA_color == Color.RED: triaRedDeg = gyro_sensor.angle() 
     if triaA_color == Color.GREEN: triaGreenDeg = gyro_sensor.angle()
 
 
     #Secondo triangolo
     #routo di altri -70 = -1 * (125 - 55) (senso antiorario)
-    triaB_color = vai_a_triangolo_e_torna_indietro( -70 )
-    if triaB_color in [Color.RED, Color.GREEN]: c+=1
+    if c < 1:
+        triaB_color = vai_a_triangolo_e_torna_indietro( -70 )
+        if triaB_color in [Color.GREEN]: c+=1
 
-    if triaB_color == Color.RED: triaRedDeg = gyro_sensor.angle() 
-    if triaB_color == Color.GREEN: triaGreenDeg = gyro_sensor.angle()
+        #if triaB_color == Color.RED: triaRedDeg = gyro_sensor.angle() 
+        if triaB_color == Color.GREEN: triaGreenDeg = gyro_sensor.angle()
 
-    if c < 2:
+    if c < 1:
         #Terzo: ruoto di altri -110 = -1 * ((360-305)+55)
         triaC_color = vai_a_triangolo_e_torna_indietro(-110)
-        if triaC_color in [Color.RED, Color.GREEN]: c+=1
+        if triaC_color in [Color.GREEN]: c+=1
 
-        if triaC_color == Color.RED: triaRedDeg = gyro_sensor.angle() 
+        #if triaC_color == Color.RED: triaRedDeg = gyro_sensor.angle() 
         if triaC_color == Color.GREEN: triaGreenDeg = gyro_sensor.angle()
             
 
-    if c < 2:
+    if c < 1:
         #Quarto: ruoto di altri -70 = -1 * (360 - 235) - (360-305)
         triaD_color = vai_a_triangolo_e_torna_indietro(-70)
-        if triaD_color in [Color.RED, Color.GREEN]: c+=1
-        if triaD_color == Color.RED: triaRedDeg = gyro_sensor.angle() 
+        if triaD_color in [Color.GREEN]: c+=1
+        #if triaD_color == Color.RED: triaRedDeg = gyro_sensor.angle() 
         if triaD_color == Color.GREEN: triaGreenDeg = gyro_sensor.angle()  
 
     #Ripristino l'angolo per allinearmi allo 0_back
