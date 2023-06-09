@@ -26,9 +26,9 @@ def getRoomSize(storicoDimensioneSx, storicoDimensioneDx):
 
 def guadagnaCentro():
 
-    robot.straight(530)
+    robot.straight(680)
     robot_gyro_turn(-90)
-    robot.straight(400)
+    robot.straight(300)
 
     # #Avanza di 45 cm
     # robot.reset()
