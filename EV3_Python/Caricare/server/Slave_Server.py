@@ -45,9 +45,6 @@ def brick_speaker_beep( num ):
             time.sleep(0.1)
 
 
-
-
-
 ultrasonic_sensor_front = UltrasonicSensor(Port.S1)
 ultrasonic_sensor_left = UltrasonicSensor(Port.S2)
 ultrasonic_sensor_right = UltrasonicSensor(Port.S3)
@@ -67,6 +64,9 @@ while True:
     extDist = NumericMailbox('extDist', server)
     extDistResponceLeft = NumericMailbox('extDistResponceLeft', server)
     extDistResponceRight = NumericMailbox('extDistResponceRight', server)
+    extDistResponceFront = NumericMailbox('extDistResponceFront', server)
+    extDistResponceBack = NumericMailbox('extDistResponceBack', server)
+
 
     # The server must be started before the client!
     brick_speaker_beep(1)
@@ -84,9 +84,11 @@ while True:
             extDist.wait()
             req = extDist.read()
             if   req == DIST_FRONT:
-                extDist.send(ultrasonic_sensor_front.distance())
+                #extDist.send(ultrasonic_sensor_front.distance())
+                extDistResponceFront.send(ultrasonic_sensor_front.distance())
             elif req == DIST_BACK:
-                extDist.send(ultrasonic_sensor_back.distance())
+                #extDist.send(ultrasonic_sensor_back.distance())
+                extDistResponceBack.send(ultrasonic_sensor_back.distance())
             elif req == DIST_LEFT:
                 #extDist.send(ultrasonic_sensor_left.distance())
                 extDistResponceLeft.send(ultrasonic_sensor_left.distance())

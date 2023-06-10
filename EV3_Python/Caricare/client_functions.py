@@ -24,6 +24,9 @@ def request( req_code, timeout ):
     global extDist
     global extDistResponceLeft
     global extDistResponceRight
+    global extDistResponceFront
+    global extDistResponceBack
+
     #Output
     response = None
 
@@ -34,6 +37,10 @@ def request( req_code, timeout ):
                 extDistResponceLeft = NumericMailbox('extDistResponceLeft', client)
             elif req_code == DIST_RIGHT:
                 extDistResponceRight = NumericMailbox('extDistResponceRight', client)
+            elif req_code == DIST_FRONT:
+                extDistResponceFront = NumericMailbox('extDistResponceFront', client)
+            elif req_code == DIST_BACK:
+                extDistResponceBack = NumericMailbox('extDistResponceBack', client)
             else:
                 extDist = NumericMailbox('extDist', client)
 
@@ -51,6 +58,10 @@ def request( req_code, timeout ):
                     response =  extDistResponceLeft.read()
                 elif req_code == DIST_RIGHT:
                     response =  extDistResponceRight.read()
+                elif req_code == DIST_FRONT:
+                    response =  extDistResponceFront.read()
+                elif req_code == DIST_BACK:
+                    response =  extDistResponceBack.read()
                 else:
                     response = extDist.read()
             if c > 1:
@@ -59,7 +70,7 @@ def request( req_code, timeout ):
         except Exception as e:
             # Catch the exception and print the error message
             print("############### request: Richiesta", req_code,". An exception occurred:", str(e))
-            time.sleep(0.1)
+            #time.sleep(0.1)
             clientEv3.speaker.beep()
             response = None
             #Prova a ricreare la connessione con il server
@@ -126,6 +137,8 @@ def crea_client_e_connetti():
     global extDist
     global extDistResponceLeft
     global extDistResponceRight
+    global extDistResponceFront
+    global extDistResponceBack
 
     client = BluetoothMailboxClient()
 
@@ -138,6 +151,9 @@ def crea_client_e_connetti():
 
     extDistResponceLeft = NumericMailbox('extDistResponceLeft', client)
     extDistResponceRight = NumericMailbox('extDistResponceRight', client)
+    extDistResponceFront = NumericMailbox('extDistResponceFront', client)
+    extDistResponceBack = NumericMailbox('extDistResponceBack', client)
+
 
 
 print("OPERAZIONE DI CONNESSIONE AL SERVER AVVIATA, COMMENTARE SE NON SERVE")
@@ -145,5 +161,7 @@ client = None
 extDist = None
 extDistResponceLeft = None
 extDistResponceRight = None
+extDistResponceFront = None
+extDistResponceBack = None
 
 crea_client_e_connetti()
