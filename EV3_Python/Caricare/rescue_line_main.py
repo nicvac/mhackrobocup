@@ -52,6 +52,12 @@ isLine_l = False; isLine_r = False
 countVerdi = 0
 while True:  
     
+    if color_sensor_left.color() == Color.RED and color_sensor_right.color() == Color.RED:
+        robot.straight(-40)
+        if light_sensor_front.color() == Color.RED:
+            brick_speaker_beep(8)
+            quit()
+
     #SE PREMO UN PULSANTE (TRANNE STOP!!!) RIAVVIA IL SERVER ED ESCE DAL PROGRAMMA (Questo alla fine ignorato malamente?)
     check_quit_and_restart_server()
 
